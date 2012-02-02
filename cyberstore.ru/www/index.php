@@ -27,30 +27,27 @@
  </style>
 </head>
 <body>
-
-	<div class="main">
-		<div class="content">
-			<div class="head">
-				<div class="logo">
-					Лого
-				</div>
-				<div class="top_menu">
-					Верхнее меню
-				</div>
-			</div>
-			<div class="body">
-				<div class="left_menu">
-					Навигация
-				</div>
-				<div class="common">
-					Гланая информация
-				</div>
-			</div>
+	<div class="head">
+		<div class="logo">
+			<!--<img src="logo.gif">-->
+			Лого
 		</div>
-		<div class="foot">
-			Копирайт
-		<div>
+		<div class="top_menu">
+			Верхнее менюююююююююююююююююююююююююююю
+		</div>
 	</div>
+	
+	<div class="left_menu">
+		Навигация
+	</div>
+	<div class="common">
+		Гланая информация
+	</div>
+	
+		
+	<div class="footer">
+		Копирайт
+	<div>
 
 </body>
 </html>
