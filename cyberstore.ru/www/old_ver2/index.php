@@ -1,7 +1,8 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
 <html>
 <head>
- <title>Шаблон верстки страницы из 3 колонок</title>
+	<title>CyberStore - все для киборгов</title>
+	<link rel="stylesheet" type="text/css" href="style.css">
 	<style type="text/css">
 		* { margin:0px; padding:0px; }
 		html { height:100%; }
@@ -26,52 +27,27 @@
  </style>
 </head>
 <body>
-	<div id="header">Заголовок страницы</div>
-
-	<div id="content">
-		<div id="container1">
-			<div id="container2">
-				<div id="container3">
-					<div id="center">Центральная колонка</div>
-				</div>
-				<div id="left">Левая колонка</div>
-			</div>
+	<div class="head">
+		<div class="logo">
+			<!--<img src="logo.gif">-->
+			Лого
 		</div>
-
-		<div id="right">Правая колонка</div>
-
+		<div class="top_menu">
+			Верхнее менюююююююююююююююююююююююююююю
+		</div>
 	</div>
+	
+	<div class="left_menu">
+		Навигация
+	</div>
+	<div class="common">
+		Гланая информация
+	</div>
+	
+		
+	<div class="footer">
+		Копирайт
+	<div>
 
-	<div id="footer">Копирайт</div>
 </body>
 </html>
-
-
-
-
-<!DOCTYPE HTML PUBLIC " – //W3C//DTD HTML 4.01 Transitional//EN"
- "http://www.w3.org/TR/html4/loose.dtd">
- <html >
- <head>
-	<title>Страница Web </title>
- </head>
- <body> 
-	<div name="hat">
-		<h1>Шапка</h1>
-	</div>
-	<div name="main_menu">
-		<h1>Главное меню</h1>
-	</div>
-	<div name="main">
-		<h1>Основной раздел</h1>
-	</div>
-	<p> 
-	<?php
-		echo "Это базовый документ PHP---------------------";
-	?>
-	
-	
-	
-	
- </body>
- </html>
