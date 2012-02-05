@@ -11,18 +11,18 @@
 			<img src="logo.gif">
 		</div>
 		<div class="top_menu">
-			<ul>
-				<li>Корзина
-				<li>Вход в систему
+			<ul class="ul.top_menu">
+				<li class="top_menu">Корзина</li>
+				<li class="top_menu">Вход в систему</li>
 			</ul>
 		</div>
 	</div>
 	
 	<div class="left">
 		<ul>
-			<li>Главная
-			<li>Новости
-			<li>Каталог
+			<li>Главная</li>
+			<li>Новости</li>
+			<li>Каталог</li>
 		</ul>
 	</div>
 	<div class="content">
