@@ -7,46 +7,41 @@ div.header {
 	width:100%;
 	height:120px;
 	background:#D10927; 
-	margin:5px;}
+	}
 div.logo {
 	width:600px;
-	height:100px;
-	background:#D89927;
-	margin:5px; 
-	min-height:200;
+	height:120px;
+	background:#D89927; 
 	float:left;}
 div.top_menu {
-	position:absolute;
-	left:600px;
-	top:10;
+	float:right;
 	width:30%;
-	height:100px;
+	height:30px;
 	background:#D86957;
-	margin:5px;
-
 	}
+ul.top_menu {
+margin-left:0px;
+	margin:0px;
+	padding:0px;
+	padding-left: 0px;
+}
+li.top_menu {
+	display:inline;
+}
 
 
-	
 div.left {
-	width:200px;
-	height:300px;
+	width:210px;
 	background:#486927;
-	margin:5px;
 	float:left;}
 div.content{
-	
-
-	
 	width:80%;
 	background:#D86987;
-	margin:5px;
 	margin-left:210px;
 	}
 div.footer {
 	clear:both;
 	width:100%;
-	height:100px;
+	height:50px;
 	background:#D83927; 
-	margin:5px;
-	padding-top:5px;}
+	}
