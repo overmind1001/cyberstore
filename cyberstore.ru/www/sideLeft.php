@@ -8,7 +8,7 @@ function printSideLeft($activeLink) {
     }
     else
     {
-        print "	<li><a href=\"./..//index.php\">Главная</a></li>";
+        print "	<li><a href=\"./../index.php\">Главная</a></li>";
     }
     print "	<li>Новости</li>";
     
