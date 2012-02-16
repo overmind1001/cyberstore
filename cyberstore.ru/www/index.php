@@ -23,7 +23,8 @@
 				</div>
 			
 			</div>
-                        <?php include "sideLeft.php";?>
+                        <?php include "sideLeft.php";
+                        printSideLeft("main") ?>
 		</div>
 	</div>
         <?php include "footer.php";?>
