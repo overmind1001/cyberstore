@@ -3,7 +3,7 @@
         <tr><!--Заголовок-->
             <h1>Товары</h1>
         </tr>
-        
+
         <tr><!--Лист-->
             <select name="listGoods" size="30" required style="width: 500;">
                 <?php
@@ -28,8 +28,3 @@
         </tr>
     </table>
 </form>
-
-<?php
-
-
-?>
