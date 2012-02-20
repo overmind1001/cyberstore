@@ -1,0 +1,75 @@
+CREATE DATABASE  `db_cyberstore` ;
+USE `db_cyberstore`;
+
+CREATE TABLE IF NOT EXISTS `goods_in_sale` (
+  `id` 		int(11) NOT NULL,
+  `price` 	float NOT NULL,
+  `count` 	int(11) NOT NULL,
+  `sale_id` int(11) NOT NULL,
+  `good_id` int(11) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=MyISAM DEFAULT CHARSET=cp1251 COMMENT='Товары в продаже';
+
+CREATE TABLE IF NOT EXISTS `sales` (
+	`id`		int(11) NOT NULL,
+	`date`		DATE	NOT NULL,
+	`user_id`	int(11),
+	PRIMARY KEY (`id`)
+) ENGINE=MyISAM DEFAULT CHARSET=cp1251 COMMENT='Продажи';
+
+create table if not exists `goods` (
+	`id`			int(11)	not null,
+	`description`	TEXT 	not null,
+	`price_current`	float	not null,
+	`count`			int(11)	not null,
+	`picture_id`	int(11),
+	`catalog_id`	int(11)	not null,
+	PRIMARY KEY (`id`)
+) ENGINE=MyISAM DEFAULT CHARSET=cp1251 COMMENT='Товары';
+
+create table if not exists `catalog_div` (
+	`id`					int(11)	not null,
+	`name`					TEXT 	not null,
+	`parent_catalog_div_id`	int(11),
+	PRIMARY KEY (`id`)
+) ENGINE=MyISAM DEFAULT CHARSET=cp1251 COMMENT='Разделы каталога. Каталог иерархический';
+
+create table if not exists `good_in_basket` (
+	`id`		int(11)	not null,
+	`count`		int(11) not null,
+	`good_id`	int(11)	not null,
+	`basket_id`	int(11)	not null,
+	PRIMARY KEY (`id`)
+) ENGINE=MyISAM DEFAULT CHARSET=cp1251 COMMENT='Товары в корзине';
+
+create table if not exists `user` (
+	`id`			int(11)	not null,
+	`login`			TEXT 	not null,
+	`password`		TEXT	not null,
+	`session_id`	int(11)	not null,
+	PRIMARY KEY (`id`)
+) ENGINE=MyISAM DEFAULT CHARSET=cp1251 COMMENT='Пользователи';
+
+create table if not exists `feedback` (
+	`id`		int(11)	not null,
+	`text`		TEXT	not null,
+	`date`		DATE	not null,
+	`mark`		int(11),
+	`good_id`	int(11)	not null,
+	PRIMARY KEY (`id`)
+) ENGINE=MyISAM DEFAULT CHARSET=cp1251 COMMENT='Отзывы';
+
+create table if not exists `basket` (
+	`id`			int(11)	not null,
+	`session_id`	int(11)	not null,
+	PRIMARY KEY (`id`)
+) ENGINE=MyISAM DEFAULT CHARSET=cp1251 COMMENT='Корзины';
+
+create table if not exists `session` (
+	`id`		int(11)	not null,
+	`basket_id`	int(11)	not null,
+	`user_id`	int(11),
+	PRIMARY KEY (`id`)
+) ENGINE=MyISAM DEFAULT CHARSET=cp1251 COMMENT='Сессии';
+
+
