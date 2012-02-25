@@ -19,6 +19,7 @@ CREATE TABLE IF NOT EXISTS `sales` (
 
 create table if not exists `goods` (
 	`id`			int(11)	not null,
+	`name`		TEXT 	not null,
 	`description`	TEXT 	not null,
 	`price_current`	float	not null,
 	`count`			int(11)	not null,
