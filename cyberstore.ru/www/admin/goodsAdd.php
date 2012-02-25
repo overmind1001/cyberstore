@@ -47,7 +47,7 @@
                 <input type="reset" value="Очистить"/>
             </tr>
             <tr>
-                <input type="button" name="Back_to_goods" value="Назад к товарам"/>
+                <input type="button" name="Back_to_goods" value="Назад к товарам" onClick="window.location = 'goodsMain.php';"/>
             </tr>
         </table>
     </div>

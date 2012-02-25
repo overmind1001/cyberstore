@@ -5,7 +5,7 @@
         </tr>
 
         <tr><!--Лист-->
-            <select name="listGoods" size="30" required style="width: 500;">
+            <select name="listGoods" size="20" required style="width: 500;">
                 <?php
                     for($i=0;$i<100;$i++)
                     {
@@ -17,10 +17,10 @@
         
         <tr><!--Кнопки-->
             <td>
-                <input name="btnAdd" type="button" value="Добавить товар" />
+                <input name="btnAdd" type="button" value="Добавить товар" onClick="window.location = 'goodsAdd.php';" />
             </td>
             <td>
-                <input name="btnEdit" type="button" value="Редактировать товар" />
+                <input name="btnEdit" type="button" value="Редактировать товар" onClick="window.location = 'goodsAdd.php';" />
             </td>
             <td>
                 <input name="btnDelete" type="button" value="Удалить товар" />
@@ -28,3 +28,6 @@
         </tr>
     </table>
 </form>
+<div>
+    <a href="adminMain.php">В админку</a>
+</div>
