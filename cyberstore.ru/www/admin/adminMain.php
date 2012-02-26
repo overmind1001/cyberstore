@@ -6,7 +6,7 @@
     <li>
         <a href="div_partMain.php">Разделы каталога</a>
     </li>
-    <li>
+    <li> 
         <a href="usersMain.php">Пользователи</a>
     </li>
     <li>
