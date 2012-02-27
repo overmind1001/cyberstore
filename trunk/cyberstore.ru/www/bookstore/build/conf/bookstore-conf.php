@@ -20,3 +20,4 @@ $conf = array (
 );
 $conf['classmap'] = include(dirname(__FILE__) . DIRECTORY_SEPARATOR . 'classmap-bookstore-conf.php');
 return $conf;
+?>
