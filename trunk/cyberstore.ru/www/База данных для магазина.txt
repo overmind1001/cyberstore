@@ -1,76 +1,99 @@
 CREATE DATABASE  `db_cyberstore` ;
 USE `db_cyberstore`;
 
+SET SQL_MODE="NO_AUTO_VALUE_ON_ZERO";
+SET time_zone = "+00:00";
+
+CREATE TABLE IF NOT EXISTS `basket` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `user_id` int(11) NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `user_id_constraint` (`user_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=cp1251 COMMENT='Корзины' AUTO_INCREMENT=1 ;
+
+CREATE TABLE IF NOT EXISTS `catalog_div` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` text NOT NULL,
+  `parent_catalog_div_id` int(11) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `parent_catalog_constraint` (`parent_catalog_div_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=cp1251 COMMENT='Разделы каталога. Каталог иерархический' AUTO_INCREMENT=1 ;
+
+CREATE TABLE IF NOT EXISTS `feedback` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `text` text NOT NULL,
+  `date` date NOT NULL,
+  `mark` int(11) DEFAULT NULL,
+  `good_id` int(11) NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `good_id_constraint` (`good_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=cp1251 COMMENT='Отзывы' AUTO_INCREMENT=1 ;
+
+CREATE TABLE IF NOT EXISTS `goods` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` text NOT NULL,
+  `description` text NOT NULL,
+  `price_current` float NOT NULL,
+  `count` int(11) NOT NULL,
+  `picture_id` int(11) DEFAULT NULL,
+  `catalog_id` int(11) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=cp1251 COMMENT='Товары' AUTO_INCREMENT=1 ;
+
 CREATE TABLE IF NOT EXISTS `goods_in_sale` (
-  `id` 		int(11) NOT NULL,
-  `price` 	float NOT NULL,
-  `count` 	int(11) NOT NULL,
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `price` float NOT NULL,
+  `count` int(11) NOT NULL,
   `sale_id` int(11) NOT NULL,
   `good_id` int(11) NOT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=MyISAM DEFAULT CHARSET=cp1251 COMMENT='Товары в продаже';
+  PRIMARY KEY (`id`),
+  KEY `sale_constraint` (`sale_id`),
+  KEY `good1_constraint` (`good_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=cp1251 COMMENT='Товары в продаже' AUTO_INCREMENT=1 ;
+
+CREATE TABLE IF NOT EXISTS `good_in_basket` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `count` int(11) NOT NULL,
+  `good_id` int(11) NOT NULL,
+  `basket_id` int(11) NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `good_constraint` (`good_id`),
+  KEY `basket_constraint` (`basket_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=cp1251 COMMENT='Товары в корзине' AUTO_INCREMENT=1 ;
 
 CREATE TABLE IF NOT EXISTS `sales` (
-	`id`		int(11) NOT NULL,
-	`date`		DATE	NOT NULL,
-	`user_id`	int(11),
-	PRIMARY KEY (`id`)
-) ENGINE=MyISAM DEFAULT CHARSET=cp1251 COMMENT='Продажи';
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `date` date NOT NULL,
+  `user_id` int(11) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `user_id1_constraint` (`user_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=cp1251 COMMENT='Продажи' AUTO_INCREMENT=1 ;
 
-create table if not exists `goods` (
-	`id`			int(11)	not null,
-	`name`		TEXT 	not null,
-	`description`	TEXT 	not null,
-	`price_current`	float	not null,
-	`count`			int(11)	not null,
-	`picture_id`	int(11),
-	`catalog_id`	int(11)	not null,
-	PRIMARY KEY (`id`)
-) ENGINE=MyISAM DEFAULT CHARSET=cp1251 COMMENT='Товары';
+CREATE TABLE IF NOT EXISTS `user` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `login` text NOT NULL,
+  `password` text NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=cp1251 COMMENT='Пользователи' AUTO_INCREMENT=1 ;
 
-create table if not exists `catalog_div` (
-	`id`					int(11)	not null,
-	`name`					TEXT 	not null,
-	`parent_catalog_div_id`	int(11),
-	PRIMARY KEY (`id`)
-) ENGINE=MyISAM DEFAULT CHARSET=cp1251 COMMENT='Разделы каталога. Каталог иерархический';
 
-create table if not exists `good_in_basket` (
-	`id`		int(11)	not null,
-	`count`		int(11) not null,
-	`good_id`	int(11)	not null,
-	`basket_id`	int(11)	not null,
-	PRIMARY KEY (`id`)
-) ENGINE=MyISAM DEFAULT CHARSET=cp1251 COMMENT='Товары в корзине';
+ALTER TABLE `basket`
+  ADD CONSTRAINT `user_id_constraint` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
-create table if not exists `user` (
-	`id`			int(11)	not null,
-	`login`			TEXT 	not null,
-	`password`		TEXT	not null,
-	`session_id`	int(11)	not null,
-	PRIMARY KEY (`id`)
-) ENGINE=MyISAM DEFAULT CHARSET=cp1251 COMMENT='Пользователи';
+ALTER TABLE `catalog_div`
+  ADD CONSTRAINT `parent_catalog_constraint` FOREIGN KEY (`parent_catalog_div_id`) REFERENCES `catalog_div` (`id`) ON DELETE SET NULL ON UPDATE SET NULL;
 
-create table if not exists `feedback` (
-	`id`		int(11)	not null,
-	`text`		TEXT	not null,
-	`date`		DATE	not null,
-	`mark`		int(11),
-	`good_id`	int(11)	not null,
-	PRIMARY KEY (`id`)
-) ENGINE=MyISAM DEFAULT CHARSET=cp1251 COMMENT='Отзывы';
+ALTER TABLE `feedback`
+  ADD CONSTRAINT `good_id_constraint` FOREIGN KEY (`good_id`) REFERENCES `goods` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
-create table if not exists `basket` (
-	`id`			int(11)	not null,
-	`session_id`	int(11)	not null,
-	PRIMARY KEY (`id`)
-) ENGINE=MyISAM DEFAULT CHARSET=cp1251 COMMENT='Корзины';
+ALTER TABLE `goods_in_sale`
+  ADD CONSTRAINT `sale_constraint` FOREIGN KEY (`sale_id`) REFERENCES `sales` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `good1_constraint` FOREIGN KEY (`good_id`) REFERENCES `goods` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
-create table if not exists `session` (
-	`id`		int(11)	not null,
-	`basket_id`	int(11)	not null,
-	`user_id`	int(11),
-	PRIMARY KEY (`id`)
-) ENGINE=MyISAM DEFAULT CHARSET=cp1251 COMMENT='Сессии';
+ALTER TABLE `good_in_basket`
+  ADD CONSTRAINT `good_constraint` FOREIGN KEY (`good_id`) REFERENCES `goods` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `basket_constraint` FOREIGN KEY (`basket_id`) REFERENCES `basket` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
+ALTER TABLE `sales`
+  ADD CONSTRAINT `user_id1_constraint` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
