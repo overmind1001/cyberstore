@@ -38,7 +38,7 @@
 		</style>
 		<script>
 			$(function(){
-				$.mobile.defaultPageTransition = "none";
+				$.mobile.defaultPageTransition = "fade";
 			});
 		</script>
 </head> 
