@@ -9,13 +9,13 @@
   </log>
   -->
   <propel>
-    <datasources default="bookstore">
-      <datasource id="bookstore">
+    <datasources default="cyberstore">
+      <datasource id="cyberstore">
         <adapter>mysql</adapter> <!-- sqlite, mysql, mssql, oracle, or pgsql -->
         <connection>
           <dsn>mysql:host=localhost;dbname=db_cyberstore</dsn>
           <user>root</user>
-          <password>rerev,th</password>
+          <password></password>
         </connection>
       </datasource>
     </datasources>
