@@ -4,17 +4,17 @@
 $conf = array (
   'datasources' => 
   array (
-    'bookstore' => 
+    'cyberstore' => 
     array (
       'adapter' => 'mysql',
       'connection' => 
       array (
         'dsn' => 'mysql:host=localhost;dbname=db_cyberstore',
         'user' => 'root',
-        'password' => 'rerev,th',
+        'password' => '',
       ),
     ),
-    'default' => 'bookstore',
+    'default' => 'cyberstore',
   ),
   'generator_version' => '1.6.0',
 );
