@@ -7,13 +7,13 @@
 </head>
 <body>
 	<div id="wrapper">
-		<div id="header">
+		<div id="our_header">
                         <?php include "logo.php";?>
                         <?php include "top_menu.php";?>
 		</div>
 		<div id="middle">
 			<div id="container">
-				<div id="content">
+				<div id="our_content">
 					<p>Главная информация</p>
 					<p>Много текста с картинками</p>
 					<p>Много текста с картинками</p>
