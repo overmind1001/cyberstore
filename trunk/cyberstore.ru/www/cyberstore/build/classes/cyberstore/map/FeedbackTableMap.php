@@ -35,13 +35,13 @@ class FeedbackTableMap extends TableMap {
 		$this->setPhpName('Feedback');
 		$this->setClassname('Feedback');
 		$this->setPackage('cyberstore');
-		$this->setUseIdGenerator(false);
+		$this->setUseIdGenerator(true);
 		// columns
 		$this->addPrimaryKey('ID', 'Id', 'INTEGER', true, null, null);
 		$this->addColumn('TEXT', 'Text', 'LONGVARCHAR', true, null, null);
 		$this->addColumn('DATE', 'Date', 'DATE', true, null, null);
 		$this->addColumn('MARK', 'Mark', 'INTEGER', false, null, null);
-		$this->addColumn('GOOD_ID', 'GoodId', 'INTEGER', true, null, null);
+		$this->addForeignKey('GOOD_ID', 'GoodId', 'INTEGER', 'goods', 'ID', true, null, null);
 		// validators
 	} // initialize()
 
@@ -50,6 +50,7 @@ class FeedbackTableMap extends TableMap {
 	 */
 	public function buildRelations()
 	{
+    $this->addRelation('Goods', 'Goods', RelationMap::MANY_TO_ONE, array('good_id' => 'id', ), 'CASCADE', 'CASCADE');
 	} // buildRelations()
 
 } // FeedbackTableMap

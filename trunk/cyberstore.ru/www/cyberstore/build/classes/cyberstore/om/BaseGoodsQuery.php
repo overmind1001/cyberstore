@@ -26,6 +26,18 @@
  * @method     GoodsQuery rightJoin($relation) Adds a RIGHT JOIN clause to the query
  * @method     GoodsQuery innerJoin($relation) Adds a INNER JOIN clause to the query
  *
+ * @method     GoodsQuery leftJoinFeedback($relationAlias = null) Adds a LEFT JOIN clause to the query using the Feedback relation
+ * @method     GoodsQuery rightJoinFeedback($relationAlias = null) Adds a RIGHT JOIN clause to the query using the Feedback relation
+ * @method     GoodsQuery innerJoinFeedback($relationAlias = null) Adds a INNER JOIN clause to the query using the Feedback relation
+ *
+ * @method     GoodsQuery leftJoinGoodInBasket($relationAlias = null) Adds a LEFT JOIN clause to the query using the GoodInBasket relation
+ * @method     GoodsQuery rightJoinGoodInBasket($relationAlias = null) Adds a RIGHT JOIN clause to the query using the GoodInBasket relation
+ * @method     GoodsQuery innerJoinGoodInBasket($relationAlias = null) Adds a INNER JOIN clause to the query using the GoodInBasket relation
+ *
+ * @method     GoodsQuery leftJoinGoodsInSale($relationAlias = null) Adds a LEFT JOIN clause to the query using the GoodsInSale relation
+ * @method     GoodsQuery rightJoinGoodsInSale($relationAlias = null) Adds a RIGHT JOIN clause to the query using the GoodsInSale relation
+ * @method     GoodsQuery innerJoinGoodsInSale($relationAlias = null) Adds a INNER JOIN clause to the query using the GoodsInSale relation
+ *
  * @method     Goods findOne(PropelPDO $con = null) Return the first Goods matching the query
  * @method     Goods findOneOrCreate(PropelPDO $con = null) Return the first Goods matching the query, or a new Goods object populated from the query conditions when no match is found
  *
@@ -393,6 +405,225 @@ abstract class BaseGoodsQuery extends ModelCriteria
 			}
 		}
 		return $this->addUsingAlias(GoodsPeer::CATALOG_ID, $catalogId, $comparison);
+	}
+
+	/**
+	 * Filter the query by a related Feedback object
+	 *
+	 * @param     Feedback $feedback  the related object to use as filter
+	 * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+	 *
+	 * @return    GoodsQuery The current query, for fluid interface
+	 */
+	public function filterByFeedback($feedback, $comparison = null)
+	{
+		if ($feedback instanceof Feedback) {
+			return $this
+				->addUsingAlias(GoodsPeer::ID, $feedback->getGoodId(), $comparison);
+		} elseif ($feedback instanceof PropelCollection) {
+			return $this
+				->useFeedbackQuery()
+					->filterByPrimaryKeys($feedback->getPrimaryKeys())
+				->endUse();
+		} else {
+			throw new PropelException('filterByFeedback() only accepts arguments of type Feedback or PropelCollection');
+		}
+	}
+
+	/**
+	 * Adds a JOIN clause to the query using the Feedback relation
+	 * 
+	 * @param     string $relationAlias optional alias for the relation
+	 * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
+	 *
+	 * @return    GoodsQuery The current query, for fluid interface
+	 */
+	public function joinFeedback($relationAlias = null, $joinType = Criteria::INNER_JOIN)
+	{
+		$tableMap = $this->getTableMap();
+		$relationMap = $tableMap->getRelation('Feedback');
+		
+		// create a ModelJoin object for this join
+		$join = new ModelJoin();
+		$join->setJoinType($joinType);
+		$join->setRelationMap($relationMap, $this->useAliasInSQL ? $this->getModelAlias() : null, $relationAlias);
+		if ($previousJoin = $this->getPreviousJoin()) {
+			$join->setPreviousJoin($previousJoin);
+		}
+		
+		// add the ModelJoin to the current object
+		if($relationAlias) {
+			$this->addAlias($relationAlias, $relationMap->getRightTable()->getName());
+			$this->addJoinObject($join, $relationAlias);
+		} else {
+			$this->addJoinObject($join, 'Feedback');
+		}
+		
+		return $this;
+	}
+
+	/**
+	 * Use the Feedback relation Feedback object
+	 *
+	 * @see       useQuery()
+	 * 
+	 * @param     string $relationAlias optional alias for the relation,
+	 *                                   to be used as main alias in the secondary query
+	 * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
+	 *
+	 * @return    FeedbackQuery A secondary query class using the current class as primary query
+	 */
+	public function useFeedbackQuery($relationAlias = null, $joinType = Criteria::INNER_JOIN)
+	{
+		return $this
+			->joinFeedback($relationAlias, $joinType)
+			->useQuery($relationAlias ? $relationAlias : 'Feedback', 'FeedbackQuery');
+	}
+
+	/**
+	 * Filter the query by a related GoodInBasket object
+	 *
+	 * @param     GoodInBasket $goodInBasket  the related object to use as filter
+	 * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+	 *
+	 * @return    GoodsQuery The current query, for fluid interface
+	 */
+	public function filterByGoodInBasket($goodInBasket, $comparison = null)
+	{
+		if ($goodInBasket instanceof GoodInBasket) {
+			return $this
+				->addUsingAlias(GoodsPeer::ID, $goodInBasket->getGoodId(), $comparison);
+		} elseif ($goodInBasket instanceof PropelCollection) {
+			return $this
+				->useGoodInBasketQuery()
+					->filterByPrimaryKeys($goodInBasket->getPrimaryKeys())
+				->endUse();
+		} else {
+			throw new PropelException('filterByGoodInBasket() only accepts arguments of type GoodInBasket or PropelCollection');
+		}
+	}
+
+	/**
+	 * Adds a JOIN clause to the query using the GoodInBasket relation
+	 * 
+	 * @param     string $relationAlias optional alias for the relation
+	 * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
+	 *
+	 * @return    GoodsQuery The current query, for fluid interface
+	 */
+	public function joinGoodInBasket($relationAlias = null, $joinType = Criteria::INNER_JOIN)
+	{
+		$tableMap = $this->getTableMap();
+		$relationMap = $tableMap->getRelation('GoodInBasket');
+		
+		// create a ModelJoin object for this join
+		$join = new ModelJoin();
+		$join->setJoinType($joinType);
+		$join->setRelationMap($relationMap, $this->useAliasInSQL ? $this->getModelAlias() : null, $relationAlias);
+		if ($previousJoin = $this->getPreviousJoin()) {
+			$join->setPreviousJoin($previousJoin);
+		}
+		
+		// add the ModelJoin to the current object
+		if($relationAlias) {
+			$this->addAlias($relationAlias, $relationMap->getRightTable()->getName());
+			$this->addJoinObject($join, $relationAlias);
+		} else {
+			$this->addJoinObject($join, 'GoodInBasket');
+		}
+		
+		return $this;
+	}
+
+	/**
+	 * Use the GoodInBasket relation GoodInBasket object
+	 *
+	 * @see       useQuery()
+	 * 
+	 * @param     string $relationAlias optional alias for the relation,
+	 *                                   to be used as main alias in the secondary query
+	 * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
+	 *
+	 * @return    GoodInBasketQuery A secondary query class using the current class as primary query
+	 */
+	public function useGoodInBasketQuery($relationAlias = null, $joinType = Criteria::INNER_JOIN)
+	{
+		return $this
+			->joinGoodInBasket($relationAlias, $joinType)
+			->useQuery($relationAlias ? $relationAlias : 'GoodInBasket', 'GoodInBasketQuery');
+	}
+
+	/**
+	 * Filter the query by a related GoodsInSale object
+	 *
+	 * @param     GoodsInSale $goodsInSale  the related object to use as filter
+	 * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+	 *
+	 * @return    GoodsQuery The current query, for fluid interface
+	 */
+	public function filterByGoodsInSale($goodsInSale, $comparison = null)
+	{
+		if ($goodsInSale instanceof GoodsInSale) {
+			return $this
+				->addUsingAlias(GoodsPeer::ID, $goodsInSale->getGoodId(), $comparison);
+		} elseif ($goodsInSale instanceof PropelCollection) {
+			return $this
+				->useGoodsInSaleQuery()
+					->filterByPrimaryKeys($goodsInSale->getPrimaryKeys())
+				->endUse();
+		} else {
+			throw new PropelException('filterByGoodsInSale() only accepts arguments of type GoodsInSale or PropelCollection');
+		}
+	}
+
+	/**
+	 * Adds a JOIN clause to the query using the GoodsInSale relation
+	 * 
+	 * @param     string $relationAlias optional alias for the relation
+	 * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
+	 *
+	 * @return    GoodsQuery The current query, for fluid interface
+	 */
+	public function joinGoodsInSale($relationAlias = null, $joinType = Criteria::INNER_JOIN)
+	{
+		$tableMap = $this->getTableMap();
+		$relationMap = $tableMap->getRelation('GoodsInSale');
+		
+		// create a ModelJoin object for this join
+		$join = new ModelJoin();
+		$join->setJoinType($joinType);
+		$join->setRelationMap($relationMap, $this->useAliasInSQL ? $this->getModelAlias() : null, $relationAlias);
+		if ($previousJoin = $this->getPreviousJoin()) {
+			$join->setPreviousJoin($previousJoin);
+		}
+		
+		// add the ModelJoin to the current object
+		if($relationAlias) {
+			$this->addAlias($relationAlias, $relationMap->getRightTable()->getName());
+			$this->addJoinObject($join, $relationAlias);
+		} else {
+			$this->addJoinObject($join, 'GoodsInSale');
+		}
+		
+		return $this;
+	}
+
+	/**
+	 * Use the GoodsInSale relation GoodsInSale object
+	 *
+	 * @see       useQuery()
+	 * 
+	 * @param     string $relationAlias optional alias for the relation,
+	 *                                   to be used as main alias in the secondary query
+	 * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
+	 *
+	 * @return    GoodsInSaleQuery A secondary query class using the current class as primary query
+	 */
+	public function useGoodsInSaleQuery($relationAlias = null, $joinType = Criteria::INNER_JOIN)
+	{
+		return $this
+			->joinGoodsInSale($relationAlias, $joinType)
+			->useQuery($relationAlias ? $relationAlias : 'GoodsInSale', 'GoodsInSaleQuery');
 	}
 
 	/**

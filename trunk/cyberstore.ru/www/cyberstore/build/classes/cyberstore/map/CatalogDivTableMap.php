@@ -35,11 +35,11 @@ class CatalogDivTableMap extends TableMap {
 		$this->setPhpName('CatalogDiv');
 		$this->setClassname('CatalogDiv');
 		$this->setPackage('cyberstore');
-		$this->setUseIdGenerator(false);
+		$this->setUseIdGenerator(true);
 		// columns
 		$this->addPrimaryKey('ID', 'Id', 'INTEGER', true, null, null);
 		$this->addColumn('NAME', 'Name', 'LONGVARCHAR', true, null, null);
-		$this->addColumn('PARENT_CATALOG_DIV_ID', 'ParentCatalogDivId', 'INTEGER', false, null, null);
+		$this->addForeignKey('PARENT_CATALOG_DIV_ID', 'ParentCatalogDivId', 'INTEGER', 'catalog_div', 'ID', false, null, null);
 		// validators
 	} // initialize()
 
@@ -48,6 +48,8 @@ class CatalogDivTableMap extends TableMap {
 	 */
 	public function buildRelations()
 	{
+    $this->addRelation('CatalogDivRelatedByParentCatalogDivId', 'CatalogDiv', RelationMap::MANY_TO_ONE, array('parent_catalog_div_id' => 'id', ), 'SET NULL', 'SET NULL');
+    $this->addRelation('CatalogDivRelatedById', 'CatalogDiv', RelationMap::ONE_TO_MANY, array('id' => 'parent_catalog_div_id', ), 'SET NULL', 'SET NULL');
 	} // buildRelations()
 
 } // CatalogDivTableMap

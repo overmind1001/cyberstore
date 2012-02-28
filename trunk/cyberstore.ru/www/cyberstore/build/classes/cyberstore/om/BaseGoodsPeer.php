@@ -374,6 +374,15 @@ abstract class BaseGoodsPeer {
 	 */
 	public static function clearRelatedInstancePool()
 	{
+		// Invalidate objects in FeedbackPeer instance pool, 
+		// since one or more of them may be deleted by ON DELETE CASCADE/SETNULL rule.
+		FeedbackPeer::clearInstancePool();
+		// Invalidate objects in GoodInBasketPeer instance pool, 
+		// since one or more of them may be deleted by ON DELETE CASCADE/SETNULL rule.
+		GoodInBasketPeer::clearInstancePool();
+		// Invalidate objects in GoodsInSalePeer instance pool, 
+		// since one or more of them may be deleted by ON DELETE CASCADE/SETNULL rule.
+		GoodsInSalePeer::clearInstancePool();
 	}
 
 	/**
@@ -526,6 +535,10 @@ abstract class BaseGoodsPeer {
 			$criteria = $values->buildCriteria(); // build Criteria from Goods object
 		}
 
+		if ($criteria->containsKey(GoodsPeer::ID) && $criteria->keyContainsValue(GoodsPeer::ID) ) {
+			throw new PropelException('Cannot insert a value for auto-increment primary key ('.GoodsPeer::ID.')');
+		}
+
 
 		// Set the correct dbName
 		$criteria->setDbName(self::DATABASE_NAME);
@@ -598,6 +611,7 @@ abstract class BaseGoodsPeer {
 			// use transaction because $criteria could contain info
 			// for more than one table or we could emulating ON DELETE CASCADE, etc.
 			$con->beginTransaction();
+			$affectedRows += GoodsPeer::doOnDeleteCascade(new Criteria(GoodsPeer::DATABASE_NAME), $con);
 			$affectedRows += BasePeer::doDeleteAll(GoodsPeer::TABLE_NAME, $con, GoodsPeer::DATABASE_NAME);
 			// Because this db requires some delete cascade/set null emulation, we have to
 			// clear the cached instance *after* the emulation has happened (since
@@ -630,24 +644,14 @@ abstract class BaseGoodsPeer {
 		}
 
 		if ($values instanceof Criteria) {
-			// invalidate the cache for all objects of this type, since we have no
-			// way of knowing (without running a query) what objects should be invalidated
-			// from the cache based on this Criteria.
-			GoodsPeer::clearInstancePool();
 			// rename for clarity
 			$criteria = clone $values;
 		} elseif ($values instanceof Goods) { // it's a model object
-			// invalidate the cache for this single object
-			GoodsPeer::removeInstanceFromPool($values);
 			// create criteria based on pk values
 			$criteria = $values->buildPkeyCriteria();
 		} else { // it's a primary key, or an array of pks
 			$criteria = new Criteria(self::DATABASE_NAME);
 			$criteria->add(GoodsPeer::ID, (array) $values, Criteria::IN);
-			// invalidate the cache for this object(s)
-			foreach ((array) $values as $singleval) {
-				GoodsPeer::removeInstanceFromPool($singleval);
-			}
 		}
 
 		// Set the correct dbName
@@ -660,6 +664,23 @@ abstract class BaseGoodsPeer {
 			// for more than one table or we could emulating ON DELETE CASCADE, etc.
 			$con->beginTransaction();
 			
+			// cloning the Criteria in case it's modified by doSelect() or doSelectStmt()
+			$c = clone $criteria;
+			$affectedRows += GoodsPeer::doOnDeleteCascade($c, $con);
+			
+			// Because this db requires some delete cascade/set null emulation, we have to
+			// clear the cached instance *after* the emulation has happened (since
+			// instances get re-added by the select statement contained therein).
+			if ($values instanceof Criteria) {
+				GoodsPeer::clearInstancePool();
+			} elseif ($values instanceof Goods) { // it's a model object
+				GoodsPeer::removeInstanceFromPool($values);
+			} else { // it's a primary key, or an array of pks
+				foreach ((array) $values as $singleval) {
+					GoodsPeer::removeInstanceFromPool($singleval);
+				}
+			}
+			
 			$affectedRows += BasePeer::doDelete($criteria, $con);
 			GoodsPeer::clearRelatedInstancePool();
 			$con->commit();
@@ -668,6 +689,50 @@ abstract class BaseGoodsPeer {
 			$con->rollBack();
 			throw $e;
 		}
+	}
+
+	/**
+	 * This is a method for emulating ON DELETE CASCADE for DBs that don't support this
+	 * feature (like MySQL or SQLite).
+	 *
+	 * This method is not very speedy because it must perform a query first to get
+	 * the implicated records and then perform the deletes by calling those Peer classes.
+	 *
+	 * This method should be used within a transaction if possible.
+	 *
+	 * @param      Criteria $criteria
+	 * @param      PropelPDO $con
+	 * @return     int The number of affected rows (if supported by underlying database driver).
+	 */
+	protected static function doOnDeleteCascade(Criteria $criteria, PropelPDO $con)
+	{
+		// initialize var to track total num of affected rows
+		$affectedRows = 0;
+
+		// first find the objects that are implicated by the $criteria
+		$objects = GoodsPeer::doSelect($criteria, $con);
+		foreach ($objects as $obj) {
+
+
+			// delete related Feedback objects
+			$criteria = new Criteria(FeedbackPeer::DATABASE_NAME);
+			
+			$criteria->add(FeedbackPeer::GOOD_ID, $obj->getId());
+			$affectedRows += FeedbackPeer::doDelete($criteria, $con);
+
+			// delete related GoodInBasket objects
+			$criteria = new Criteria(GoodInBasketPeer::DATABASE_NAME);
+			
+			$criteria->add(GoodInBasketPeer::GOOD_ID, $obj->getId());
+			$affectedRows += GoodInBasketPeer::doDelete($criteria, $con);
+
+			// delete related GoodsInSale objects
+			$criteria = new Criteria(GoodsInSalePeer::DATABASE_NAME);
+			
+			$criteria->add(GoodsInSalePeer::GOOD_ID, $obj->getId());
+			$affectedRows += GoodsInSalePeer::doDelete($criteria, $con);
+		}
+		return $affectedRows;
 	}
 
 	/**

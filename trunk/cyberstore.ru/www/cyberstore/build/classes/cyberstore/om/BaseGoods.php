@@ -67,6 +67,21 @@ abstract class BaseGoods extends BaseObject  implements Persistent
 	protected $catalog_id;
 
 	/**
+	 * @var        array Feedback[] Collection to store aggregation of Feedback objects.
+	 */
+	protected $collFeedbacks;
+
+	/**
+	 * @var        array GoodInBasket[] Collection to store aggregation of GoodInBasket objects.
+	 */
+	protected $collGoodInBaskets;
+
+	/**
+	 * @var        array GoodsInSale[] Collection to store aggregation of GoodsInSale objects.
+	 */
+	protected $collGoodsInSales;
+
+	/**
 	 * Flag to prevent endless save loop, if this object is referenced
 	 * by another object which falls in this transaction.
 	 * @var        boolean
@@ -399,6 +414,12 @@ abstract class BaseGoods extends BaseObject  implements Persistent
 
 		if ($deep) {  // also de-associate any related objects?
 
+			$this->collFeedbacks = null;
+
+			$this->collGoodInBaskets = null;
+
+			$this->collGoodsInSales = null;
+
 		} // if (deep)
 	}
 
@@ -509,19 +530,51 @@ abstract class BaseGoods extends BaseObject  implements Persistent
 		if (!$this->alreadyInSave) {
 			$this->alreadyInSave = true;
 
+			if ($this->isNew() ) {
+				$this->modifiedColumns[] = GoodsPeer::ID;
+			}
 
 			// If this object has been modified, then save it to the database.
 			if ($this->isModified()) {
 				if ($this->isNew()) {
 					$criteria = $this->buildCriteria();
+					if ($criteria->keyContainsValue(GoodsPeer::ID) ) {
+						throw new PropelException('Cannot insert a value for auto-increment primary key ('.GoodsPeer::ID.')');
+					}
+
 					$pk = BasePeer::doInsert($criteria, $con);
 					$affectedRows = 1;
+					$this->setId($pk);  //[IMV] update autoincrement primary key
 					$this->setNew(false);
 				} else {
 					$affectedRows = GoodsPeer::doUpdate($this, $con);
 				}
 
 				$this->resetModified(); // [HL] After being saved an object is no longer 'modified'
+			}
+
+			if ($this->collFeedbacks !== null) {
+				foreach ($this->collFeedbacks as $referrerFK) {
+					if (!$referrerFK->isDeleted()) {
+						$affectedRows += $referrerFK->save($con);
+					}
+				}
+			}
+
+			if ($this->collGoodInBaskets !== null) {
+				foreach ($this->collGoodInBaskets as $referrerFK) {
+					if (!$referrerFK->isDeleted()) {
+						$affectedRows += $referrerFK->save($con);
+					}
+				}
+			}
+
+			if ($this->collGoodsInSales !== null) {
+				foreach ($this->collGoodsInSales as $referrerFK) {
+					if (!$referrerFK->isDeleted()) {
+						$affectedRows += $referrerFK->save($con);
+					}
+				}
 			}
 
 			$this->alreadyInSave = false;
@@ -595,6 +648,30 @@ abstract class BaseGoods extends BaseObject  implements Persistent
 			}
 
 
+				if ($this->collFeedbacks !== null) {
+					foreach ($this->collFeedbacks as $referrerFK) {
+						if (!$referrerFK->validate($columns)) {
+							$failureMap = array_merge($failureMap, $referrerFK->getValidationFailures());
+						}
+					}
+				}
+
+				if ($this->collGoodInBaskets !== null) {
+					foreach ($this->collGoodInBaskets as $referrerFK) {
+						if (!$referrerFK->validate($columns)) {
+							$failureMap = array_merge($failureMap, $referrerFK->getValidationFailures());
+						}
+					}
+				}
+
+				if ($this->collGoodsInSales !== null) {
+					foreach ($this->collGoodsInSales as $referrerFK) {
+						if (!$referrerFK->validate($columns)) {
+							$failureMap = array_merge($failureMap, $referrerFK->getValidationFailures());
+						}
+					}
+				}
+
 
 			$this->alreadyInValidation = false;
 		}
@@ -666,10 +743,11 @@ abstract class BaseGoods extends BaseObject  implements Persistent
 	 *                    Defaults to BasePeer::TYPE_PHPNAME.
 	 * @param     boolean $includeLazyLoadColumns (optional) Whether to include lazy loaded columns. Defaults to TRUE.
 	 * @param     array $alreadyDumpedObjects List of objects to skip to avoid recursion
+	 * @param     boolean $includeForeignObjects (optional) Whether to include hydrated related objects. Default to FALSE.
 	 *
 	 * @return    array an associative array containing the field names (as keys) and field values
 	 */
-	public function toArray($keyType = BasePeer::TYPE_PHPNAME, $includeLazyLoadColumns = true, $alreadyDumpedObjects = array())
+	public function toArray($keyType = BasePeer::TYPE_PHPNAME, $includeLazyLoadColumns = true, $alreadyDumpedObjects = array(), $includeForeignObjects = false)
 	{
 		if (isset($alreadyDumpedObjects['Goods'][$this->getPrimaryKey()])) {
 			return '*RECURSION*';
@@ -685,6 +763,17 @@ abstract class BaseGoods extends BaseObject  implements Persistent
 			$keys[5] => $this->getPictureId(),
 			$keys[6] => $this->getCatalogId(),
 		);
+		if ($includeForeignObjects) {
+			if (null !== $this->collFeedbacks) {
+				$result['Feedbacks'] = $this->collFeedbacks->toArray(null, true, $keyType, $includeLazyLoadColumns, $alreadyDumpedObjects);
+			}
+			if (null !== $this->collGoodInBaskets) {
+				$result['GoodInBaskets'] = $this->collGoodInBaskets->toArray(null, true, $keyType, $includeLazyLoadColumns, $alreadyDumpedObjects);
+			}
+			if (null !== $this->collGoodsInSales) {
+				$result['GoodsInSales'] = $this->collGoodsInSales->toArray(null, true, $keyType, $includeLazyLoadColumns, $alreadyDumpedObjects);
+			}
+		}
 		return $result;
 	}
 
@@ -847,15 +936,41 @@ abstract class BaseGoods extends BaseObject  implements Persistent
 	 */
 	public function copyInto($copyObj, $deepCopy = false, $makeNew = true)
 	{
-		$copyObj->setId($this->getId());
 		$copyObj->setName($this->getName());
 		$copyObj->setDescription($this->getDescription());
 		$copyObj->setPriceCurrent($this->getPriceCurrent());
 		$copyObj->setCount($this->getCount());
 		$copyObj->setPictureId($this->getPictureId());
 		$copyObj->setCatalogId($this->getCatalogId());
+
+		if ($deepCopy) {
+			// important: temporarily setNew(false) because this affects the behavior of
+			// the getter/setter methods for fkey referrer objects.
+			$copyObj->setNew(false);
+
+			foreach ($this->getFeedbacks() as $relObj) {
+				if ($relObj !== $this) {  // ensure that we don't try to copy a reference to ourselves
+					$copyObj->addFeedback($relObj->copy($deepCopy));
+				}
+			}
+
+			foreach ($this->getGoodInBaskets() as $relObj) {
+				if ($relObj !== $this) {  // ensure that we don't try to copy a reference to ourselves
+					$copyObj->addGoodInBasket($relObj->copy($deepCopy));
+				}
+			}
+
+			foreach ($this->getGoodsInSales() as $relObj) {
+				if ($relObj !== $this) {  // ensure that we don't try to copy a reference to ourselves
+					$copyObj->addGoodsInSale($relObj->copy($deepCopy));
+				}
+			}
+
+		} // if ($deepCopy)
+
 		if ($makeNew) {
 			$copyObj->setNew(true);
+			$copyObj->setId(NULL); // this is a auto-increment column, so set to default value
 		}
 	}
 
@@ -898,6 +1013,401 @@ abstract class BaseGoods extends BaseObject  implements Persistent
 	}
 
 	/**
+	 * Clears out the collFeedbacks collection
+	 *
+	 * This does not modify the database; however, it will remove any associated objects, causing
+	 * them to be refetched by subsequent calls to accessor method.
+	 *
+	 * @return     void
+	 * @see        addFeedbacks()
+	 */
+	public function clearFeedbacks()
+	{
+		$this->collFeedbacks = null; // important to set this to NULL since that means it is uninitialized
+	}
+
+	/**
+	 * Initializes the collFeedbacks collection.
+	 *
+	 * By default this just sets the collFeedbacks collection to an empty array (like clearcollFeedbacks());
+	 * however, you may wish to override this method in your stub class to provide setting appropriate
+	 * to your application -- for example, setting the initial array to the values stored in database.
+	 *
+	 * @param      boolean $overrideExisting If set to true, the method call initializes
+	 *                                        the collection even if it is not empty
+	 *
+	 * @return     void
+	 */
+	public function initFeedbacks($overrideExisting = true)
+	{
+		if (null !== $this->collFeedbacks && !$overrideExisting) {
+			return;
+		}
+		$this->collFeedbacks = new PropelObjectCollection();
+		$this->collFeedbacks->setModel('Feedback');
+	}
+
+	/**
+	 * Gets an array of Feedback objects which contain a foreign key that references this object.
+	 *
+	 * If the $criteria is not null, it is used to always fetch the results from the database.
+	 * Otherwise the results are fetched from the database the first time, then cached.
+	 * Next time the same method is called without $criteria, the cached collection is returned.
+	 * If this Goods is new, it will return
+	 * an empty collection or the current collection; the criteria is ignored on a new object.
+	 *
+	 * @param      Criteria $criteria optional Criteria object to narrow the query
+	 * @param      PropelPDO $con optional connection object
+	 * @return     PropelCollection|array Feedback[] List of Feedback objects
+	 * @throws     PropelException
+	 */
+	public function getFeedbacks($criteria = null, PropelPDO $con = null)
+	{
+		if(null === $this->collFeedbacks || null !== $criteria) {
+			if ($this->isNew() && null === $this->collFeedbacks) {
+				// return empty collection
+				$this->initFeedbacks();
+			} else {
+				$collFeedbacks = FeedbackQuery::create(null, $criteria)
+					->filterByGoods($this)
+					->find($con);
+				if (null !== $criteria) {
+					return $collFeedbacks;
+				}
+				$this->collFeedbacks = $collFeedbacks;
+			}
+		}
+		return $this->collFeedbacks;
+	}
+
+	/**
+	 * Returns the number of related Feedback objects.
+	 *
+	 * @param      Criteria $criteria
+	 * @param      boolean $distinct
+	 * @param      PropelPDO $con
+	 * @return     int Count of related Feedback objects.
+	 * @throws     PropelException
+	 */
+	public function countFeedbacks(Criteria $criteria = null, $distinct = false, PropelPDO $con = null)
+	{
+		if(null === $this->collFeedbacks || null !== $criteria) {
+			if ($this->isNew() && null === $this->collFeedbacks) {
+				return 0;
+			} else {
+				$query = FeedbackQuery::create(null, $criteria);
+				if($distinct) {
+					$query->distinct();
+				}
+				return $query
+					->filterByGoods($this)
+					->count($con);
+			}
+		} else {
+			return count($this->collFeedbacks);
+		}
+	}
+
+	/**
+	 * Method called to associate a Feedback object to this object
+	 * through the Feedback foreign key attribute.
+	 *
+	 * @param      Feedback $l Feedback
+	 * @return     void
+	 * @throws     PropelException
+	 */
+	public function addFeedback(Feedback $l)
+	{
+		if ($this->collFeedbacks === null) {
+			$this->initFeedbacks();
+		}
+		if (!$this->collFeedbacks->contains($l)) { // only add it if the **same** object is not already associated
+			$this->collFeedbacks[]= $l;
+			$l->setGoods($this);
+		}
+	}
+
+	/**
+	 * Clears out the collGoodInBaskets collection
+	 *
+	 * This does not modify the database; however, it will remove any associated objects, causing
+	 * them to be refetched by subsequent calls to accessor method.
+	 *
+	 * @return     void
+	 * @see        addGoodInBaskets()
+	 */
+	public function clearGoodInBaskets()
+	{
+		$this->collGoodInBaskets = null; // important to set this to NULL since that means it is uninitialized
+	}
+
+	/**
+	 * Initializes the collGoodInBaskets collection.
+	 *
+	 * By default this just sets the collGoodInBaskets collection to an empty array (like clearcollGoodInBaskets());
+	 * however, you may wish to override this method in your stub class to provide setting appropriate
+	 * to your application -- for example, setting the initial array to the values stored in database.
+	 *
+	 * @param      boolean $overrideExisting If set to true, the method call initializes
+	 *                                        the collection even if it is not empty
+	 *
+	 * @return     void
+	 */
+	public function initGoodInBaskets($overrideExisting = true)
+	{
+		if (null !== $this->collGoodInBaskets && !$overrideExisting) {
+			return;
+		}
+		$this->collGoodInBaskets = new PropelObjectCollection();
+		$this->collGoodInBaskets->setModel('GoodInBasket');
+	}
+
+	/**
+	 * Gets an array of GoodInBasket objects which contain a foreign key that references this object.
+	 *
+	 * If the $criteria is not null, it is used to always fetch the results from the database.
+	 * Otherwise the results are fetched from the database the first time, then cached.
+	 * Next time the same method is called without $criteria, the cached collection is returned.
+	 * If this Goods is new, it will return
+	 * an empty collection or the current collection; the criteria is ignored on a new object.
+	 *
+	 * @param      Criteria $criteria optional Criteria object to narrow the query
+	 * @param      PropelPDO $con optional connection object
+	 * @return     PropelCollection|array GoodInBasket[] List of GoodInBasket objects
+	 * @throws     PropelException
+	 */
+	public function getGoodInBaskets($criteria = null, PropelPDO $con = null)
+	{
+		if(null === $this->collGoodInBaskets || null !== $criteria) {
+			if ($this->isNew() && null === $this->collGoodInBaskets) {
+				// return empty collection
+				$this->initGoodInBaskets();
+			} else {
+				$collGoodInBaskets = GoodInBasketQuery::create(null, $criteria)
+					->filterByGoods($this)
+					->find($con);
+				if (null !== $criteria) {
+					return $collGoodInBaskets;
+				}
+				$this->collGoodInBaskets = $collGoodInBaskets;
+			}
+		}
+		return $this->collGoodInBaskets;
+	}
+
+	/**
+	 * Returns the number of related GoodInBasket objects.
+	 *
+	 * @param      Criteria $criteria
+	 * @param      boolean $distinct
+	 * @param      PropelPDO $con
+	 * @return     int Count of related GoodInBasket objects.
+	 * @throws     PropelException
+	 */
+	public function countGoodInBaskets(Criteria $criteria = null, $distinct = false, PropelPDO $con = null)
+	{
+		if(null === $this->collGoodInBaskets || null !== $criteria) {
+			if ($this->isNew() && null === $this->collGoodInBaskets) {
+				return 0;
+			} else {
+				$query = GoodInBasketQuery::create(null, $criteria);
+				if($distinct) {
+					$query->distinct();
+				}
+				return $query
+					->filterByGoods($this)
+					->count($con);
+			}
+		} else {
+			return count($this->collGoodInBaskets);
+		}
+	}
+
+	/**
+	 * Method called to associate a GoodInBasket object to this object
+	 * through the GoodInBasket foreign key attribute.
+	 *
+	 * @param      GoodInBasket $l GoodInBasket
+	 * @return     void
+	 * @throws     PropelException
+	 */
+	public function addGoodInBasket(GoodInBasket $l)
+	{
+		if ($this->collGoodInBaskets === null) {
+			$this->initGoodInBaskets();
+		}
+		if (!$this->collGoodInBaskets->contains($l)) { // only add it if the **same** object is not already associated
+			$this->collGoodInBaskets[]= $l;
+			$l->setGoods($this);
+		}
+	}
+
+
+	/**
+	 * If this collection has already been initialized with
+	 * an identical criteria, it returns the collection.
+	 * Otherwise if this Goods is new, it will return
+	 * an empty collection; or if this Goods has previously
+	 * been saved, it will retrieve related GoodInBaskets from storage.
+	 *
+	 * This method is protected by default in order to keep the public
+	 * api reasonable.  You can provide public methods for those you
+	 * actually need in Goods.
+	 *
+	 * @param      Criteria $criteria optional Criteria object to narrow the query
+	 * @param      PropelPDO $con optional connection object
+	 * @param      string $join_behavior optional join type to use (defaults to Criteria::LEFT_JOIN)
+	 * @return     PropelCollection|array GoodInBasket[] List of GoodInBasket objects
+	 */
+	public function getGoodInBasketsJoinBasket($criteria = null, $con = null, $join_behavior = Criteria::LEFT_JOIN)
+	{
+		$query = GoodInBasketQuery::create(null, $criteria);
+		$query->joinWith('Basket', $join_behavior);
+
+		return $this->getGoodInBaskets($query, $con);
+	}
+
+	/**
+	 * Clears out the collGoodsInSales collection
+	 *
+	 * This does not modify the database; however, it will remove any associated objects, causing
+	 * them to be refetched by subsequent calls to accessor method.
+	 *
+	 * @return     void
+	 * @see        addGoodsInSales()
+	 */
+	public function clearGoodsInSales()
+	{
+		$this->collGoodsInSales = null; // important to set this to NULL since that means it is uninitialized
+	}
+
+	/**
+	 * Initializes the collGoodsInSales collection.
+	 *
+	 * By default this just sets the collGoodsInSales collection to an empty array (like clearcollGoodsInSales());
+	 * however, you may wish to override this method in your stub class to provide setting appropriate
+	 * to your application -- for example, setting the initial array to the values stored in database.
+	 *
+	 * @param      boolean $overrideExisting If set to true, the method call initializes
+	 *                                        the collection even if it is not empty
+	 *
+	 * @return     void
+	 */
+	public function initGoodsInSales($overrideExisting = true)
+	{
+		if (null !== $this->collGoodsInSales && !$overrideExisting) {
+			return;
+		}
+		$this->collGoodsInSales = new PropelObjectCollection();
+		$this->collGoodsInSales->setModel('GoodsInSale');
+	}
+
+	/**
+	 * Gets an array of GoodsInSale objects which contain a foreign key that references this object.
+	 *
+	 * If the $criteria is not null, it is used to always fetch the results from the database.
+	 * Otherwise the results are fetched from the database the first time, then cached.
+	 * Next time the same method is called without $criteria, the cached collection is returned.
+	 * If this Goods is new, it will return
+	 * an empty collection or the current collection; the criteria is ignored on a new object.
+	 *
+	 * @param      Criteria $criteria optional Criteria object to narrow the query
+	 * @param      PropelPDO $con optional connection object
+	 * @return     PropelCollection|array GoodsInSale[] List of GoodsInSale objects
+	 * @throws     PropelException
+	 */
+	public function getGoodsInSales($criteria = null, PropelPDO $con = null)
+	{
+		if(null === $this->collGoodsInSales || null !== $criteria) {
+			if ($this->isNew() && null === $this->collGoodsInSales) {
+				// return empty collection
+				$this->initGoodsInSales();
+			} else {
+				$collGoodsInSales = GoodsInSaleQuery::create(null, $criteria)
+					->filterByGoods($this)
+					->find($con);
+				if (null !== $criteria) {
+					return $collGoodsInSales;
+				}
+				$this->collGoodsInSales = $collGoodsInSales;
+			}
+		}
+		return $this->collGoodsInSales;
+	}
+
+	/**
+	 * Returns the number of related GoodsInSale objects.
+	 *
+	 * @param      Criteria $criteria
+	 * @param      boolean $distinct
+	 * @param      PropelPDO $con
+	 * @return     int Count of related GoodsInSale objects.
+	 * @throws     PropelException
+	 */
+	public function countGoodsInSales(Criteria $criteria = null, $distinct = false, PropelPDO $con = null)
+	{
+		if(null === $this->collGoodsInSales || null !== $criteria) {
+			if ($this->isNew() && null === $this->collGoodsInSales) {
+				return 0;
+			} else {
+				$query = GoodsInSaleQuery::create(null, $criteria);
+				if($distinct) {
+					$query->distinct();
+				}
+				return $query
+					->filterByGoods($this)
+					->count($con);
+			}
+		} else {
+			return count($this->collGoodsInSales);
+		}
+	}
+
+	/**
+	 * Method called to associate a GoodsInSale object to this object
+	 * through the GoodsInSale foreign key attribute.
+	 *
+	 * @param      GoodsInSale $l GoodsInSale
+	 * @return     void
+	 * @throws     PropelException
+	 */
+	public function addGoodsInSale(GoodsInSale $l)
+	{
+		if ($this->collGoodsInSales === null) {
+			$this->initGoodsInSales();
+		}
+		if (!$this->collGoodsInSales->contains($l)) { // only add it if the **same** object is not already associated
+			$this->collGoodsInSales[]= $l;
+			$l->setGoods($this);
+		}
+	}
+
+
+	/**
+	 * If this collection has already been initialized with
+	 * an identical criteria, it returns the collection.
+	 * Otherwise if this Goods is new, it will return
+	 * an empty collection; or if this Goods has previously
+	 * been saved, it will retrieve related GoodsInSales from storage.
+	 *
+	 * This method is protected by default in order to keep the public
+	 * api reasonable.  You can provide public methods for those you
+	 * actually need in Goods.
+	 *
+	 * @param      Criteria $criteria optional Criteria object to narrow the query
+	 * @param      PropelPDO $con optional connection object
+	 * @param      string $join_behavior optional join type to use (defaults to Criteria::LEFT_JOIN)
+	 * @return     PropelCollection|array GoodsInSale[] List of GoodsInSale objects
+	 */
+	public function getGoodsInSalesJoinSales($criteria = null, $con = null, $join_behavior = Criteria::LEFT_JOIN)
+	{
+		$query = GoodsInSaleQuery::create(null, $criteria);
+		$query->joinWith('Sales', $join_behavior);
+
+		return $this->getGoodsInSales($query, $con);
+	}
+
+	/**
 	 * Clears the current object and sets all attributes to their default values
 	 */
 	public function clear()
@@ -929,8 +1439,35 @@ abstract class BaseGoods extends BaseObject  implements Persistent
 	public function clearAllReferences($deep = false)
 	{
 		if ($deep) {
+			if ($this->collFeedbacks) {
+				foreach ($this->collFeedbacks as $o) {
+					$o->clearAllReferences($deep);
+				}
+			}
+			if ($this->collGoodInBaskets) {
+				foreach ($this->collGoodInBaskets as $o) {
+					$o->clearAllReferences($deep);
+				}
+			}
+			if ($this->collGoodsInSales) {
+				foreach ($this->collGoodsInSales as $o) {
+					$o->clearAllReferences($deep);
+				}
+			}
 		} // if ($deep)
 
+		if ($this->collFeedbacks instanceof PropelCollection) {
+			$this->collFeedbacks->clearIterator();
+		}
+		$this->collFeedbacks = null;
+		if ($this->collGoodInBaskets instanceof PropelCollection) {
+			$this->collGoodInBaskets->clearIterator();
+		}
+		$this->collGoodInBaskets = null;
+		if ($this->collGoodsInSales instanceof PropelCollection) {
+			$this->collGoodsInSales->clearIterator();
+		}
+		$this->collGoodsInSales = null;
 	}
 
 	/**

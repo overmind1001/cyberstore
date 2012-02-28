@@ -55,6 +55,16 @@ abstract class BaseGoodsInSale extends BaseObject  implements Persistent
 	protected $good_id;
 
 	/**
+	 * @var        Goods
+	 */
+	protected $aGoods;
+
+	/**
+	 * @var        Sales
+	 */
+	protected $aSales;
+
+	/**
 	 * Flag to prevent endless save loop, if this object is referenced
 	 * by another object which falls in this transaction.
 	 * @var        boolean
@@ -195,6 +205,10 @@ abstract class BaseGoodsInSale extends BaseObject  implements Persistent
 			$this->modifiedColumns[] = GoodsInSalePeer::SALE_ID;
 		}
 
+		if ($this->aSales !== null && $this->aSales->getId() !== $v) {
+			$this->aSales = null;
+		}
+
 		return $this;
 	} // setSaleId()
 
@@ -213,6 +227,10 @@ abstract class BaseGoodsInSale extends BaseObject  implements Persistent
 		if ($this->good_id !== $v) {
 			$this->good_id = $v;
 			$this->modifiedColumns[] = GoodsInSalePeer::GOOD_ID;
+		}
+
+		if ($this->aGoods !== null && $this->aGoods->getId() !== $v) {
+			$this->aGoods = null;
 		}
 
 		return $this;
@@ -286,6 +304,12 @@ abstract class BaseGoodsInSale extends BaseObject  implements Persistent
 	public function ensureConsistency()
 	{
 
+		if ($this->aSales !== null && $this->sale_id !== $this->aSales->getId()) {
+			$this->aSales = null;
+		}
+		if ($this->aGoods !== null && $this->good_id !== $this->aGoods->getId()) {
+			$this->aGoods = null;
+		}
 	} // ensureConsistency
 
 	/**
@@ -325,6 +349,8 @@ abstract class BaseGoodsInSale extends BaseObject  implements Persistent
 
 		if ($deep) {  // also de-associate any related objects?
 
+			$this->aGoods = null;
+			$this->aSales = null;
 		} // if (deep)
 	}
 
@@ -435,16 +461,43 @@ abstract class BaseGoodsInSale extends BaseObject  implements Persistent
 		if (!$this->alreadyInSave) {
 			$this->alreadyInSave = true;
 
+			// We call the save method on the following object(s) if they
+			// were passed to this object by their coresponding set
+			// method.  This object relates to these object(s) by a
+			// foreign key reference.
+
+			if ($this->aGoods !== null) {
+				if ($this->aGoods->isModified() || $this->aGoods->isNew()) {
+					$affectedRows += $this->aGoods->save($con);
+				}
+				$this->setGoods($this->aGoods);
+			}
+
+			if ($this->aSales !== null) {
+				if ($this->aSales->isModified() || $this->aSales->isNew()) {
+					$affectedRows += $this->aSales->save($con);
+				}
+				$this->setSales($this->aSales);
+			}
+
+			if ($this->isNew() ) {
+				$this->modifiedColumns[] = GoodsInSalePeer::ID;
+			}
 
 			// If this object has been modified, then save it to the database.
 			if ($this->isModified()) {
 				if ($this->isNew()) {
 					$criteria = $this->buildCriteria();
+					if ($criteria->keyContainsValue(GoodsInSalePeer::ID) ) {
+						throw new PropelException('Cannot insert a value for auto-increment primary key ('.GoodsInSalePeer::ID.')');
+					}
+
 					$pk = BasePeer::doInsert($criteria, $con);
-					$affectedRows = 1;
+					$affectedRows += 1;
+					$this->setId($pk);  //[IMV] update autoincrement primary key
 					$this->setNew(false);
 				} else {
-					$affectedRows = GoodsInSalePeer::doUpdate($this, $con);
+					$affectedRows += GoodsInSalePeer::doUpdate($this, $con);
 				}
 
 				$this->resetModified(); // [HL] After being saved an object is no longer 'modified'
@@ -514,6 +567,24 @@ abstract class BaseGoodsInSale extends BaseObject  implements Persistent
 			$retval = null;
 
 			$failureMap = array();
+
+
+			// We call the validate method on the following object(s) if they
+			// were passed to this object by their coresponding set
+			// method.  This object relates to these object(s) by a
+			// foreign key reference.
+
+			if ($this->aGoods !== null) {
+				if (!$this->aGoods->validate($columns)) {
+					$failureMap = array_merge($failureMap, $this->aGoods->getValidationFailures());
+				}
+			}
+
+			if ($this->aSales !== null) {
+				if (!$this->aSales->validate($columns)) {
+					$failureMap = array_merge($failureMap, $this->aSales->getValidationFailures());
+				}
+			}
 
 
 			if (($retval = GoodsInSalePeer::doValidate($this, $columns)) !== true) {
@@ -586,10 +657,11 @@ abstract class BaseGoodsInSale extends BaseObject  implements Persistent
 	 *                    Defaults to BasePeer::TYPE_PHPNAME.
 	 * @param     boolean $includeLazyLoadColumns (optional) Whether to include lazy loaded columns. Defaults to TRUE.
 	 * @param     array $alreadyDumpedObjects List of objects to skip to avoid recursion
+	 * @param     boolean $includeForeignObjects (optional) Whether to include hydrated related objects. Default to FALSE.
 	 *
 	 * @return    array an associative array containing the field names (as keys) and field values
 	 */
-	public function toArray($keyType = BasePeer::TYPE_PHPNAME, $includeLazyLoadColumns = true, $alreadyDumpedObjects = array())
+	public function toArray($keyType = BasePeer::TYPE_PHPNAME, $includeLazyLoadColumns = true, $alreadyDumpedObjects = array(), $includeForeignObjects = false)
 	{
 		if (isset($alreadyDumpedObjects['GoodsInSale'][$this->getPrimaryKey()])) {
 			return '*RECURSION*';
@@ -603,6 +675,14 @@ abstract class BaseGoodsInSale extends BaseObject  implements Persistent
 			$keys[3] => $this->getSaleId(),
 			$keys[4] => $this->getGoodId(),
 		);
+		if ($includeForeignObjects) {
+			if (null !== $this->aGoods) {
+				$result['Goods'] = $this->aGoods->toArray($keyType, $includeLazyLoadColumns,  $alreadyDumpedObjects, true);
+			}
+			if (null !== $this->aSales) {
+				$result['Sales'] = $this->aSales->toArray($keyType, $includeLazyLoadColumns,  $alreadyDumpedObjects, true);
+			}
+		}
 		return $result;
 	}
 
@@ -755,13 +835,13 @@ abstract class BaseGoodsInSale extends BaseObject  implements Persistent
 	 */
 	public function copyInto($copyObj, $deepCopy = false, $makeNew = true)
 	{
-		$copyObj->setId($this->getId());
 		$copyObj->setPrice($this->getPrice());
 		$copyObj->setCount($this->getCount());
 		$copyObj->setSaleId($this->getSaleId());
 		$copyObj->setGoodId($this->getGoodId());
 		if ($makeNew) {
 			$copyObj->setNew(true);
+			$copyObj->setId(NULL); // this is a auto-increment column, so set to default value
 		}
 	}
 
@@ -804,6 +884,104 @@ abstract class BaseGoodsInSale extends BaseObject  implements Persistent
 	}
 
 	/**
+	 * Declares an association between this object and a Goods object.
+	 *
+	 * @param      Goods $v
+	 * @return     GoodsInSale The current object (for fluent API support)
+	 * @throws     PropelException
+	 */
+	public function setGoods(Goods $v = null)
+	{
+		if ($v === null) {
+			$this->setGoodId(NULL);
+		} else {
+			$this->setGoodId($v->getId());
+		}
+
+		$this->aGoods = $v;
+
+		// Add binding for other direction of this n:n relationship.
+		// If this object has already been added to the Goods object, it will not be re-added.
+		if ($v !== null) {
+			$v->addGoodsInSale($this);
+		}
+
+		return $this;
+	}
+
+
+	/**
+	 * Get the associated Goods object
+	 *
+	 * @param      PropelPDO Optional Connection object.
+	 * @return     Goods The associated Goods object.
+	 * @throws     PropelException
+	 */
+	public function getGoods(PropelPDO $con = null)
+	{
+		if ($this->aGoods === null && ($this->good_id !== null)) {
+			$this->aGoods = GoodsQuery::create()->findPk($this->good_id, $con);
+			/* The following can be used additionally to
+				guarantee the related object contains a reference
+				to this object.  This level of coupling may, however, be
+				undesirable since it could result in an only partially populated collection
+				in the referenced object.
+				$this->aGoods->addGoodsInSales($this);
+			 */
+		}
+		return $this->aGoods;
+	}
+
+	/**
+	 * Declares an association between this object and a Sales object.
+	 *
+	 * @param      Sales $v
+	 * @return     GoodsInSale The current object (for fluent API support)
+	 * @throws     PropelException
+	 */
+	public function setSales(Sales $v = null)
+	{
+		if ($v === null) {
+			$this->setSaleId(NULL);
+		} else {
+			$this->setSaleId($v->getId());
+		}
+
+		$this->aSales = $v;
+
+		// Add binding for other direction of this n:n relationship.
+		// If this object has already been added to the Sales object, it will not be re-added.
+		if ($v !== null) {
+			$v->addGoodsInSale($this);
+		}
+
+		return $this;
+	}
+
+
+	/**
+	 * Get the associated Sales object
+	 *
+	 * @param      PropelPDO Optional Connection object.
+	 * @return     Sales The associated Sales object.
+	 * @throws     PropelException
+	 */
+	public function getSales(PropelPDO $con = null)
+	{
+		if ($this->aSales === null && ($this->sale_id !== null)) {
+			$this->aSales = SalesQuery::create()->findPk($this->sale_id, $con);
+			/* The following can be used additionally to
+				guarantee the related object contains a reference
+				to this object.  This level of coupling may, however, be
+				undesirable since it could result in an only partially populated collection
+				in the referenced object.
+				$this->aSales->addGoodsInSales($this);
+			 */
+		}
+		return $this->aSales;
+	}
+
+	/**
 	 * Clears the current object and sets all attributes to their default values
 	 */
 	public function clear()
@@ -835,6 +1013,8 @@ abstract class BaseGoodsInSale extends BaseObject  implements Persistent
 		if ($deep) {
 		} // if ($deep)
 
+		$this->aGoods = null;
+		$this->aSales = null;
 	}
 
 	/**

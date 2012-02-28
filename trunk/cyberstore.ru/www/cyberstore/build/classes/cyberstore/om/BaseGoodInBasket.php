@@ -49,6 +49,16 @@ abstract class BaseGoodInBasket extends BaseObject  implements Persistent
 	protected $basket_id;
 
 	/**
+	 * @var        Basket
+	 */
+	protected $aBasket;
+
+	/**
+	 * @var        Goods
+	 */
+	protected $aGoods;
+
+	/**
 	 * Flag to prevent endless save loop, if this object is referenced
 	 * by another object which falls in this transaction.
 	 * @var        boolean
@@ -159,6 +169,10 @@ abstract class BaseGoodInBasket extends BaseObject  implements Persistent
 			$this->modifiedColumns[] = GoodInBasketPeer::GOOD_ID;
 		}
 
+		if ($this->aGoods !== null && $this->aGoods->getId() !== $v) {
+			$this->aGoods = null;
+		}
+
 		return $this;
 	} // setGoodId()
 
@@ -177,6 +191,10 @@ abstract class BaseGoodInBasket extends BaseObject  implements Persistent
 		if ($this->basket_id !== $v) {
 			$this->basket_id = $v;
 			$this->modifiedColumns[] = GoodInBasketPeer::BASKET_ID;
+		}
+
+		if ($this->aBasket !== null && $this->aBasket->getId() !== $v) {
+			$this->aBasket = null;
 		}
 
 		return $this;
@@ -249,6 +267,12 @@ abstract class BaseGoodInBasket extends BaseObject  implements Persistent
 	public function ensureConsistency()
 	{
 
+		if ($this->aGoods !== null && $this->good_id !== $this->aGoods->getId()) {
+			$this->aGoods = null;
+		}
+		if ($this->aBasket !== null && $this->basket_id !== $this->aBasket->getId()) {
+			$this->aBasket = null;
+		}
 	} // ensureConsistency
 
 	/**
@@ -288,6 +312,8 @@ abstract class BaseGoodInBasket extends BaseObject  implements Persistent
 
 		if ($deep) {  // also de-associate any related objects?
 
+			$this->aBasket = null;
+			$this->aGoods = null;
 		} // if (deep)
 	}
 
@@ -398,16 +424,43 @@ abstract class BaseGoodInBasket extends BaseObject  implements Persistent
 		if (!$this->alreadyInSave) {
 			$this->alreadyInSave = true;
 
+			// We call the save method on the following object(s) if they
+			// were passed to this object by their coresponding set
+			// method.  This object relates to these object(s) by a
+			// foreign key reference.
+
+			if ($this->aBasket !== null) {
+				if ($this->aBasket->isModified() || $this->aBasket->isNew()) {
+					$affectedRows += $this->aBasket->save($con);
+				}
+				$this->setBasket($this->aBasket);
+			}
+
+			if ($this->aGoods !== null) {
+				if ($this->aGoods->isModified() || $this->aGoods->isNew()) {
+					$affectedRows += $this->aGoods->save($con);
+				}
+				$this->setGoods($this->aGoods);
+			}
+
+			if ($this->isNew() ) {
+				$this->modifiedColumns[] = GoodInBasketPeer::ID;
+			}
 
 			// If this object has been modified, then save it to the database.
 			if ($this->isModified()) {
 				if ($this->isNew()) {
 					$criteria = $this->buildCriteria();
+					if ($criteria->keyContainsValue(GoodInBasketPeer::ID) ) {
+						throw new PropelException('Cannot insert a value for auto-increment primary key ('.GoodInBasketPeer::ID.')');
+					}
+
 					$pk = BasePeer::doInsert($criteria, $con);
-					$affectedRows = 1;
+					$affectedRows += 1;
+					$this->setId($pk);  //[IMV] update autoincrement primary key
 					$this->setNew(false);
 				} else {
-					$affectedRows = GoodInBasketPeer::doUpdate($this, $con);
+					$affectedRows += GoodInBasketPeer::doUpdate($this, $con);
 				}
 
 				$this->resetModified(); // [HL] After being saved an object is no longer 'modified'
@@ -479,6 +532,24 @@ abstract class BaseGoodInBasket extends BaseObject  implements Persistent
 			$failureMap = array();
 
 
+			// We call the validate method on the following object(s) if they
+			// were passed to this object by their coresponding set
+			// method.  This object relates to these object(s) by a
+			// foreign key reference.
+
+			if ($this->aBasket !== null) {
+				if (!$this->aBasket->validate($columns)) {
+					$failureMap = array_merge($failureMap, $this->aBasket->getValidationFailures());
+				}
+			}
+
+			if ($this->aGoods !== null) {
+				if (!$this->aGoods->validate($columns)) {
+					$failureMap = array_merge($failureMap, $this->aGoods->getValidationFailures());
+				}
+			}
+
+
 			if (($retval = GoodInBasketPeer::doValidate($this, $columns)) !== true) {
 				$failureMap = array_merge($failureMap, $retval);
 			}
@@ -546,10 +617,11 @@ abstract class BaseGoodInBasket extends BaseObject  implements Persistent
 	 *                    Defaults to BasePeer::TYPE_PHPNAME.
 	 * @param     boolean $includeLazyLoadColumns (optional) Whether to include lazy loaded columns. Defaults to TRUE.
 	 * @param     array $alreadyDumpedObjects List of objects to skip to avoid recursion
+	 * @param     boolean $includeForeignObjects (optional) Whether to include hydrated related objects. Default to FALSE.
 	 *
 	 * @return    array an associative array containing the field names (as keys) and field values
 	 */
-	public function toArray($keyType = BasePeer::TYPE_PHPNAME, $includeLazyLoadColumns = true, $alreadyDumpedObjects = array())
+	public function toArray($keyType = BasePeer::TYPE_PHPNAME, $includeLazyLoadColumns = true, $alreadyDumpedObjects = array(), $includeForeignObjects = false)
 	{
 		if (isset($alreadyDumpedObjects['GoodInBasket'][$this->getPrimaryKey()])) {
 			return '*RECURSION*';
@@ -562,6 +634,14 @@ abstract class BaseGoodInBasket extends BaseObject  implements Persistent
 			$keys[2] => $this->getGoodId(),
 			$keys[3] => $this->getBasketId(),
 		);
+		if ($includeForeignObjects) {
+			if (null !== $this->aBasket) {
+				$result['Basket'] = $this->aBasket->toArray($keyType, $includeLazyLoadColumns,  $alreadyDumpedObjects, true);
+			}
+			if (null !== $this->aGoods) {
+				$result['Goods'] = $this->aGoods->toArray($keyType, $includeLazyLoadColumns,  $alreadyDumpedObjects, true);
+			}
+		}
 		return $result;
 	}
 
@@ -709,12 +789,12 @@ abstract class BaseGoodInBasket extends BaseObject  implements Persistent
 	 */
 	public function copyInto($copyObj, $deepCopy = false, $makeNew = true)
 	{
-		$copyObj->setId($this->getId());
 		$copyObj->setCount($this->getCount());
 		$copyObj->setGoodId($this->getGoodId());
 		$copyObj->setBasketId($this->getBasketId());
 		if ($makeNew) {
 			$copyObj->setNew(true);
+			$copyObj->setId(NULL); // this is a auto-increment column, so set to default value
 		}
 	}
 
@@ -757,6 +837,104 @@ abstract class BaseGoodInBasket extends BaseObject  implements Persistent
 	}
 
 	/**
+	 * Declares an association between this object and a Basket object.
+	 *
+	 * @param      Basket $v
+	 * @return     GoodInBasket The current object (for fluent API support)
+	 * @throws     PropelException
+	 */
+	public function setBasket(Basket $v = null)
+	{
+		if ($v === null) {
+			$this->setBasketId(NULL);
+		} else {
+			$this->setBasketId($v->getId());
+		}
+
+		$this->aBasket = $v;
+
+		// Add binding for other direction of this n:n relationship.
+		// If this object has already been added to the Basket object, it will not be re-added.
+		if ($v !== null) {
+			$v->addGoodInBasket($this);
+		}
+
+		return $this;
+	}
+
+
+	/**
+	 * Get the associated Basket object
+	 *
+	 * @param      PropelPDO Optional Connection object.
+	 * @return     Basket The associated Basket object.
+	 * @throws     PropelException
+	 */
+	public function getBasket(PropelPDO $con = null)
+	{
+		if ($this->aBasket === null && ($this->basket_id !== null)) {
+			$this->aBasket = BasketQuery::create()->findPk($this->basket_id, $con);
+			/* The following can be used additionally to
+				guarantee the related object contains a reference
+				to this object.  This level of coupling may, however, be
+				undesirable since it could result in an only partially populated collection
+				in the referenced object.
+				$this->aBasket->addGoodInBaskets($this);
+			 */
+		}
+		return $this->aBasket;
+	}
+
+	/**
+	 * Declares an association between this object and a Goods object.
+	 *
+	 * @param      Goods $v
+	 * @return     GoodInBasket The current object (for fluent API support)
+	 * @throws     PropelException
+	 */
+	public function setGoods(Goods $v = null)
+	{
+		if ($v === null) {
+			$this->setGoodId(NULL);
+		} else {
+			$this->setGoodId($v->getId());
+		}
+
+		$this->aGoods = $v;
+
+		// Add binding for other direction of this n:n relationship.
+		// If this object has already been added to the Goods object, it will not be re-added.
+		if ($v !== null) {
+			$v->addGoodInBasket($this);
+		}
+
+		return $this;
+	}
+
+
+	/**
+	 * Get the associated Goods object
+	 *
+	 * @param      PropelPDO Optional Connection object.
+	 * @return     Goods The associated Goods object.
+	 * @throws     PropelException
+	 */
+	public function getGoods(PropelPDO $con = null)
+	{
+		if ($this->aGoods === null && ($this->good_id !== null)) {
+			$this->aGoods = GoodsQuery::create()->findPk($this->good_id, $con);
+			/* The following can be used additionally to
+				guarantee the related object contains a reference
+				to this object.  This level of coupling may, however, be
+				undesirable since it could result in an only partially populated collection
+				in the referenced object.
+				$this->aGoods->addGoodInBaskets($this);
+			 */
+		}
+		return $this->aGoods;
+	}
+
+	/**
 	 * Clears the current object and sets all attributes to their default values
 	 */
 	public function clear()
@@ -787,6 +965,8 @@ abstract class BaseGoodInBasket extends BaseObject  implements Persistent
 		if ($deep) {
 		} // if ($deep)
 
+		$this->aBasket = null;
+		$this->aGoods = null;
 	}
 
 	/**

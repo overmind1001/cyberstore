@@ -35,11 +35,11 @@ class SalesTableMap extends TableMap {
 		$this->setPhpName('Sales');
 		$this->setClassname('Sales');
 		$this->setPackage('cyberstore');
-		$this->setUseIdGenerator(false);
+		$this->setUseIdGenerator(true);
 		// columns
 		$this->addPrimaryKey('ID', 'Id', 'INTEGER', true, null, null);
 		$this->addColumn('DATE', 'Date', 'DATE', true, null, null);
-		$this->addColumn('USER_ID', 'UserId', 'INTEGER', false, null, null);
+		$this->addForeignKey('USER_ID', 'UserId', 'INTEGER', 'user', 'ID', false, null, null);
 		// validators
 	} // initialize()
 
@@ -48,6 +48,8 @@ class SalesTableMap extends TableMap {
 	 */
 	public function buildRelations()
 	{
+    $this->addRelation('User', 'User', RelationMap::MANY_TO_ONE, array('user_id' => 'id', ), 'CASCADE', 'CASCADE');
+    $this->addRelation('GoodsInSale', 'GoodsInSale', RelationMap::ONE_TO_MANY, array('id' => 'sale_id', ), 'CASCADE', 'CASCADE');
 	} // buildRelations()
 
 } // SalesTableMap

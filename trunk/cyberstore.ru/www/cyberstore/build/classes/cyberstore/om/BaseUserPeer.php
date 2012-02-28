@@ -26,13 +26,13 @@ abstract class BaseUserPeer {
 	const TM_CLASS = 'UserTableMap';
 	
 	/** The total number of columns. */
-	const NUM_COLUMNS = 4;
+	const NUM_COLUMNS = 3;
 
 	/** The number of lazy-loaded columns. */
 	const NUM_LAZY_LOAD_COLUMNS = 0;
 
 	/** The number of columns to hydrate (NUM_COLUMNS - NUM_LAZY_LOAD_COLUMNS) */
-	const NUM_HYDRATE_COLUMNS = 4;
+	const NUM_HYDRATE_COLUMNS = 3;
 
 	/** the column name for the ID field */
 	const ID = 'user.ID';
@@ -42,9 +42,6 @@ abstract class BaseUserPeer {
 
 	/** the column name for the PASSWORD field */
 	const PASSWORD = 'user.PASSWORD';
-
-	/** the column name for the SESSION_ID field */
-	const SESSION_ID = 'user.SESSION_ID';
 
 	/** The default string format for model objects of the related table **/
 	const DEFAULT_STRING_FORMAT = 'YAML';
@@ -65,12 +62,12 @@ abstract class BaseUserPeer {
 	 * e.g. self::$fieldNames[self::TYPE_PHPNAME][0] = 'Id'
 	 */
 	protected static $fieldNames = array (
-		BasePeer::TYPE_PHPNAME => array ('Id', 'Login', 'Password', 'SessionId', ),
-		BasePeer::TYPE_STUDLYPHPNAME => array ('id', 'login', 'password', 'sessionId', ),
-		BasePeer::TYPE_COLNAME => array (self::ID, self::LOGIN, self::PASSWORD, self::SESSION_ID, ),
-		BasePeer::TYPE_RAW_COLNAME => array ('ID', 'LOGIN', 'PASSWORD', 'SESSION_ID', ),
-		BasePeer::TYPE_FIELDNAME => array ('id', 'login', 'password', 'session_id', ),
-		BasePeer::TYPE_NUM => array (0, 1, 2, 3, )
+		BasePeer::TYPE_PHPNAME => array ('Id', 'Login', 'Password', ),
+		BasePeer::TYPE_STUDLYPHPNAME => array ('id', 'login', 'password', ),
+		BasePeer::TYPE_COLNAME => array (self::ID, self::LOGIN, self::PASSWORD, ),
+		BasePeer::TYPE_RAW_COLNAME => array ('ID', 'LOGIN', 'PASSWORD', ),
+		BasePeer::TYPE_FIELDNAME => array ('id', 'login', 'password', ),
+		BasePeer::TYPE_NUM => array (0, 1, 2, )
 	);
 
 	/**
@@ -80,12 +77,12 @@ abstract class BaseUserPeer {
 	 * e.g. self::$fieldNames[BasePeer::TYPE_PHPNAME]['Id'] = 0
 	 */
 	protected static $fieldKeys = array (
-		BasePeer::TYPE_PHPNAME => array ('Id' => 0, 'Login' => 1, 'Password' => 2, 'SessionId' => 3, ),
-		BasePeer::TYPE_STUDLYPHPNAME => array ('id' => 0, 'login' => 1, 'password' => 2, 'sessionId' => 3, ),
-		BasePeer::TYPE_COLNAME => array (self::ID => 0, self::LOGIN => 1, self::PASSWORD => 2, self::SESSION_ID => 3, ),
-		BasePeer::TYPE_RAW_COLNAME => array ('ID' => 0, 'LOGIN' => 1, 'PASSWORD' => 2, 'SESSION_ID' => 3, ),
-		BasePeer::TYPE_FIELDNAME => array ('id' => 0, 'login' => 1, 'password' => 2, 'session_id' => 3, ),
-		BasePeer::TYPE_NUM => array (0, 1, 2, 3, )
+		BasePeer::TYPE_PHPNAME => array ('Id' => 0, 'Login' => 1, 'Password' => 2, ),
+		BasePeer::TYPE_STUDLYPHPNAME => array ('id' => 0, 'login' => 1, 'password' => 2, ),
+		BasePeer::TYPE_COLNAME => array (self::ID => 0, self::LOGIN => 1, self::PASSWORD => 2, ),
+		BasePeer::TYPE_RAW_COLNAME => array ('ID' => 0, 'LOGIN' => 1, 'PASSWORD' => 2, ),
+		BasePeer::TYPE_FIELDNAME => array ('id' => 0, 'login' => 1, 'password' => 2, ),
+		BasePeer::TYPE_NUM => array (0, 1, 2, )
 	);
 
 	/**
@@ -160,12 +157,10 @@ abstract class BaseUserPeer {
 			$criteria->addSelectColumn(UserPeer::ID);
 			$criteria->addSelectColumn(UserPeer::LOGIN);
 			$criteria->addSelectColumn(UserPeer::PASSWORD);
-			$criteria->addSelectColumn(UserPeer::SESSION_ID);
 		} else {
 			$criteria->addSelectColumn($alias . '.ID');
 			$criteria->addSelectColumn($alias . '.LOGIN');
 			$criteria->addSelectColumn($alias . '.PASSWORD');
-			$criteria->addSelectColumn($alias . '.SESSION_ID');
 		}
 	}
 
@@ -359,6 +354,12 @@ abstract class BaseUserPeer {
 	 */
 	public static function clearRelatedInstancePool()
 	{
+		// Invalidate objects in BasketPeer instance pool, 
+		// since one or more of them may be deleted by ON DELETE CASCADE/SETNULL rule.
+		BasketPeer::clearInstancePool();
+		// Invalidate objects in SalesPeer instance pool, 
+		// since one or more of them may be deleted by ON DELETE CASCADE/SETNULL rule.
+		SalesPeer::clearInstancePool();
 	}
 
 	/**
@@ -511,6 +512,10 @@ abstract class BaseUserPeer {
 			$criteria = $values->buildCriteria(); // build Criteria from User object
 		}
 
+		if ($criteria->containsKey(UserPeer::ID) && $criteria->keyContainsValue(UserPeer::ID) ) {
+			throw new PropelException('Cannot insert a value for auto-increment primary key ('.UserPeer::ID.')');
+		}
+
 
 		// Set the correct dbName
 		$criteria->setDbName(self::DATABASE_NAME);
@@ -583,6 +588,7 @@ abstract class BaseUserPeer {
 			// use transaction because $criteria could contain info
 			// for more than one table or we could emulating ON DELETE CASCADE, etc.
 			$con->beginTransaction();
+			$affectedRows += UserPeer::doOnDeleteCascade(new Criteria(UserPeer::DATABASE_NAME), $con);
 			$affectedRows += BasePeer::doDeleteAll(UserPeer::TABLE_NAME, $con, UserPeer::DATABASE_NAME);
 			// Because this db requires some delete cascade/set null emulation, we have to
 			// clear the cached instance *after* the emulation has happened (since
@@ -615,24 +621,14 @@ abstract class BaseUserPeer {
 		}
 
 		if ($values instanceof Criteria) {
-			// invalidate the cache for all objects of this type, since we have no
-			// way of knowing (without running a query) what objects should be invalidated
-			// from the cache based on this Criteria.
-			UserPeer::clearInstancePool();
 			// rename for clarity
 			$criteria = clone $values;
 		} elseif ($values instanceof User) { // it's a model object
-			// invalidate the cache for this single object
-			UserPeer::removeInstanceFromPool($values);
 			// create criteria based on pk values
 			$criteria = $values->buildPkeyCriteria();
 		} else { // it's a primary key, or an array of pks
 			$criteria = new Criteria(self::DATABASE_NAME);
 			$criteria->add(UserPeer::ID, (array) $values, Criteria::IN);
-			// invalidate the cache for this object(s)
-			foreach ((array) $values as $singleval) {
-				UserPeer::removeInstanceFromPool($singleval);
-			}
 		}
 
 		// Set the correct dbName
@@ -645,6 +641,23 @@ abstract class BaseUserPeer {
 			// for more than one table or we could emulating ON DELETE CASCADE, etc.
 			$con->beginTransaction();
 			
+			// cloning the Criteria in case it's modified by doSelect() or doSelectStmt()
+			$c = clone $criteria;
+			$affectedRows += UserPeer::doOnDeleteCascade($c, $con);
+			
+			// Because this db requires some delete cascade/set null emulation, we have to
+			// clear the cached instance *after* the emulation has happened (since
+			// instances get re-added by the select statement contained therein).
+			if ($values instanceof Criteria) {
+				UserPeer::clearInstancePool();
+			} elseif ($values instanceof User) { // it's a model object
+				UserPeer::removeInstanceFromPool($values);
+			} else { // it's a primary key, or an array of pks
+				foreach ((array) $values as $singleval) {
+					UserPeer::removeInstanceFromPool($singleval);
+				}
+			}
+			
 			$affectedRows += BasePeer::doDelete($criteria, $con);
 			UserPeer::clearRelatedInstancePool();
 			$con->commit();
@@ -653,6 +666,44 @@ abstract class BaseUserPeer {
 			$con->rollBack();
 			throw $e;
 		}
+	}
+
+	/**
+	 * This is a method for emulating ON DELETE CASCADE for DBs that don't support this
+	 * feature (like MySQL or SQLite).
+	 *
+	 * This method is not very speedy because it must perform a query first to get
+	 * the implicated records and then perform the deletes by calling those Peer classes.
+	 *
+	 * This method should be used within a transaction if possible.
+	 *
+	 * @param      Criteria $criteria
+	 * @param      PropelPDO $con
+	 * @return     int The number of affected rows (if supported by underlying database driver).
+	 */
+	protected static function doOnDeleteCascade(Criteria $criteria, PropelPDO $con)
+	{
+		// initialize var to track total num of affected rows
+		$affectedRows = 0;
+
+		// first find the objects that are implicated by the $criteria
+		$objects = UserPeer::doSelect($criteria, $con);
+		foreach ($objects as $obj) {
+
+
+			// delete related Basket objects
+			$criteria = new Criteria(BasketPeer::DATABASE_NAME);
+			
+			$criteria->add(BasketPeer::USER_ID, $obj->getId());
+			$affectedRows += BasketPeer::doDelete($criteria, $con);
+
+			// delete related Sales objects
+			$criteria = new Criteria(SalesPeer::DATABASE_NAME);
+			
+			$criteria->add(SalesPeer::USER_ID, $obj->getId());
+			$affectedRows += SalesPeer::doDelete($criteria, $con);
+		}
+		return $affectedRows;
 	}
 
 	/**

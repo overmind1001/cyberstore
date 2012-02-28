@@ -43,6 +43,16 @@ abstract class BaseCatalogDiv extends BaseObject  implements Persistent
 	protected $parent_catalog_div_id;
 
 	/**
+	 * @var        CatalogDiv
+	 */
+	protected $aCatalogDivRelatedByParentCatalogDivId;
+
+	/**
+	 * @var        array CatalogDiv[] Collection to store aggregation of CatalogDiv objects.
+	 */
+	protected $collCatalogDivsRelatedById;
+
+	/**
 	 * Flag to prevent endless save loop, if this object is referenced
 	 * by another object which falls in this transaction.
 	 * @var        boolean
@@ -143,6 +153,10 @@ abstract class BaseCatalogDiv extends BaseObject  implements Persistent
 			$this->modifiedColumns[] = CatalogDivPeer::PARENT_CATALOG_DIV_ID;
 		}
 
+		if ($this->aCatalogDivRelatedByParentCatalogDivId !== null && $this->aCatalogDivRelatedByParentCatalogDivId->getId() !== $v) {
+			$this->aCatalogDivRelatedByParentCatalogDivId = null;
+		}
+
 		return $this;
 	} // setParentCatalogDivId()
 
@@ -212,6 +226,9 @@ abstract class BaseCatalogDiv extends BaseObject  implements Persistent
 	public function ensureConsistency()
 	{
 
+		if ($this->aCatalogDivRelatedByParentCatalogDivId !== null && $this->parent_catalog_div_id !== $this->aCatalogDivRelatedByParentCatalogDivId->getId()) {
+			$this->aCatalogDivRelatedByParentCatalogDivId = null;
+		}
 	} // ensureConsistency
 
 	/**
@@ -250,6 +267,9 @@ abstract class BaseCatalogDiv extends BaseObject  implements Persistent
 		$this->hydrate($row, 0, true); // rehydrate
 
 		if ($deep) {  // also de-associate any related objects?
+
+			$this->aCatalogDivRelatedByParentCatalogDivId = null;
+			$this->collCatalogDivsRelatedById = null;
 
 		} // if (deep)
 	}
@@ -361,19 +381,47 @@ abstract class BaseCatalogDiv extends BaseObject  implements Persistent
 		if (!$this->alreadyInSave) {
 			$this->alreadyInSave = true;
 
+			// We call the save method on the following object(s) if they
+			// were passed to this object by their coresponding set
+			// method.  This object relates to these object(s) by a
+			// foreign key reference.
+
+			if ($this->aCatalogDivRelatedByParentCatalogDivId !== null) {
+				if ($this->aCatalogDivRelatedByParentCatalogDivId->isModified() || $this->aCatalogDivRelatedByParentCatalogDivId->isNew()) {
+					$affectedRows += $this->aCatalogDivRelatedByParentCatalogDivId->save($con);
+				}
+				$this->setCatalogDivRelatedByParentCatalogDivId($this->aCatalogDivRelatedByParentCatalogDivId);
+			}
+
+			if ($this->isNew() ) {
+				$this->modifiedColumns[] = CatalogDivPeer::ID;
+			}
 
 			// If this object has been modified, then save it to the database.
 			if ($this->isModified()) {
 				if ($this->isNew()) {
 					$criteria = $this->buildCriteria();
+					if ($criteria->keyContainsValue(CatalogDivPeer::ID) ) {
+						throw new PropelException('Cannot insert a value for auto-increment primary key ('.CatalogDivPeer::ID.')');
+					}
+
 					$pk = BasePeer::doInsert($criteria, $con);
-					$affectedRows = 1;
+					$affectedRows += 1;
+					$this->setId($pk);  //[IMV] update autoincrement primary key
 					$this->setNew(false);
 				} else {
-					$affectedRows = CatalogDivPeer::doUpdate($this, $con);
+					$affectedRows += CatalogDivPeer::doUpdate($this, $con);
 				}
 
 				$this->resetModified(); // [HL] After being saved an object is no longer 'modified'
+			}
+
+			if ($this->collCatalogDivsRelatedById !== null) {
+				foreach ($this->collCatalogDivsRelatedById as $referrerFK) {
+					if (!$referrerFK->isDeleted()) {
+						$affectedRows += $referrerFK->save($con);
+					}
+				}
 			}
 
 			$this->alreadyInSave = false;
@@ -442,10 +490,30 @@ abstract class BaseCatalogDiv extends BaseObject  implements Persistent
 			$failureMap = array();
 
 
+			// We call the validate method on the following object(s) if they
+			// were passed to this object by their coresponding set
+			// method.  This object relates to these object(s) by a
+			// foreign key reference.
+
+			if ($this->aCatalogDivRelatedByParentCatalogDivId !== null) {
+				if (!$this->aCatalogDivRelatedByParentCatalogDivId->validate($columns)) {
+					$failureMap = array_merge($failureMap, $this->aCatalogDivRelatedByParentCatalogDivId->getValidationFailures());
+				}
+			}
+
+
 			if (($retval = CatalogDivPeer::doValidate($this, $columns)) !== true) {
 				$failureMap = array_merge($failureMap, $retval);
 			}
 
+
+				if ($this->collCatalogDivsRelatedById !== null) {
+					foreach ($this->collCatalogDivsRelatedById as $referrerFK) {
+						if (!$referrerFK->validate($columns)) {
+							$failureMap = array_merge($failureMap, $referrerFK->getValidationFailures());
+						}
+					}
+				}
 
 
 			$this->alreadyInValidation = false;
@@ -506,10 +574,11 @@ abstract class BaseCatalogDiv extends BaseObject  implements Persistent
 	 *                    Defaults to BasePeer::TYPE_PHPNAME.
 	 * @param     boolean $includeLazyLoadColumns (optional) Whether to include lazy loaded columns. Defaults to TRUE.
 	 * @param     array $alreadyDumpedObjects List of objects to skip to avoid recursion
+	 * @param     boolean $includeForeignObjects (optional) Whether to include hydrated related objects. Default to FALSE.
 	 *
 	 * @return    array an associative array containing the field names (as keys) and field values
 	 */
-	public function toArray($keyType = BasePeer::TYPE_PHPNAME, $includeLazyLoadColumns = true, $alreadyDumpedObjects = array())
+	public function toArray($keyType = BasePeer::TYPE_PHPNAME, $includeLazyLoadColumns = true, $alreadyDumpedObjects = array(), $includeForeignObjects = false)
 	{
 		if (isset($alreadyDumpedObjects['CatalogDiv'][$this->getPrimaryKey()])) {
 			return '*RECURSION*';
@@ -521,6 +590,14 @@ abstract class BaseCatalogDiv extends BaseObject  implements Persistent
 			$keys[1] => $this->getName(),
 			$keys[2] => $this->getParentCatalogDivId(),
 		);
+		if ($includeForeignObjects) {
+			if (null !== $this->aCatalogDivRelatedByParentCatalogDivId) {
+				$result['CatalogDivRelatedByParentCatalogDivId'] = $this->aCatalogDivRelatedByParentCatalogDivId->toArray($keyType, $includeLazyLoadColumns,  $alreadyDumpedObjects, true);
+			}
+			if (null !== $this->collCatalogDivsRelatedById) {
+				$result['CatalogDivsRelatedById'] = $this->collCatalogDivsRelatedById->toArray(null, true, $keyType, $includeLazyLoadColumns, $alreadyDumpedObjects);
+			}
+		}
 		return $result;
 	}
 
@@ -663,11 +740,25 @@ abstract class BaseCatalogDiv extends BaseObject  implements Persistent
 	 */
 	public function copyInto($copyObj, $deepCopy = false, $makeNew = true)
 	{
-		$copyObj->setId($this->getId());
 		$copyObj->setName($this->getName());
 		$copyObj->setParentCatalogDivId($this->getParentCatalogDivId());
+
+		if ($deepCopy) {
+			// important: temporarily setNew(false) because this affects the behavior of
+			// the getter/setter methods for fkey referrer objects.
+			$copyObj->setNew(false);
+
+			foreach ($this->getCatalogDivsRelatedById() as $relObj) {
+				if ($relObj !== $this) {  // ensure that we don't try to copy a reference to ourselves
+					$copyObj->addCatalogDivRelatedById($relObj->copy($deepCopy));
+				}
+			}
+
+		} // if ($deepCopy)
+
 		if ($makeNew) {
 			$copyObj->setNew(true);
+			$copyObj->setId(NULL); // this is a auto-increment column, so set to default value
 		}
 	}
 
@@ -710,6 +801,170 @@ abstract class BaseCatalogDiv extends BaseObject  implements Persistent
 	}
 
 	/**
+	 * Declares an association between this object and a CatalogDiv object.
+	 *
+	 * @param      CatalogDiv $v
+	 * @return     CatalogDiv The current object (for fluent API support)
+	 * @throws     PropelException
+	 */
+	public function setCatalogDivRelatedByParentCatalogDivId(CatalogDiv $v = null)
+	{
+		if ($v === null) {
+			$this->setParentCatalogDivId(NULL);
+		} else {
+			$this->setParentCatalogDivId($v->getId());
+		}
+
+		$this->aCatalogDivRelatedByParentCatalogDivId = $v;
+
+		// Add binding for other direction of this n:n relationship.
+		// If this object has already been added to the CatalogDiv object, it will not be re-added.
+		if ($v !== null) {
+			$v->addCatalogDivRelatedById($this);
+		}
+
+		return $this;
+	}
+
+
+	/**
+	 * Get the associated CatalogDiv object
+	 *
+	 * @param      PropelPDO Optional Connection object.
+	 * @return     CatalogDiv The associated CatalogDiv object.
+	 * @throws     PropelException
+	 */
+	public function getCatalogDivRelatedByParentCatalogDivId(PropelPDO $con = null)
+	{
+		if ($this->aCatalogDivRelatedByParentCatalogDivId === null && ($this->parent_catalog_div_id !== null)) {
+			$this->aCatalogDivRelatedByParentCatalogDivId = CatalogDivQuery::create()->findPk($this->parent_catalog_div_id, $con);
+			/* The following can be used additionally to
+				guarantee the related object contains a reference
+				to this object.  This level of coupling may, however, be
+				undesirable since it could result in an only partially populated collection
+				in the referenced object.
+				$this->aCatalogDivRelatedByParentCatalogDivId->addCatalogDivsRelatedById($this);
+			 */
+		}
+		return $this->aCatalogDivRelatedByParentCatalogDivId;
+	}
+
+	/**
+	 * Clears out the collCatalogDivsRelatedById collection
+	 *
+	 * This does not modify the database; however, it will remove any associated objects, causing
+	 * them to be refetched by subsequent calls to accessor method.
+	 *
+	 * @return     void
+	 * @see        addCatalogDivsRelatedById()
+	 */
+	public function clearCatalogDivsRelatedById()
+	{
+		$this->collCatalogDivsRelatedById = null; // important to set this to NULL since that means it is uninitialized
+	}
+
+	/**
+	 * Initializes the collCatalogDivsRelatedById collection.
+	 *
+	 * By default this just sets the collCatalogDivsRelatedById collection to an empty array (like clearcollCatalogDivsRelatedById());
+	 * however, you may wish to override this method in your stub class to provide setting appropriate
+	 * to your application -- for example, setting the initial array to the values stored in database.
+	 *
+	 * @param      boolean $overrideExisting If set to true, the method call initializes
+	 *                                        the collection even if it is not empty
+	 *
+	 * @return     void
+	 */
+	public function initCatalogDivsRelatedById($overrideExisting = true)
+	{
+		if (null !== $this->collCatalogDivsRelatedById && !$overrideExisting) {
+			return;
+		}
+		$this->collCatalogDivsRelatedById = new PropelObjectCollection();
+		$this->collCatalogDivsRelatedById->setModel('CatalogDiv');
+	}
+
+	/**
+	 * Gets an array of CatalogDiv objects which contain a foreign key that references this object.
+	 *
+	 * If the $criteria is not null, it is used to always fetch the results from the database.
+	 * Otherwise the results are fetched from the database the first time, then cached.
+	 * Next time the same method is called without $criteria, the cached collection is returned.
+	 * If this CatalogDiv is new, it will return
+	 * an empty collection or the current collection; the criteria is ignored on a new object.
+	 *
+	 * @param      Criteria $criteria optional Criteria object to narrow the query
+	 * @param      PropelPDO $con optional connection object
+	 * @return     PropelCollection|array CatalogDiv[] List of CatalogDiv objects
+	 * @throws     PropelException
+	 */
+	public function getCatalogDivsRelatedById($criteria = null, PropelPDO $con = null)
+	{
+		if(null === $this->collCatalogDivsRelatedById || null !== $criteria) {
+			if ($this->isNew() && null === $this->collCatalogDivsRelatedById) {
+				// return empty collection
+				$this->initCatalogDivsRelatedById();
+			} else {
+				$collCatalogDivsRelatedById = CatalogDivQuery::create(null, $criteria)
+					->filterByCatalogDivRelatedByParentCatalogDivId($this)
+					->find($con);
+				if (null !== $criteria) {
+					return $collCatalogDivsRelatedById;
+				}
+				$this->collCatalogDivsRelatedById = $collCatalogDivsRelatedById;
+			}
+		}
+		return $this->collCatalogDivsRelatedById;
+	}
+
+	/**
+	 * Returns the number of related CatalogDiv objects.
+	 *
+	 * @param      Criteria $criteria
+	 * @param      boolean $distinct
+	 * @param      PropelPDO $con
+	 * @return     int Count of related CatalogDiv objects.
+	 * @throws     PropelException
+	 */
+	public function countCatalogDivsRelatedById(Criteria $criteria = null, $distinct = false, PropelPDO $con = null)
+	{
+		if(null === $this->collCatalogDivsRelatedById || null !== $criteria) {
+			if ($this->isNew() && null === $this->collCatalogDivsRelatedById) {
+				return 0;
+			} else {
+				$query = CatalogDivQuery::create(null, $criteria);
+				if($distinct) {
+					$query->distinct();
+				}
+				return $query
+					->filterByCatalogDivRelatedByParentCatalogDivId($this)
+					->count($con);
+			}
+		} else {
+			return count($this->collCatalogDivsRelatedById);
+		}
+	}
+
+	/**
+	 * Method called to associate a CatalogDiv object to this object
+	 * through the CatalogDiv foreign key attribute.
+	 *
+	 * @param      CatalogDiv $l CatalogDiv
+	 * @return     void
+	 * @throws     PropelException
+	 */
+	public function addCatalogDivRelatedById(CatalogDiv $l)
+	{
+		if ($this->collCatalogDivsRelatedById === null) {
+			$this->initCatalogDivsRelatedById();
+		}
+		if (!$this->collCatalogDivsRelatedById->contains($l)) { // only add it if the **same** object is not already associated
+			$this->collCatalogDivsRelatedById[]= $l;
+			$l->setCatalogDivRelatedByParentCatalogDivId($this);
+		}
+	}
+
+	/**
 	 * Clears the current object and sets all attributes to their default values
 	 */
 	public function clear()
@@ -737,8 +992,18 @@ abstract class BaseCatalogDiv extends BaseObject  implements Persistent
 	public function clearAllReferences($deep = false)
 	{
 		if ($deep) {
+			if ($this->collCatalogDivsRelatedById) {
+				foreach ($this->collCatalogDivsRelatedById as $o) {
+					$o->clearAllReferences($deep);
+				}
+			}
 		} // if ($deep)
 
+		if ($this->collCatalogDivsRelatedById instanceof PropelCollection) {
+			$this->collCatalogDivsRelatedById->clearIterator();
+		}
+		$this->collCatalogDivsRelatedById = null;
+		$this->aCatalogDivRelatedByParentCatalogDivId = null;
 	}
 
 	/**

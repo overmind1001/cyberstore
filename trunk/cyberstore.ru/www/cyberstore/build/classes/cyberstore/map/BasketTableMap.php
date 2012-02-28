@@ -35,10 +35,10 @@ class BasketTableMap extends TableMap {
 		$this->setPhpName('Basket');
 		$this->setClassname('Basket');
 		$this->setPackage('cyberstore');
-		$this->setUseIdGenerator(false);
+		$this->setUseIdGenerator(true);
 		// columns
 		$this->addPrimaryKey('ID', 'Id', 'INTEGER', true, null, null);
-		$this->addColumn('SESSION_ID', 'SessionId', 'INTEGER', true, null, null);
+		$this->addForeignKey('USER_ID', 'UserId', 'INTEGER', 'user', 'ID', true, null, null);
 		// validators
 	} // initialize()
 
@@ -47,6 +47,8 @@ class BasketTableMap extends TableMap {
 	 */
 	public function buildRelations()
 	{
+    $this->addRelation('User', 'User', RelationMap::MANY_TO_ONE, array('user_id' => 'id', ), 'CASCADE', 'CASCADE');
+    $this->addRelation('GoodInBasket', 'GoodInBasket', RelationMap::ONE_TO_MANY, array('id' => 'basket_id', ), 'CASCADE', 'CASCADE');
 	} // buildRelations()
 
 } // BasketTableMap

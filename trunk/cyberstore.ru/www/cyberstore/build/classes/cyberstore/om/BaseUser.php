@@ -43,10 +43,14 @@ abstract class BaseUser extends BaseObject  implements Persistent
 	protected $password;
 
 	/**
-	 * The value for the session_id field.
-	 * @var        int
+	 * @var        array Basket[] Collection to store aggregation of Basket objects.
 	 */
-	protected $session_id;
+	protected $collBaskets;
+
+	/**
+	 * @var        array Sales[] Collection to store aggregation of Sales objects.
+	 */
+	protected $collSaless;
 
 	/**
 	 * Flag to prevent endless save loop, if this object is referenced
@@ -90,16 +94,6 @@ abstract class BaseUser extends BaseObject  implements Persistent
 	public function getPassword()
 	{
 		return $this->password;
-	}
-
-	/**
-	 * Get the [session_id] column value.
-	 * 
-	 * @return     int
-	 */
-	public function getSessionId()
-	{
-		return $this->session_id;
 	}
 
 	/**
@@ -163,26 +157,6 @@ abstract class BaseUser extends BaseObject  implements Persistent
 	} // setPassword()
 
 	/**
-	 * Set the value of [session_id] column.
-	 * 
-	 * @param      int $v new value
-	 * @return     User The current object (for fluent API support)
-	 */
-	public function setSessionId($v)
-	{
-		if ($v !== null) {
-			$v = (int) $v;
-		}
-
-		if ($this->session_id !== $v) {
-			$this->session_id = $v;
-			$this->modifiedColumns[] = UserPeer::SESSION_ID;
-		}
-
-		return $this;
-	} // setSessionId()
-
-	/**
 	 * Indicates whether the columns in this object are only set to default values.
 	 *
 	 * This method can be used in conjunction with isModified() to indicate whether an object is both
@@ -217,7 +191,6 @@ abstract class BaseUser extends BaseObject  implements Persistent
 			$this->id = ($row[$startcol + 0] !== null) ? (int) $row[$startcol + 0] : null;
 			$this->login = ($row[$startcol + 1] !== null) ? (string) $row[$startcol + 1] : null;
 			$this->password = ($row[$startcol + 2] !== null) ? (string) $row[$startcol + 2] : null;
-			$this->session_id = ($row[$startcol + 3] !== null) ? (int) $row[$startcol + 3] : null;
 			$this->resetModified();
 
 			$this->setNew(false);
@@ -226,7 +199,7 @@ abstract class BaseUser extends BaseObject  implements Persistent
 				$this->ensureConsistency();
 			}
 
-			return $startcol + 4; // 4 = UserPeer::NUM_HYDRATE_COLUMNS.
+			return $startcol + 3; // 3 = UserPeer::NUM_HYDRATE_COLUMNS.
 
 		} catch (Exception $e) {
 			throw new PropelException("Error populating User object", $e);
@@ -287,6 +260,10 @@ abstract class BaseUser extends BaseObject  implements Persistent
 		$this->hydrate($row, 0, true); // rehydrate
 
 		if ($deep) {  // also de-associate any related objects?
+
+			$this->collBaskets = null;
+
+			$this->collSaless = null;
 
 		} // if (deep)
 	}
@@ -398,19 +375,43 @@ abstract class BaseUser extends BaseObject  implements Persistent
 		if (!$this->alreadyInSave) {
 			$this->alreadyInSave = true;
 
+			if ($this->isNew() ) {
+				$this->modifiedColumns[] = UserPeer::ID;
+			}
 
 			// If this object has been modified, then save it to the database.
 			if ($this->isModified()) {
 				if ($this->isNew()) {
 					$criteria = $this->buildCriteria();
+					if ($criteria->keyContainsValue(UserPeer::ID) ) {
+						throw new PropelException('Cannot insert a value for auto-increment primary key ('.UserPeer::ID.')');
+					}
+
 					$pk = BasePeer::doInsert($criteria, $con);
 					$affectedRows = 1;
+					$this->setId($pk);  //[IMV] update autoincrement primary key
 					$this->setNew(false);
 				} else {
 					$affectedRows = UserPeer::doUpdate($this, $con);
 				}
 
 				$this->resetModified(); // [HL] After being saved an object is no longer 'modified'
+			}
+
+			if ($this->collBaskets !== null) {
+				foreach ($this->collBaskets as $referrerFK) {
+					if (!$referrerFK->isDeleted()) {
+						$affectedRows += $referrerFK->save($con);
+					}
+				}
+			}
+
+			if ($this->collSaless !== null) {
+				foreach ($this->collSaless as $referrerFK) {
+					if (!$referrerFK->isDeleted()) {
+						$affectedRows += $referrerFK->save($con);
+					}
+				}
 			}
 
 			$this->alreadyInSave = false;
@@ -484,6 +485,22 @@ abstract class BaseUser extends BaseObject  implements Persistent
 			}
 
 
+				if ($this->collBaskets !== null) {
+					foreach ($this->collBaskets as $referrerFK) {
+						if (!$referrerFK->validate($columns)) {
+							$failureMap = array_merge($failureMap, $referrerFK->getValidationFailures());
+						}
+					}
+				}
+
+				if ($this->collSaless !== null) {
+					foreach ($this->collSaless as $referrerFK) {
+						if (!$referrerFK->validate($columns)) {
+							$failureMap = array_merge($failureMap, $referrerFK->getValidationFailures());
+						}
+					}
+				}
+
 
 			$this->alreadyInValidation = false;
 		}
@@ -526,9 +543,6 @@ abstract class BaseUser extends BaseObject  implements Persistent
 			case 2:
 				return $this->getPassword();
 				break;
-			case 3:
-				return $this->getSessionId();
-				break;
 			default:
 				return null;
 				break;
@@ -546,10 +560,11 @@ abstract class BaseUser extends BaseObject  implements Persistent
 	 *                    Defaults to BasePeer::TYPE_PHPNAME.
 	 * @param     boolean $includeLazyLoadColumns (optional) Whether to include lazy loaded columns. Defaults to TRUE.
 	 * @param     array $alreadyDumpedObjects List of objects to skip to avoid recursion
+	 * @param     boolean $includeForeignObjects (optional) Whether to include hydrated related objects. Default to FALSE.
 	 *
 	 * @return    array an associative array containing the field names (as keys) and field values
 	 */
-	public function toArray($keyType = BasePeer::TYPE_PHPNAME, $includeLazyLoadColumns = true, $alreadyDumpedObjects = array())
+	public function toArray($keyType = BasePeer::TYPE_PHPNAME, $includeLazyLoadColumns = true, $alreadyDumpedObjects = array(), $includeForeignObjects = false)
 	{
 		if (isset($alreadyDumpedObjects['User'][$this->getPrimaryKey()])) {
 			return '*RECURSION*';
@@ -560,8 +575,15 @@ abstract class BaseUser extends BaseObject  implements Persistent
 			$keys[0] => $this->getId(),
 			$keys[1] => $this->getLogin(),
 			$keys[2] => $this->getPassword(),
-			$keys[3] => $this->getSessionId(),
 		);
+		if ($includeForeignObjects) {
+			if (null !== $this->collBaskets) {
+				$result['Baskets'] = $this->collBaskets->toArray(null, true, $keyType, $includeLazyLoadColumns, $alreadyDumpedObjects);
+			}
+			if (null !== $this->collSaless) {
+				$result['Saless'] = $this->collSaless->toArray(null, true, $keyType, $includeLazyLoadColumns, $alreadyDumpedObjects);
+			}
+		}
 		return $result;
 	}
 
@@ -601,9 +623,6 @@ abstract class BaseUser extends BaseObject  implements Persistent
 			case 2:
 				$this->setPassword($value);
 				break;
-			case 3:
-				$this->setSessionId($value);
-				break;
 		} // switch()
 	}
 
@@ -631,7 +650,6 @@ abstract class BaseUser extends BaseObject  implements Persistent
 		if (array_key_exists($keys[0], $arr)) $this->setId($arr[$keys[0]]);
 		if (array_key_exists($keys[1], $arr)) $this->setLogin($arr[$keys[1]]);
 		if (array_key_exists($keys[2], $arr)) $this->setPassword($arr[$keys[2]]);
-		if (array_key_exists($keys[3], $arr)) $this->setSessionId($arr[$keys[3]]);
 	}
 
 	/**
@@ -646,7 +664,6 @@ abstract class BaseUser extends BaseObject  implements Persistent
 		if ($this->isColumnModified(UserPeer::ID)) $criteria->add(UserPeer::ID, $this->id);
 		if ($this->isColumnModified(UserPeer::LOGIN)) $criteria->add(UserPeer::LOGIN, $this->login);
 		if ($this->isColumnModified(UserPeer::PASSWORD)) $criteria->add(UserPeer::PASSWORD, $this->password);
-		if ($this->isColumnModified(UserPeer::SESSION_ID)) $criteria->add(UserPeer::SESSION_ID, $this->session_id);
 
 		return $criteria;
 	}
@@ -709,12 +726,31 @@ abstract class BaseUser extends BaseObject  implements Persistent
 	 */
 	public function copyInto($copyObj, $deepCopy = false, $makeNew = true)
 	{
-		$copyObj->setId($this->getId());
 		$copyObj->setLogin($this->getLogin());
 		$copyObj->setPassword($this->getPassword());
-		$copyObj->setSessionId($this->getSessionId());
+
+		if ($deepCopy) {
+			// important: temporarily setNew(false) because this affects the behavior of
+			// the getter/setter methods for fkey referrer objects.
+			$copyObj->setNew(false);
+
+			foreach ($this->getBaskets() as $relObj) {
+				if ($relObj !== $this) {  // ensure that we don't try to copy a reference to ourselves
+					$copyObj->addBasket($relObj->copy($deepCopy));
+				}
+			}
+
+			foreach ($this->getSaless() as $relObj) {
+				if ($relObj !== $this) {  // ensure that we don't try to copy a reference to ourselves
+					$copyObj->addSales($relObj->copy($deepCopy));
+				}
+			}
+
+		} // if ($deepCopy)
+
 		if ($makeNew) {
 			$copyObj->setNew(true);
+			$copyObj->setId(NULL); // this is a auto-increment column, so set to default value
 		}
 	}
 
@@ -757,6 +793,236 @@ abstract class BaseUser extends BaseObject  implements Persistent
 	}
 
 	/**
+	 * Clears out the collBaskets collection
+	 *
+	 * This does not modify the database; however, it will remove any associated objects, causing
+	 * them to be refetched by subsequent calls to accessor method.
+	 *
+	 * @return     void
+	 * @see        addBaskets()
+	 */
+	public function clearBaskets()
+	{
+		$this->collBaskets = null; // important to set this to NULL since that means it is uninitialized
+	}
+
+	/**
+	 * Initializes the collBaskets collection.
+	 *
+	 * By default this just sets the collBaskets collection to an empty array (like clearcollBaskets());
+	 * however, you may wish to override this method in your stub class to provide setting appropriate
+	 * to your application -- for example, setting the initial array to the values stored in database.
+	 *
+	 * @param      boolean $overrideExisting If set to true, the method call initializes
+	 *                                        the collection even if it is not empty
+	 *
+	 * @return     void
+	 */
+	public function initBaskets($overrideExisting = true)
+	{
+		if (null !== $this->collBaskets && !$overrideExisting) {
+			return;
+		}
+		$this->collBaskets = new PropelObjectCollection();
+		$this->collBaskets->setModel('Basket');
+	}
+
+	/**
+	 * Gets an array of Basket objects which contain a foreign key that references this object.
+	 *
+	 * If the $criteria is not null, it is used to always fetch the results from the database.
+	 * Otherwise the results are fetched from the database the first time, then cached.
+	 * Next time the same method is called without $criteria, the cached collection is returned.
+	 * If this User is new, it will return
+	 * an empty collection or the current collection; the criteria is ignored on a new object.
+	 *
+	 * @param      Criteria $criteria optional Criteria object to narrow the query
+	 * @param      PropelPDO $con optional connection object
+	 * @return     PropelCollection|array Basket[] List of Basket objects
+	 * @throws     PropelException
+	 */
+	public function getBaskets($criteria = null, PropelPDO $con = null)
+	{
+		if(null === $this->collBaskets || null !== $criteria) {
+			if ($this->isNew() && null === $this->collBaskets) {
+				// return empty collection
+				$this->initBaskets();
+			} else {
+				$collBaskets = BasketQuery::create(null, $criteria)
+					->filterByUser($this)
+					->find($con);
+				if (null !== $criteria) {
+					return $collBaskets;
+				}
+				$this->collBaskets = $collBaskets;
+			}
+		}
+		return $this->collBaskets;
+	}
+
+	/**
+	 * Returns the number of related Basket objects.
+	 *
+	 * @param      Criteria $criteria
+	 * @param      boolean $distinct
+	 * @param      PropelPDO $con
+	 * @return     int Count of related Basket objects.
+	 * @throws     PropelException
+	 */
+	public function countBaskets(Criteria $criteria = null, $distinct = false, PropelPDO $con = null)
+	{
+		if(null === $this->collBaskets || null !== $criteria) {
+			if ($this->isNew() && null === $this->collBaskets) {
+				return 0;
+			} else {
+				$query = BasketQuery::create(null, $criteria);
+				if($distinct) {
+					$query->distinct();
+				}
+				return $query
+					->filterByUser($this)
+					->count($con);
+			}
+		} else {
+			return count($this->collBaskets);
+		}
+	}
+
+	/**
+	 * Method called to associate a Basket object to this object
+	 * through the Basket foreign key attribute.
+	 *
+	 * @param      Basket $l Basket
+	 * @return     void
+	 * @throws     PropelException
+	 */
+	public function addBasket(Basket $l)
+	{
+		if ($this->collBaskets === null) {
+			$this->initBaskets();
+		}
+		if (!$this->collBaskets->contains($l)) { // only add it if the **same** object is not already associated
+			$this->collBaskets[]= $l;
+			$l->setUser($this);
+		}
+	}
+
+	/**
+	 * Clears out the collSaless collection
+	 *
+	 * This does not modify the database; however, it will remove any associated objects, causing
+	 * them to be refetched by subsequent calls to accessor method.
+	 *
+	 * @return     void
+	 * @see        addSaless()
+	 */
+	public function clearSaless()
+	{
+		$this->collSaless = null; // important to set this to NULL since that means it is uninitialized
+	}
+
+	/**
+	 * Initializes the collSaless collection.
+	 *
+	 * By default this just sets the collSaless collection to an empty array (like clearcollSaless());
+	 * however, you may wish to override this method in your stub class to provide setting appropriate
+	 * to your application -- for example, setting the initial array to the values stored in database.
+	 *
+	 * @param      boolean $overrideExisting If set to true, the method call initializes
+	 *                                        the collection even if it is not empty
+	 *
+	 * @return     void
+	 */
+	public function initSaless($overrideExisting = true)
+	{
+		if (null !== $this->collSaless && !$overrideExisting) {
+			return;
+		}
+		$this->collSaless = new PropelObjectCollection();
+		$this->collSaless->setModel('Sales');
+	}
+
+	/**
+	 * Gets an array of Sales objects which contain a foreign key that references this object.
+	 *
+	 * If the $criteria is not null, it is used to always fetch the results from the database.
+	 * Otherwise the results are fetched from the database the first time, then cached.
+	 * Next time the same method is called without $criteria, the cached collection is returned.
+	 * If this User is new, it will return
+	 * an empty collection or the current collection; the criteria is ignored on a new object.
+	 *
+	 * @param      Criteria $criteria optional Criteria object to narrow the query
+	 * @param      PropelPDO $con optional connection object
+	 * @return     PropelCollection|array Sales[] List of Sales objects
+	 * @throws     PropelException
+	 */
+	public function getSaless($criteria = null, PropelPDO $con = null)
+	{
+		if(null === $this->collSaless || null !== $criteria) {
+			if ($this->isNew() && null === $this->collSaless) {
+				// return empty collection
+				$this->initSaless();
+			} else {
+				$collSaless = SalesQuery::create(null, $criteria)
+					->filterByUser($this)
+					->find($con);
+				if (null !== $criteria) {
+					return $collSaless;
+				}
+				$this->collSaless = $collSaless;
+			}
+		}
+		return $this->collSaless;
+	}
+
+	/**
+	 * Returns the number of related Sales objects.
+	 *
+	 * @param      Criteria $criteria
+	 * @param      boolean $distinct
+	 * @param      PropelPDO $con
+	 * @return     int Count of related Sales objects.
+	 * @throws     PropelException
+	 */
+	public function countSaless(Criteria $criteria = null, $distinct = false, PropelPDO $con = null)
+	{
+		if(null === $this->collSaless || null !== $criteria) {
+			if ($this->isNew() && null === $this->collSaless) {
+				return 0;
+			} else {
+				$query = SalesQuery::create(null, $criteria);
+				if($distinct) {
+					$query->distinct();
+				}
+				return $query
+					->filterByUser($this)
+					->count($con);
+			}
+		} else {
+			return count($this->collSaless);
+		}
+	}
+
+	/**
+	 * Method called to associate a Sales object to this object
+	 * through the Sales foreign key attribute.
+	 *
+	 * @param      Sales $l Sales
+	 * @return     void
+	 * @throws     PropelException
+	 */
+	public function addSales(Sales $l)
+	{
+		if ($this->collSaless === null) {
+			$this->initSaless();
+		}
+		if (!$this->collSaless->contains($l)) { // only add it if the **same** object is not already associated
+			$this->collSaless[]= $l;
+			$l->setUser($this);
+		}
+	}
+
+	/**
 	 * Clears the current object and sets all attributes to their default values
 	 */
 	public function clear()
@@ -764,7 +1030,6 @@ abstract class BaseUser extends BaseObject  implements Persistent
 		$this->id = null;
 		$this->login = null;
 		$this->password = null;
-		$this->session_id = null;
 		$this->alreadyInSave = false;
 		$this->alreadyInValidation = false;
 		$this->clearAllReferences();
@@ -785,8 +1050,26 @@ abstract class BaseUser extends BaseObject  implements Persistent
 	public function clearAllReferences($deep = false)
 	{
 		if ($deep) {
+			if ($this->collBaskets) {
+				foreach ($this->collBaskets as $o) {
+					$o->clearAllReferences($deep);
+				}
+			}
+			if ($this->collSaless) {
+				foreach ($this->collSaless as $o) {
+					$o->clearAllReferences($deep);
+				}
+			}
 		} // if ($deep)
 
+		if ($this->collBaskets instanceof PropelCollection) {
+			$this->collBaskets->clearIterator();
+		}
+		$this->collBaskets = null;
+		if ($this->collSaless instanceof PropelCollection) {
+			$this->collSaless->clearIterator();
+		}
+		$this->collSaless = null;
 	}
 
 	/**
