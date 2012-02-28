@@ -18,6 +18,14 @@
  * @method     CatalogDivQuery rightJoin($relation) Adds a RIGHT JOIN clause to the query
  * @method     CatalogDivQuery innerJoin($relation) Adds a INNER JOIN clause to the query
  *
+ * @method     CatalogDivQuery leftJoinCatalogDivRelatedByParentCatalogDivId($relationAlias = null) Adds a LEFT JOIN clause to the query using the CatalogDivRelatedByParentCatalogDivId relation
+ * @method     CatalogDivQuery rightJoinCatalogDivRelatedByParentCatalogDivId($relationAlias = null) Adds a RIGHT JOIN clause to the query using the CatalogDivRelatedByParentCatalogDivId relation
+ * @method     CatalogDivQuery innerJoinCatalogDivRelatedByParentCatalogDivId($relationAlias = null) Adds a INNER JOIN clause to the query using the CatalogDivRelatedByParentCatalogDivId relation
+ *
+ * @method     CatalogDivQuery leftJoinCatalogDivRelatedById($relationAlias = null) Adds a LEFT JOIN clause to the query using the CatalogDivRelatedById relation
+ * @method     CatalogDivQuery rightJoinCatalogDivRelatedById($relationAlias = null) Adds a RIGHT JOIN clause to the query using the CatalogDivRelatedById relation
+ * @method     CatalogDivQuery innerJoinCatalogDivRelatedById($relationAlias = null) Adds a INNER JOIN clause to the query using the CatalogDivRelatedById relation
+ *
  * @method     CatalogDiv findOne(PropelPDO $con = null) Return the first CatalogDiv matching the query
  * @method     CatalogDiv findOneOrCreate(PropelPDO $con = null) Return the first CatalogDiv matching the query, or a new CatalogDiv object populated from the query conditions when no match is found
  *
@@ -201,6 +209,8 @@ abstract class BaseCatalogDivQuery extends ModelCriteria
 	 * $query->filterByParentCatalogDivId(array('min' => 12)); // WHERE parent_catalog_div_id > 12
 	 * </code>
 	 *
+	 * @see       filterByCatalogDivRelatedByParentCatalogDivId()
+	 *
 	 * @param     mixed $parentCatalogDivId The value to use as filter.
 	 *              Use scalar values for equality.
 	 *              Use array values for in_array() equivalent.
@@ -229,6 +239,153 @@ abstract class BaseCatalogDivQuery extends ModelCriteria
 			}
 		}
 		return $this->addUsingAlias(CatalogDivPeer::PARENT_CATALOG_DIV_ID, $parentCatalogDivId, $comparison);
+	}
+
+	/**
+	 * Filter the query by a related CatalogDiv object
+	 *
+	 * @param     CatalogDiv|PropelCollection $catalogDiv The related object(s) to use as filter
+	 * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+	 *
+	 * @return    CatalogDivQuery The current query, for fluid interface
+	 */
+	public function filterByCatalogDivRelatedByParentCatalogDivId($catalogDiv, $comparison = null)
+	{
+		if ($catalogDiv instanceof CatalogDiv) {
+			return $this
+				->addUsingAlias(CatalogDivPeer::PARENT_CATALOG_DIV_ID, $catalogDiv->getId(), $comparison);
+		} elseif ($catalogDiv instanceof PropelCollection) {
+			if (null === $comparison) {
+				$comparison = Criteria::IN;
+			}
+			return $this
+				->addUsingAlias(CatalogDivPeer::PARENT_CATALOG_DIV_ID, $catalogDiv->toKeyValue('PrimaryKey', 'Id'), $comparison);
+		} else {
+			throw new PropelException('filterByCatalogDivRelatedByParentCatalogDivId() only accepts arguments of type CatalogDiv or PropelCollection');
+		}
+	}
+
+	/**
+	 * Adds a JOIN clause to the query using the CatalogDivRelatedByParentCatalogDivId relation
+	 * 
+	 * @param     string $relationAlias optional alias for the relation
+	 * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
+	 *
+	 * @return    CatalogDivQuery The current query, for fluid interface
+	 */
+	public function joinCatalogDivRelatedByParentCatalogDivId($relationAlias = null, $joinType = Criteria::LEFT_JOIN)
+	{
+		$tableMap = $this->getTableMap();
+		$relationMap = $tableMap->getRelation('CatalogDivRelatedByParentCatalogDivId');
+		
+		// create a ModelJoin object for this join
+		$join = new ModelJoin();
+		$join->setJoinType($joinType);
+		$join->setRelationMap($relationMap, $this->useAliasInSQL ? $this->getModelAlias() : null, $relationAlias);
+		if ($previousJoin = $this->getPreviousJoin()) {
+			$join->setPreviousJoin($previousJoin);
+		}
+		
+		// add the ModelJoin to the current object
+		if($relationAlias) {
+			$this->addAlias($relationAlias, $relationMap->getRightTable()->getName());
+			$this->addJoinObject($join, $relationAlias);
+		} else {
+			$this->addJoinObject($join, 'CatalogDivRelatedByParentCatalogDivId');
+		}
+		
+		return $this;
+	}
+
+	/**
+	 * Use the CatalogDivRelatedByParentCatalogDivId relation CatalogDiv object
+	 *
+	 * @see       useQuery()
+	 * 
+	 * @param     string $relationAlias optional alias for the relation,
+	 *                                   to be used as main alias in the secondary query
+	 * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
+	 *
+	 * @return    CatalogDivQuery A secondary query class using the current class as primary query
+	 */
+	public function useCatalogDivRelatedByParentCatalogDivIdQuery($relationAlias = null, $joinType = Criteria::LEFT_JOIN)
+	{
+		return $this
+			->joinCatalogDivRelatedByParentCatalogDivId($relationAlias, $joinType)
+			->useQuery($relationAlias ? $relationAlias : 'CatalogDivRelatedByParentCatalogDivId', 'CatalogDivQuery');
+	}
+
+	/**
+	 * Filter the query by a related CatalogDiv object
+	 *
+	 * @param     CatalogDiv $catalogDiv  the related object to use as filter
+	 * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+	 *
+	 * @return    CatalogDivQuery The current query, for fluid interface
+	 */
+	public function filterByCatalogDivRelatedById($catalogDiv, $comparison = null)
+	{
+		if ($catalogDiv instanceof CatalogDiv) {
+			return $this
+				->addUsingAlias(CatalogDivPeer::ID, $catalogDiv->getParentCatalogDivId(), $comparison);
+		} elseif ($catalogDiv instanceof PropelCollection) {
+			return $this
+				->useCatalogDivRelatedByIdQuery()
+					->filterByPrimaryKeys($catalogDiv->getPrimaryKeys())
+				->endUse();
+		} else {
+			throw new PropelException('filterByCatalogDivRelatedById() only accepts arguments of type CatalogDiv or PropelCollection');
+		}
+	}
+
+	/**
+	 * Adds a JOIN clause to the query using the CatalogDivRelatedById relation
+	 * 
+	 * @param     string $relationAlias optional alias for the relation
+	 * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
+	 *
+	 * @return    CatalogDivQuery The current query, for fluid interface
+	 */
+	public function joinCatalogDivRelatedById($relationAlias = null, $joinType = Criteria::LEFT_JOIN)
+	{
+		$tableMap = $this->getTableMap();
+		$relationMap = $tableMap->getRelation('CatalogDivRelatedById');
+		
+		// create a ModelJoin object for this join
+		$join = new ModelJoin();
+		$join->setJoinType($joinType);
+		$join->setRelationMap($relationMap, $this->useAliasInSQL ? $this->getModelAlias() : null, $relationAlias);
+		if ($previousJoin = $this->getPreviousJoin()) {
+			$join->setPreviousJoin($previousJoin);
+		}
+		
+		// add the ModelJoin to the current object
+		if($relationAlias) {
+			$this->addAlias($relationAlias, $relationMap->getRightTable()->getName());
+			$this->addJoinObject($join, $relationAlias);
+		} else {
+			$this->addJoinObject($join, 'CatalogDivRelatedById');
+		}
+		
+		return $this;
+	}
+
+	/**
+	 * Use the CatalogDivRelatedById relation CatalogDiv object
+	 *
+	 * @see       useQuery()
+	 * 
+	 * @param     string $relationAlias optional alias for the relation,
+	 *                                   to be used as main alias in the secondary query
+	 * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
+	 *
+	 * @return    CatalogDivQuery A secondary query class using the current class as primary query
+	 */
+	public function useCatalogDivRelatedByIdQuery($relationAlias = null, $joinType = Criteria::LEFT_JOIN)
+	{
+		return $this
+			->joinCatalogDivRelatedById($relationAlias, $joinType)
+			->useQuery($relationAlias ? $relationAlias : 'CatalogDivRelatedById', 'CatalogDivQuery');
 	}
 
 	/**

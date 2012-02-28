@@ -35,12 +35,11 @@ class UserTableMap extends TableMap {
 		$this->setPhpName('User');
 		$this->setClassname('User');
 		$this->setPackage('cyberstore');
-		$this->setUseIdGenerator(false);
+		$this->setUseIdGenerator(true);
 		// columns
 		$this->addPrimaryKey('ID', 'Id', 'INTEGER', true, null, null);
 		$this->addColumn('LOGIN', 'Login', 'LONGVARCHAR', true, null, null);
 		$this->addColumn('PASSWORD', 'Password', 'LONGVARCHAR', true, null, null);
-		$this->addColumn('SESSION_ID', 'SessionId', 'INTEGER', true, null, null);
 		// validators
 	} // initialize()
 
@@ -49,6 +48,8 @@ class UserTableMap extends TableMap {
 	 */
 	public function buildRelations()
 	{
+    $this->addRelation('Basket', 'Basket', RelationMap::ONE_TO_MANY, array('id' => 'user_id', ), 'CASCADE', 'CASCADE');
+    $this->addRelation('Sales', 'Sales', RelationMap::ONE_TO_MANY, array('id' => 'user_id', ), 'CASCADE', 'CASCADE');
 	} // buildRelations()
 
 } // UserTableMap

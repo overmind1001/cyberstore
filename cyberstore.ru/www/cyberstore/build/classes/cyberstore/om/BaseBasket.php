@@ -31,10 +31,20 @@ abstract class BaseBasket extends BaseObject  implements Persistent
 	protected $id;
 
 	/**
-	 * The value for the session_id field.
+	 * The value for the user_id field.
 	 * @var        int
 	 */
-	protected $session_id;
+	protected $user_id;
+
+	/**
+	 * @var        User
+	 */
+	protected $aUser;
+
+	/**
+	 * @var        array GoodInBasket[] Collection to store aggregation of GoodInBasket objects.
+	 */
+	protected $collGoodInBaskets;
 
 	/**
 	 * Flag to prevent endless save loop, if this object is referenced
@@ -61,13 +71,13 @@ abstract class BaseBasket extends BaseObject  implements Persistent
 	}
 
 	/**
-	 * Get the [session_id] column value.
+	 * Get the [user_id] column value.
 	 * 
 	 * @return     int
 	 */
-	public function getSessionId()
+	public function getUserId()
 	{
-		return $this->session_id;
+		return $this->user_id;
 	}
 
 	/**
@@ -91,24 +101,28 @@ abstract class BaseBasket extends BaseObject  implements Persistent
 	} // setId()
 
 	/**
-	 * Set the value of [session_id] column.
+	 * Set the value of [user_id] column.
 	 * 
 	 * @param      int $v new value
 	 * @return     Basket The current object (for fluent API support)
 	 */
-	public function setSessionId($v)
+	public function setUserId($v)
 	{
 		if ($v !== null) {
 			$v = (int) $v;
 		}
 
-		if ($this->session_id !== $v) {
-			$this->session_id = $v;
-			$this->modifiedColumns[] = BasketPeer::SESSION_ID;
+		if ($this->user_id !== $v) {
+			$this->user_id = $v;
+			$this->modifiedColumns[] = BasketPeer::USER_ID;
+		}
+
+		if ($this->aUser !== null && $this->aUser->getId() !== $v) {
+			$this->aUser = null;
 		}
 
 		return $this;
-	} // setSessionId()
+	} // setUserId()
 
 	/**
 	 * Indicates whether the columns in this object are only set to default values.
@@ -143,7 +157,7 @@ abstract class BaseBasket extends BaseObject  implements Persistent
 		try {
 
 			$this->id = ($row[$startcol + 0] !== null) ? (int) $row[$startcol + 0] : null;
-			$this->session_id = ($row[$startcol + 1] !== null) ? (int) $row[$startcol + 1] : null;
+			$this->user_id = ($row[$startcol + 1] !== null) ? (int) $row[$startcol + 1] : null;
 			$this->resetModified();
 
 			$this->setNew(false);
@@ -175,6 +189,9 @@ abstract class BaseBasket extends BaseObject  implements Persistent
 	public function ensureConsistency()
 	{
 
+		if ($this->aUser !== null && $this->user_id !== $this->aUser->getId()) {
+			$this->aUser = null;
+		}
 	} // ensureConsistency
 
 	/**
@@ -213,6 +230,9 @@ abstract class BaseBasket extends BaseObject  implements Persistent
 		$this->hydrate($row, 0, true); // rehydrate
 
 		if ($deep) {  // also de-associate any related objects?
+
+			$this->aUser = null;
+			$this->collGoodInBaskets = null;
 
 		} // if (deep)
 	}
@@ -324,19 +344,47 @@ abstract class BaseBasket extends BaseObject  implements Persistent
 		if (!$this->alreadyInSave) {
 			$this->alreadyInSave = true;
 
+			// We call the save method on the following object(s) if they
+			// were passed to this object by their coresponding set
+			// method.  This object relates to these object(s) by a
+			// foreign key reference.
+
+			if ($this->aUser !== null) {
+				if ($this->aUser->isModified() || $this->aUser->isNew()) {
+					$affectedRows += $this->aUser->save($con);
+				}
+				$this->setUser($this->aUser);
+			}
+
+			if ($this->isNew() ) {
+				$this->modifiedColumns[] = BasketPeer::ID;
+			}
 
 			// If this object has been modified, then save it to the database.
 			if ($this->isModified()) {
 				if ($this->isNew()) {
 					$criteria = $this->buildCriteria();
+					if ($criteria->keyContainsValue(BasketPeer::ID) ) {
+						throw new PropelException('Cannot insert a value for auto-increment primary key ('.BasketPeer::ID.')');
+					}
+
 					$pk = BasePeer::doInsert($criteria, $con);
-					$affectedRows = 1;
+					$affectedRows += 1;
+					$this->setId($pk);  //[IMV] update autoincrement primary key
 					$this->setNew(false);
 				} else {
-					$affectedRows = BasketPeer::doUpdate($this, $con);
+					$affectedRows += BasketPeer::doUpdate($this, $con);
 				}
 
 				$this->resetModified(); // [HL] After being saved an object is no longer 'modified'
+			}
+
+			if ($this->collGoodInBaskets !== null) {
+				foreach ($this->collGoodInBaskets as $referrerFK) {
+					if (!$referrerFK->isDeleted()) {
+						$affectedRows += $referrerFK->save($con);
+					}
+				}
 			}
 
 			$this->alreadyInSave = false;
@@ -405,10 +453,30 @@ abstract class BaseBasket extends BaseObject  implements Persistent
 			$failureMap = array();
 
 
+			// We call the validate method on the following object(s) if they
+			// were passed to this object by their coresponding set
+			// method.  This object relates to these object(s) by a
+			// foreign key reference.
+
+			if ($this->aUser !== null) {
+				if (!$this->aUser->validate($columns)) {
+					$failureMap = array_merge($failureMap, $this->aUser->getValidationFailures());
+				}
+			}
+
+
 			if (($retval = BasketPeer::doValidate($this, $columns)) !== true) {
 				$failureMap = array_merge($failureMap, $retval);
 			}
 
+
+				if ($this->collGoodInBaskets !== null) {
+					foreach ($this->collGoodInBaskets as $referrerFK) {
+						if (!$referrerFK->validate($columns)) {
+							$failureMap = array_merge($failureMap, $referrerFK->getValidationFailures());
+						}
+					}
+				}
 
 
 			$this->alreadyInValidation = false;
@@ -447,7 +515,7 @@ abstract class BaseBasket extends BaseObject  implements Persistent
 				return $this->getId();
 				break;
 			case 1:
-				return $this->getSessionId();
+				return $this->getUserId();
 				break;
 			default:
 				return null;
@@ -466,10 +534,11 @@ abstract class BaseBasket extends BaseObject  implements Persistent
 	 *                    Defaults to BasePeer::TYPE_PHPNAME.
 	 * @param     boolean $includeLazyLoadColumns (optional) Whether to include lazy loaded columns. Defaults to TRUE.
 	 * @param     array $alreadyDumpedObjects List of objects to skip to avoid recursion
+	 * @param     boolean $includeForeignObjects (optional) Whether to include hydrated related objects. Default to FALSE.
 	 *
 	 * @return    array an associative array containing the field names (as keys) and field values
 	 */
-	public function toArray($keyType = BasePeer::TYPE_PHPNAME, $includeLazyLoadColumns = true, $alreadyDumpedObjects = array())
+	public function toArray($keyType = BasePeer::TYPE_PHPNAME, $includeLazyLoadColumns = true, $alreadyDumpedObjects = array(), $includeForeignObjects = false)
 	{
 		if (isset($alreadyDumpedObjects['Basket'][$this->getPrimaryKey()])) {
 			return '*RECURSION*';
@@ -478,8 +547,16 @@ abstract class BaseBasket extends BaseObject  implements Persistent
 		$keys = BasketPeer::getFieldNames($keyType);
 		$result = array(
 			$keys[0] => $this->getId(),
-			$keys[1] => $this->getSessionId(),
+			$keys[1] => $this->getUserId(),
 		);
+		if ($includeForeignObjects) {
+			if (null !== $this->aUser) {
+				$result['User'] = $this->aUser->toArray($keyType, $includeLazyLoadColumns,  $alreadyDumpedObjects, true);
+			}
+			if (null !== $this->collGoodInBaskets) {
+				$result['GoodInBaskets'] = $this->collGoodInBaskets->toArray(null, true, $keyType, $includeLazyLoadColumns, $alreadyDumpedObjects);
+			}
+		}
 		return $result;
 	}
 
@@ -514,7 +591,7 @@ abstract class BaseBasket extends BaseObject  implements Persistent
 				$this->setId($value);
 				break;
 			case 1:
-				$this->setSessionId($value);
+				$this->setUserId($value);
 				break;
 		} // switch()
 	}
@@ -541,7 +618,7 @@ abstract class BaseBasket extends BaseObject  implements Persistent
 		$keys = BasketPeer::getFieldNames($keyType);
 
 		if (array_key_exists($keys[0], $arr)) $this->setId($arr[$keys[0]]);
-		if (array_key_exists($keys[1], $arr)) $this->setSessionId($arr[$keys[1]]);
+		if (array_key_exists($keys[1], $arr)) $this->setUserId($arr[$keys[1]]);
 	}
 
 	/**
@@ -554,7 +631,7 @@ abstract class BaseBasket extends BaseObject  implements Persistent
 		$criteria = new Criteria(BasketPeer::DATABASE_NAME);
 
 		if ($this->isColumnModified(BasketPeer::ID)) $criteria->add(BasketPeer::ID, $this->id);
-		if ($this->isColumnModified(BasketPeer::SESSION_ID)) $criteria->add(BasketPeer::SESSION_ID, $this->session_id);
+		if ($this->isColumnModified(BasketPeer::USER_ID)) $criteria->add(BasketPeer::USER_ID, $this->user_id);
 
 		return $criteria;
 	}
@@ -617,10 +694,24 @@ abstract class BaseBasket extends BaseObject  implements Persistent
 	 */
 	public function copyInto($copyObj, $deepCopy = false, $makeNew = true)
 	{
-		$copyObj->setId($this->getId());
-		$copyObj->setSessionId($this->getSessionId());
+		$copyObj->setUserId($this->getUserId());
+
+		if ($deepCopy) {
+			// important: temporarily setNew(false) because this affects the behavior of
+			// the getter/setter methods for fkey referrer objects.
+			$copyObj->setNew(false);
+
+			foreach ($this->getGoodInBaskets() as $relObj) {
+				if ($relObj !== $this) {  // ensure that we don't try to copy a reference to ourselves
+					$copyObj->addGoodInBasket($relObj->copy($deepCopy));
+				}
+			}
+
+		} // if ($deepCopy)
+
 		if ($makeNew) {
 			$copyObj->setNew(true);
+			$copyObj->setId(NULL); // this is a auto-increment column, so set to default value
 		}
 	}
 
@@ -663,12 +754,201 @@ abstract class BaseBasket extends BaseObject  implements Persistent
 	}
 
 	/**
+	 * Declares an association between this object and a User object.
+	 *
+	 * @param      User $v
+	 * @return     Basket The current object (for fluent API support)
+	 * @throws     PropelException
+	 */
+	public function setUser(User $v = null)
+	{
+		if ($v === null) {
+			$this->setUserId(NULL);
+		} else {
+			$this->setUserId($v->getId());
+		}
+
+		$this->aUser = $v;
+
+		// Add binding for other direction of this n:n relationship.
+		// If this object has already been added to the User object, it will not be re-added.
+		if ($v !== null) {
+			$v->addBasket($this);
+		}
+
+		return $this;
+	}
+
+
+	/**
+	 * Get the associated User object
+	 *
+	 * @param      PropelPDO Optional Connection object.
+	 * @return     User The associated User object.
+	 * @throws     PropelException
+	 */
+	public function getUser(PropelPDO $con = null)
+	{
+		if ($this->aUser === null && ($this->user_id !== null)) {
+			$this->aUser = UserQuery::create()->findPk($this->user_id, $con);
+			/* The following can be used additionally to
+				guarantee the related object contains a reference
+				to this object.  This level of coupling may, however, be
+				undesirable since it could result in an only partially populated collection
+				in the referenced object.
+				$this->aUser->addBaskets($this);
+			 */
+		}
+		return $this->aUser;
+	}
+
+	/**
+	 * Clears out the collGoodInBaskets collection
+	 *
+	 * This does not modify the database; however, it will remove any associated objects, causing
+	 * them to be refetched by subsequent calls to accessor method.
+	 *
+	 * @return     void
+	 * @see        addGoodInBaskets()
+	 */
+	public function clearGoodInBaskets()
+	{
+		$this->collGoodInBaskets = null; // important to set this to NULL since that means it is uninitialized
+	}
+
+	/**
+	 * Initializes the collGoodInBaskets collection.
+	 *
+	 * By default this just sets the collGoodInBaskets collection to an empty array (like clearcollGoodInBaskets());
+	 * however, you may wish to override this method in your stub class to provide setting appropriate
+	 * to your application -- for example, setting the initial array to the values stored in database.
+	 *
+	 * @param      boolean $overrideExisting If set to true, the method call initializes
+	 *                                        the collection even if it is not empty
+	 *
+	 * @return     void
+	 */
+	public function initGoodInBaskets($overrideExisting = true)
+	{
+		if (null !== $this->collGoodInBaskets && !$overrideExisting) {
+			return;
+		}
+		$this->collGoodInBaskets = new PropelObjectCollection();
+		$this->collGoodInBaskets->setModel('GoodInBasket');
+	}
+
+	/**
+	 * Gets an array of GoodInBasket objects which contain a foreign key that references this object.
+	 *
+	 * If the $criteria is not null, it is used to always fetch the results from the database.
+	 * Otherwise the results are fetched from the database the first time, then cached.
+	 * Next time the same method is called without $criteria, the cached collection is returned.
+	 * If this Basket is new, it will return
+	 * an empty collection or the current collection; the criteria is ignored on a new object.
+	 *
+	 * @param      Criteria $criteria optional Criteria object to narrow the query
+	 * @param      PropelPDO $con optional connection object
+	 * @return     PropelCollection|array GoodInBasket[] List of GoodInBasket objects
+	 * @throws     PropelException
+	 */
+	public function getGoodInBaskets($criteria = null, PropelPDO $con = null)
+	{
+		if(null === $this->collGoodInBaskets || null !== $criteria) {
+			if ($this->isNew() && null === $this->collGoodInBaskets) {
+				// return empty collection
+				$this->initGoodInBaskets();
+			} else {
+				$collGoodInBaskets = GoodInBasketQuery::create(null, $criteria)
+					->filterByBasket($this)
+					->find($con);
+				if (null !== $criteria) {
+					return $collGoodInBaskets;
+				}
+				$this->collGoodInBaskets = $collGoodInBaskets;
+			}
+		}
+		return $this->collGoodInBaskets;
+	}
+
+	/**
+	 * Returns the number of related GoodInBasket objects.
+	 *
+	 * @param      Criteria $criteria
+	 * @param      boolean $distinct
+	 * @param      PropelPDO $con
+	 * @return     int Count of related GoodInBasket objects.
+	 * @throws     PropelException
+	 */
+	public function countGoodInBaskets(Criteria $criteria = null, $distinct = false, PropelPDO $con = null)
+	{
+		if(null === $this->collGoodInBaskets || null !== $criteria) {
+			if ($this->isNew() && null === $this->collGoodInBaskets) {
+				return 0;
+			} else {
+				$query = GoodInBasketQuery::create(null, $criteria);
+				if($distinct) {
+					$query->distinct();
+				}
+				return $query
+					->filterByBasket($this)
+					->count($con);
+			}
+		} else {
+			return count($this->collGoodInBaskets);
+		}
+	}
+
+	/**
+	 * Method called to associate a GoodInBasket object to this object
+	 * through the GoodInBasket foreign key attribute.
+	 *
+	 * @param      GoodInBasket $l GoodInBasket
+	 * @return     void
+	 * @throws     PropelException
+	 */
+	public function addGoodInBasket(GoodInBasket $l)
+	{
+		if ($this->collGoodInBaskets === null) {
+			$this->initGoodInBaskets();
+		}
+		if (!$this->collGoodInBaskets->contains($l)) { // only add it if the **same** object is not already associated
+			$this->collGoodInBaskets[]= $l;
+			$l->setBasket($this);
+		}
+	}
+
+
+	/**
+	 * If this collection has already been initialized with
+	 * an identical criteria, it returns the collection.
+	 * Otherwise if this Basket is new, it will return
+	 * an empty collection; or if this Basket has previously
+	 * been saved, it will retrieve related GoodInBaskets from storage.
+	 *
+	 * This method is protected by default in order to keep the public
+	 * api reasonable.  You can provide public methods for those you
+	 * actually need in Basket.
+	 *
+	 * @param      Criteria $criteria optional Criteria object to narrow the query
+	 * @param      PropelPDO $con optional connection object
+	 * @param      string $join_behavior optional join type to use (defaults to Criteria::LEFT_JOIN)
+	 * @return     PropelCollection|array GoodInBasket[] List of GoodInBasket objects
+	 */
+	public function getGoodInBasketsJoinGoods($criteria = null, $con = null, $join_behavior = Criteria::LEFT_JOIN)
+	{
+		$query = GoodInBasketQuery::create(null, $criteria);
+		$query->joinWith('Goods', $join_behavior);
+
+		return $this->getGoodInBaskets($query, $con);
+	}
+
+	/**
 	 * Clears the current object and sets all attributes to their default values
 	 */
 	public function clear()
 	{
 		$this->id = null;
-		$this->session_id = null;
+		$this->user_id = null;
 		$this->alreadyInSave = false;
 		$this->alreadyInValidation = false;
 		$this->clearAllReferences();
@@ -689,8 +969,18 @@ abstract class BaseBasket extends BaseObject  implements Persistent
 	public function clearAllReferences($deep = false)
 	{
 		if ($deep) {
+			if ($this->collGoodInBaskets) {
+				foreach ($this->collGoodInBaskets as $o) {
+					$o->clearAllReferences($deep);
+				}
+			}
 		} // if ($deep)
 
+		if ($this->collGoodInBaskets instanceof PropelCollection) {
+			$this->collGoodInBaskets->clearIterator();
+		}
+		$this->collGoodInBaskets = null;
+		$this->aUser = null;
 	}
 
 	/**

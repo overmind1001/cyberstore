@@ -7,23 +7,31 @@
  * 
  *
  * @method     BasketQuery orderById($order = Criteria::ASC) Order by the id column
- * @method     BasketQuery orderBySessionId($order = Criteria::ASC) Order by the session_id column
+ * @method     BasketQuery orderByUserId($order = Criteria::ASC) Order by the user_id column
  *
  * @method     BasketQuery groupById() Group by the id column
- * @method     BasketQuery groupBySessionId() Group by the session_id column
+ * @method     BasketQuery groupByUserId() Group by the user_id column
  *
  * @method     BasketQuery leftJoin($relation) Adds a LEFT JOIN clause to the query
  * @method     BasketQuery rightJoin($relation) Adds a RIGHT JOIN clause to the query
  * @method     BasketQuery innerJoin($relation) Adds a INNER JOIN clause to the query
  *
+ * @method     BasketQuery leftJoinUser($relationAlias = null) Adds a LEFT JOIN clause to the query using the User relation
+ * @method     BasketQuery rightJoinUser($relationAlias = null) Adds a RIGHT JOIN clause to the query using the User relation
+ * @method     BasketQuery innerJoinUser($relationAlias = null) Adds a INNER JOIN clause to the query using the User relation
+ *
+ * @method     BasketQuery leftJoinGoodInBasket($relationAlias = null) Adds a LEFT JOIN clause to the query using the GoodInBasket relation
+ * @method     BasketQuery rightJoinGoodInBasket($relationAlias = null) Adds a RIGHT JOIN clause to the query using the GoodInBasket relation
+ * @method     BasketQuery innerJoinGoodInBasket($relationAlias = null) Adds a INNER JOIN clause to the query using the GoodInBasket relation
+ *
  * @method     Basket findOne(PropelPDO $con = null) Return the first Basket matching the query
  * @method     Basket findOneOrCreate(PropelPDO $con = null) Return the first Basket matching the query, or a new Basket object populated from the query conditions when no match is found
  *
  * @method     Basket findOneById(int $id) Return the first Basket filtered by the id column
- * @method     Basket findOneBySessionId(int $session_id) Return the first Basket filtered by the session_id column
+ * @method     Basket findOneByUserId(int $user_id) Return the first Basket filtered by the user_id column
  *
  * @method     array findById(int $id) Return Basket objects filtered by the id column
- * @method     array findBySessionId(int $session_id) Return Basket objects filtered by the session_id column
+ * @method     array findByUserId(int $user_id) Return Basket objects filtered by the user_id column
  *
  * @package    propel.generator.cyberstore.om
  */
@@ -160,16 +168,18 @@ abstract class BaseBasketQuery extends ModelCriteria
 	}
 
 	/**
-	 * Filter the query on the session_id column
+	 * Filter the query on the user_id column
 	 * 
 	 * Example usage:
 	 * <code>
-	 * $query->filterBySessionId(1234); // WHERE session_id = 1234
-	 * $query->filterBySessionId(array(12, 34)); // WHERE session_id IN (12, 34)
-	 * $query->filterBySessionId(array('min' => 12)); // WHERE session_id > 12
+	 * $query->filterByUserId(1234); // WHERE user_id = 1234
+	 * $query->filterByUserId(array(12, 34)); // WHERE user_id IN (12, 34)
+	 * $query->filterByUserId(array('min' => 12)); // WHERE user_id > 12
 	 * </code>
 	 *
-	 * @param     mixed $sessionId The value to use as filter.
+	 * @see       filterByUser()
+	 *
+	 * @param     mixed $userId The value to use as filter.
 	 *              Use scalar values for equality.
 	 *              Use array values for in_array() equivalent.
 	 *              Use associative array('min' => $minValue, 'max' => $maxValue) for intervals.
@@ -177,16 +187,16 @@ abstract class BaseBasketQuery extends ModelCriteria
 	 *
 	 * @return    BasketQuery The current query, for fluid interface
 	 */
-	public function filterBySessionId($sessionId = null, $comparison = null)
+	public function filterByUserId($userId = null, $comparison = null)
 	{
-		if (is_array($sessionId)) {
+		if (is_array($userId)) {
 			$useMinMax = false;
-			if (isset($sessionId['min'])) {
-				$this->addUsingAlias(BasketPeer::SESSION_ID, $sessionId['min'], Criteria::GREATER_EQUAL);
+			if (isset($userId['min'])) {
+				$this->addUsingAlias(BasketPeer::USER_ID, $userId['min'], Criteria::GREATER_EQUAL);
 				$useMinMax = true;
 			}
-			if (isset($sessionId['max'])) {
-				$this->addUsingAlias(BasketPeer::SESSION_ID, $sessionId['max'], Criteria::LESS_EQUAL);
+			if (isset($userId['max'])) {
+				$this->addUsingAlias(BasketPeer::USER_ID, $userId['max'], Criteria::LESS_EQUAL);
 				$useMinMax = true;
 			}
 			if ($useMinMax) {
@@ -196,7 +206,154 @@ abstract class BaseBasketQuery extends ModelCriteria
 				$comparison = Criteria::IN;
 			}
 		}
-		return $this->addUsingAlias(BasketPeer::SESSION_ID, $sessionId, $comparison);
+		return $this->addUsingAlias(BasketPeer::USER_ID, $userId, $comparison);
+	}
+
+	/**
+	 * Filter the query by a related User object
+	 *
+	 * @param     User|PropelCollection $user The related object(s) to use as filter
+	 * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+	 *
+	 * @return    BasketQuery The current query, for fluid interface
+	 */
+	public function filterByUser($user, $comparison = null)
+	{
+		if ($user instanceof User) {
+			return $this
+				->addUsingAlias(BasketPeer::USER_ID, $user->getId(), $comparison);
+		} elseif ($user instanceof PropelCollection) {
+			if (null === $comparison) {
+				$comparison = Criteria::IN;
+			}
+			return $this
+				->addUsingAlias(BasketPeer::USER_ID, $user->toKeyValue('PrimaryKey', 'Id'), $comparison);
+		} else {
+			throw new PropelException('filterByUser() only accepts arguments of type User or PropelCollection');
+		}
+	}
+
+	/**
+	 * Adds a JOIN clause to the query using the User relation
+	 * 
+	 * @param     string $relationAlias optional alias for the relation
+	 * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
+	 *
+	 * @return    BasketQuery The current query, for fluid interface
+	 */
+	public function joinUser($relationAlias = null, $joinType = Criteria::INNER_JOIN)
+	{
+		$tableMap = $this->getTableMap();
+		$relationMap = $tableMap->getRelation('User');
+		
+		// create a ModelJoin object for this join
+		$join = new ModelJoin();
+		$join->setJoinType($joinType);
+		$join->setRelationMap($relationMap, $this->useAliasInSQL ? $this->getModelAlias() : null, $relationAlias);
+		if ($previousJoin = $this->getPreviousJoin()) {
+			$join->setPreviousJoin($previousJoin);
+		}
+		
+		// add the ModelJoin to the current object
+		if($relationAlias) {
+			$this->addAlias($relationAlias, $relationMap->getRightTable()->getName());
+			$this->addJoinObject($join, $relationAlias);
+		} else {
+			$this->addJoinObject($join, 'User');
+		}
+		
+		return $this;
+	}
+
+	/**
+	 * Use the User relation User object
+	 *
+	 * @see       useQuery()
+	 * 
+	 * @param     string $relationAlias optional alias for the relation,
+	 *                                   to be used as main alias in the secondary query
+	 * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
+	 *
+	 * @return    UserQuery A secondary query class using the current class as primary query
+	 */
+	public function useUserQuery($relationAlias = null, $joinType = Criteria::INNER_JOIN)
+	{
+		return $this
+			->joinUser($relationAlias, $joinType)
+			->useQuery($relationAlias ? $relationAlias : 'User', 'UserQuery');
+	}
+
+	/**
+	 * Filter the query by a related GoodInBasket object
+	 *
+	 * @param     GoodInBasket $goodInBasket  the related object to use as filter
+	 * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+	 *
+	 * @return    BasketQuery The current query, for fluid interface
+	 */
+	public function filterByGoodInBasket($goodInBasket, $comparison = null)
+	{
+		if ($goodInBasket instanceof GoodInBasket) {
+			return $this
+				->addUsingAlias(BasketPeer::ID, $goodInBasket->getBasketId(), $comparison);
+		} elseif ($goodInBasket instanceof PropelCollection) {
+			return $this
+				->useGoodInBasketQuery()
+					->filterByPrimaryKeys($goodInBasket->getPrimaryKeys())
+				->endUse();
+		} else {
+			throw new PropelException('filterByGoodInBasket() only accepts arguments of type GoodInBasket or PropelCollection');
+		}
+	}
+
+	/**
+	 * Adds a JOIN clause to the query using the GoodInBasket relation
+	 * 
+	 * @param     string $relationAlias optional alias for the relation
+	 * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
+	 *
+	 * @return    BasketQuery The current query, for fluid interface
+	 */
+	public function joinGoodInBasket($relationAlias = null, $joinType = Criteria::INNER_JOIN)
+	{
+		$tableMap = $this->getTableMap();
+		$relationMap = $tableMap->getRelation('GoodInBasket');
+		
+		// create a ModelJoin object for this join
+		$join = new ModelJoin();
+		$join->setJoinType($joinType);
+		$join->setRelationMap($relationMap, $this->useAliasInSQL ? $this->getModelAlias() : null, $relationAlias);
+		if ($previousJoin = $this->getPreviousJoin()) {
+			$join->setPreviousJoin($previousJoin);
+		}
+		
+		// add the ModelJoin to the current object
+		if($relationAlias) {
+			$this->addAlias($relationAlias, $relationMap->getRightTable()->getName());
+			$this->addJoinObject($join, $relationAlias);
+		} else {
+			$this->addJoinObject($join, 'GoodInBasket');
+		}
+		
+		return $this;
+	}
+
+	/**
+	 * Use the GoodInBasket relation GoodInBasket object
+	 *
+	 * @see       useQuery()
+	 * 
+	 * @param     string $relationAlias optional alias for the relation,
+	 *                                   to be used as main alias in the secondary query
+	 * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
+	 *
+	 * @return    GoodInBasketQuery A secondary query class using the current class as primary query
+	 */
+	public function useGoodInBasketQuery($relationAlias = null, $joinType = Criteria::INNER_JOIN)
+	{
+		return $this
+			->joinGoodInBasket($relationAlias, $joinType)
+			->useQuery($relationAlias ? $relationAlias : 'GoodInBasket', 'GoodInBasketQuery');
 	}
 
 	/**

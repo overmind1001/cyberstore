@@ -35,12 +35,12 @@ class GoodInBasketTableMap extends TableMap {
 		$this->setPhpName('GoodInBasket');
 		$this->setClassname('GoodInBasket');
 		$this->setPackage('cyberstore');
-		$this->setUseIdGenerator(false);
+		$this->setUseIdGenerator(true);
 		// columns
 		$this->addPrimaryKey('ID', 'Id', 'INTEGER', true, null, null);
 		$this->addColumn('COUNT', 'Count', 'INTEGER', true, null, null);
-		$this->addColumn('GOOD_ID', 'GoodId', 'INTEGER', true, null, null);
-		$this->addColumn('BASKET_ID', 'BasketId', 'INTEGER', true, null, null);
+		$this->addForeignKey('GOOD_ID', 'GoodId', 'INTEGER', 'goods', 'ID', true, null, null);
+		$this->addForeignKey('BASKET_ID', 'BasketId', 'INTEGER', 'basket', 'ID', true, null, null);
 		// validators
 	} // initialize()
 
@@ -49,6 +49,8 @@ class GoodInBasketTableMap extends TableMap {
 	 */
 	public function buildRelations()
 	{
+    $this->addRelation('Basket', 'Basket', RelationMap::MANY_TO_ONE, array('basket_id' => 'id', ), 'CASCADE', 'CASCADE');
+    $this->addRelation('Goods', 'Goods', RelationMap::MANY_TO_ONE, array('good_id' => 'id', ), 'CASCADE', 'CASCADE');
 	} // buildRelations()
 
 } // GoodInBasketTableMap

@@ -35,7 +35,7 @@ class GoodsTableMap extends TableMap {
 		$this->setPhpName('Goods');
 		$this->setClassname('Goods');
 		$this->setPackage('cyberstore');
-		$this->setUseIdGenerator(false);
+		$this->setUseIdGenerator(true);
 		// columns
 		$this->addPrimaryKey('ID', 'Id', 'INTEGER', true, null, null);
 		$this->addColumn('NAME', 'Name', 'LONGVARCHAR', true, null, null);
@@ -52,6 +52,9 @@ class GoodsTableMap extends TableMap {
 	 */
 	public function buildRelations()
 	{
+    $this->addRelation('Feedback', 'Feedback', RelationMap::ONE_TO_MANY, array('id' => 'good_id', ), 'CASCADE', 'CASCADE');
+    $this->addRelation('GoodInBasket', 'GoodInBasket', RelationMap::ONE_TO_MANY, array('id' => 'good_id', ), 'CASCADE', 'CASCADE');
+    $this->addRelation('GoodsInSale', 'GoodsInSale', RelationMap::ONE_TO_MANY, array('id' => 'good_id', ), 'CASCADE', 'CASCADE');
 	} // buildRelations()
 
 } // GoodsTableMap

@@ -55,6 +55,11 @@ abstract class BaseFeedback extends BaseObject  implements Persistent
 	protected $good_id;
 
 	/**
+	 * @var        Goods
+	 */
+	protected $aGoods;
+
+	/**
 	 * Flag to prevent endless save loop, if this object is referenced
 	 * by another object which falls in this transaction.
 	 * @var        boolean
@@ -245,6 +250,10 @@ abstract class BaseFeedback extends BaseObject  implements Persistent
 			$this->modifiedColumns[] = FeedbackPeer::GOOD_ID;
 		}
 
+		if ($this->aGoods !== null && $this->aGoods->getId() !== $v) {
+			$this->aGoods = null;
+		}
+
 		return $this;
 	} // setGoodId()
 
@@ -316,6 +325,9 @@ abstract class BaseFeedback extends BaseObject  implements Persistent
 	public function ensureConsistency()
 	{
 
+		if ($this->aGoods !== null && $this->good_id !== $this->aGoods->getId()) {
+			$this->aGoods = null;
+		}
 	} // ensureConsistency
 
 	/**
@@ -355,6 +367,7 @@ abstract class BaseFeedback extends BaseObject  implements Persistent
 
 		if ($deep) {  // also de-associate any related objects?
 
+			$this->aGoods = null;
 		} // if (deep)
 	}
 
@@ -465,16 +478,36 @@ abstract class BaseFeedback extends BaseObject  implements Persistent
 		if (!$this->alreadyInSave) {
 			$this->alreadyInSave = true;
 
+			// We call the save method on the following object(s) if they
+			// were passed to this object by their coresponding set
+			// method.  This object relates to these object(s) by a
+			// foreign key reference.
+
+			if ($this->aGoods !== null) {
+				if ($this->aGoods->isModified() || $this->aGoods->isNew()) {
+					$affectedRows += $this->aGoods->save($con);
+				}
+				$this->setGoods($this->aGoods);
+			}
+
+			if ($this->isNew() ) {
+				$this->modifiedColumns[] = FeedbackPeer::ID;
+			}
 
 			// If this object has been modified, then save it to the database.
 			if ($this->isModified()) {
 				if ($this->isNew()) {
 					$criteria = $this->buildCriteria();
+					if ($criteria->keyContainsValue(FeedbackPeer::ID) ) {
+						throw new PropelException('Cannot insert a value for auto-increment primary key ('.FeedbackPeer::ID.')');
+					}
+
 					$pk = BasePeer::doInsert($criteria, $con);
-					$affectedRows = 1;
+					$affectedRows += 1;
+					$this->setId($pk);  //[IMV] update autoincrement primary key
 					$this->setNew(false);
 				} else {
-					$affectedRows = FeedbackPeer::doUpdate($this, $con);
+					$affectedRows += FeedbackPeer::doUpdate($this, $con);
 				}
 
 				$this->resetModified(); // [HL] After being saved an object is no longer 'modified'
@@ -544,6 +577,18 @@ abstract class BaseFeedback extends BaseObject  implements Persistent
 			$retval = null;
 
 			$failureMap = array();
+
+
+			// We call the validate method on the following object(s) if they
+			// were passed to this object by their coresponding set
+			// method.  This object relates to these object(s) by a
+			// foreign key reference.
+
+			if ($this->aGoods !== null) {
+				if (!$this->aGoods->validate($columns)) {
+					$failureMap = array_merge($failureMap, $this->aGoods->getValidationFailures());
+				}
+			}
 
 
 			if (($retval = FeedbackPeer::doValidate($this, $columns)) !== true) {
@@ -616,10 +661,11 @@ abstract class BaseFeedback extends BaseObject  implements Persistent
 	 *                    Defaults to BasePeer::TYPE_PHPNAME.
 	 * @param     boolean $includeLazyLoadColumns (optional) Whether to include lazy loaded columns. Defaults to TRUE.
 	 * @param     array $alreadyDumpedObjects List of objects to skip to avoid recursion
+	 * @param     boolean $includeForeignObjects (optional) Whether to include hydrated related objects. Default to FALSE.
 	 *
 	 * @return    array an associative array containing the field names (as keys) and field values
 	 */
-	public function toArray($keyType = BasePeer::TYPE_PHPNAME, $includeLazyLoadColumns = true, $alreadyDumpedObjects = array())
+	public function toArray($keyType = BasePeer::TYPE_PHPNAME, $includeLazyLoadColumns = true, $alreadyDumpedObjects = array(), $includeForeignObjects = false)
 	{
 		if (isset($alreadyDumpedObjects['Feedback'][$this->getPrimaryKey()])) {
 			return '*RECURSION*';
@@ -633,6 +679,11 @@ abstract class BaseFeedback extends BaseObject  implements Persistent
 			$keys[3] => $this->getMark(),
 			$keys[4] => $this->getGoodId(),
 		);
+		if ($includeForeignObjects) {
+			if (null !== $this->aGoods) {
+				$result['Goods'] = $this->aGoods->toArray($keyType, $includeLazyLoadColumns,  $alreadyDumpedObjects, true);
+			}
+		}
 		return $result;
 	}
 
@@ -785,13 +836,13 @@ abstract class BaseFeedback extends BaseObject  implements Persistent
 	 */
 	public function copyInto($copyObj, $deepCopy = false, $makeNew = true)
 	{
-		$copyObj->setId($this->getId());
 		$copyObj->setText($this->getText());
 		$copyObj->setDate($this->getDate());
 		$copyObj->setMark($this->getMark());
 		$copyObj->setGoodId($this->getGoodId());
 		if ($makeNew) {
 			$copyObj->setNew(true);
+			$copyObj->setId(NULL); // this is a auto-increment column, so set to default value
 		}
 	}
 
@@ -834,6 +885,55 @@ abstract class BaseFeedback extends BaseObject  implements Persistent
 	}
 
 	/**
+	 * Declares an association between this object and a Goods object.
+	 *
+	 * @param      Goods $v
+	 * @return     Feedback The current object (for fluent API support)
+	 * @throws     PropelException
+	 */
+	public function setGoods(Goods $v = null)
+	{
+		if ($v === null) {
+			$this->setGoodId(NULL);
+		} else {
+			$this->setGoodId($v->getId());
+		}
+
+		$this->aGoods = $v;
+
+		// Add binding for other direction of this n:n relationship.
+		// If this object has already been added to the Goods object, it will not be re-added.
+		if ($v !== null) {
+			$v->addFeedback($this);
+		}
+
+		return $this;
+	}
+
+
+	/**
+	 * Get the associated Goods object
+	 *
+	 * @param      PropelPDO Optional Connection object.
+	 * @return     Goods The associated Goods object.
+	 * @throws     PropelException
+	 */
+	public function getGoods(PropelPDO $con = null)
+	{
+		if ($this->aGoods === null && ($this->good_id !== null)) {
+			$this->aGoods = GoodsQuery::create()->findPk($this->good_id, $con);
+			/* The following can be used additionally to
+				guarantee the related object contains a reference
+				to this object.  This level of coupling may, however, be
+				undesirable since it could result in an only partially populated collection
+				in the referenced object.
+				$this->aGoods->addFeedbacks($this);
+			 */
+		}
+		return $this->aGoods;
+	}
+
+	/**
 	 * Clears the current object and sets all attributes to their default values
 	 */
 	public function clear()
@@ -865,6 +965,7 @@ abstract class BaseFeedback extends BaseObject  implements Persistent
 		if ($deep) {
 		} // if ($deep)
 
+		$this->aGoods = null;
 	}
 
 	/**

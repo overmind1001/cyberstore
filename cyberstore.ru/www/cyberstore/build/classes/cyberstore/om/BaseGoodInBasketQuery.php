@@ -20,6 +20,14 @@
  * @method     GoodInBasketQuery rightJoin($relation) Adds a RIGHT JOIN clause to the query
  * @method     GoodInBasketQuery innerJoin($relation) Adds a INNER JOIN clause to the query
  *
+ * @method     GoodInBasketQuery leftJoinBasket($relationAlias = null) Adds a LEFT JOIN clause to the query using the Basket relation
+ * @method     GoodInBasketQuery rightJoinBasket($relationAlias = null) Adds a RIGHT JOIN clause to the query using the Basket relation
+ * @method     GoodInBasketQuery innerJoinBasket($relationAlias = null) Adds a INNER JOIN clause to the query using the Basket relation
+ *
+ * @method     GoodInBasketQuery leftJoinGoods($relationAlias = null) Adds a LEFT JOIN clause to the query using the Goods relation
+ * @method     GoodInBasketQuery rightJoinGoods($relationAlias = null) Adds a RIGHT JOIN clause to the query using the Goods relation
+ * @method     GoodInBasketQuery innerJoinGoods($relationAlias = null) Adds a INNER JOIN clause to the query using the Goods relation
+ *
  * @method     GoodInBasket findOne(PropelPDO $con = null) Return the first GoodInBasket matching the query
  * @method     GoodInBasket findOneOrCreate(PropelPDO $con = null) Return the first GoodInBasket matching the query, or a new GoodInBasket object populated from the query conditions when no match is found
  *
@@ -217,6 +225,8 @@ abstract class BaseGoodInBasketQuery extends ModelCriteria
 	 * $query->filterByGoodId(array('min' => 12)); // WHERE good_id > 12
 	 * </code>
 	 *
+	 * @see       filterByGoods()
+	 *
 	 * @param     mixed $goodId The value to use as filter.
 	 *              Use scalar values for equality.
 	 *              Use array values for in_array() equivalent.
@@ -257,6 +267,8 @@ abstract class BaseGoodInBasketQuery extends ModelCriteria
 	 * $query->filterByBasketId(array('min' => 12)); // WHERE basket_id > 12
 	 * </code>
 	 *
+	 * @see       filterByBasket()
+	 *
 	 * @param     mixed $basketId The value to use as filter.
 	 *              Use scalar values for equality.
 	 *              Use array values for in_array() equivalent.
@@ -285,6 +297,154 @@ abstract class BaseGoodInBasketQuery extends ModelCriteria
 			}
 		}
 		return $this->addUsingAlias(GoodInBasketPeer::BASKET_ID, $basketId, $comparison);
+	}
+
+	/**
+	 * Filter the query by a related Basket object
+	 *
+	 * @param     Basket|PropelCollection $basket The related object(s) to use as filter
+	 * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+	 *
+	 * @return    GoodInBasketQuery The current query, for fluid interface
+	 */
+	public function filterByBasket($basket, $comparison = null)
+	{
+		if ($basket instanceof Basket) {
+			return $this
+				->addUsingAlias(GoodInBasketPeer::BASKET_ID, $basket->getId(), $comparison);
+		} elseif ($basket instanceof PropelCollection) {
+			if (null === $comparison) {
+				$comparison = Criteria::IN;
+			}
+			return $this
+				->addUsingAlias(GoodInBasketPeer::BASKET_ID, $basket->toKeyValue('PrimaryKey', 'Id'), $comparison);
+		} else {
+			throw new PropelException('filterByBasket() only accepts arguments of type Basket or PropelCollection');
+		}
+	}
+
+	/**
+	 * Adds a JOIN clause to the query using the Basket relation
+	 * 
+	 * @param     string $relationAlias optional alias for the relation
+	 * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
+	 *
+	 * @return    GoodInBasketQuery The current query, for fluid interface
+	 */
+	public function joinBasket($relationAlias = null, $joinType = Criteria::INNER_JOIN)
+	{
+		$tableMap = $this->getTableMap();
+		$relationMap = $tableMap->getRelation('Basket');
+		
+		// create a ModelJoin object for this join
+		$join = new ModelJoin();
+		$join->setJoinType($joinType);
+		$join->setRelationMap($relationMap, $this->useAliasInSQL ? $this->getModelAlias() : null, $relationAlias);
+		if ($previousJoin = $this->getPreviousJoin()) {
+			$join->setPreviousJoin($previousJoin);
+		}
+		
+		// add the ModelJoin to the current object
+		if($relationAlias) {
+			$this->addAlias($relationAlias, $relationMap->getRightTable()->getName());
+			$this->addJoinObject($join, $relationAlias);
+		} else {
+			$this->addJoinObject($join, 'Basket');
+		}
+		
+		return $this;
+	}
+
+	/**
+	 * Use the Basket relation Basket object
+	 *
+	 * @see       useQuery()
+	 * 
+	 * @param     string $relationAlias optional alias for the relation,
+	 *                                   to be used as main alias in the secondary query
+	 * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
+	 *
+	 * @return    BasketQuery A secondary query class using the current class as primary query
+	 */
+	public function useBasketQuery($relationAlias = null, $joinType = Criteria::INNER_JOIN)
+	{
+		return $this
+			->joinBasket($relationAlias, $joinType)
+			->useQuery($relationAlias ? $relationAlias : 'Basket', 'BasketQuery');
+	}
+
+	/**
+	 * Filter the query by a related Goods object
+	 *
+	 * @param     Goods|PropelCollection $goods The related object(s) to use as filter
+	 * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+	 *
+	 * @return    GoodInBasketQuery The current query, for fluid interface
+	 */
+	public function filterByGoods($goods, $comparison = null)
+	{
+		if ($goods instanceof Goods) {
+			return $this
+				->addUsingAlias(GoodInBasketPeer::GOOD_ID, $goods->getId(), $comparison);
+		} elseif ($goods instanceof PropelCollection) {
+			if (null === $comparison) {
+				$comparison = Criteria::IN;
+			}
+			return $this
+				->addUsingAlias(GoodInBasketPeer::GOOD_ID, $goods->toKeyValue('PrimaryKey', 'Id'), $comparison);
+		} else {
+			throw new PropelException('filterByGoods() only accepts arguments of type Goods or PropelCollection');
+		}
+	}
+
+	/**
+	 * Adds a JOIN clause to the query using the Goods relation
+	 * 
+	 * @param     string $relationAlias optional alias for the relation
+	 * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
+	 *
+	 * @return    GoodInBasketQuery The current query, for fluid interface
+	 */
+	public function joinGoods($relationAlias = null, $joinType = Criteria::INNER_JOIN)
+	{
+		$tableMap = $this->getTableMap();
+		$relationMap = $tableMap->getRelation('Goods');
+		
+		// create a ModelJoin object for this join
+		$join = new ModelJoin();
+		$join->setJoinType($joinType);
+		$join->setRelationMap($relationMap, $this->useAliasInSQL ? $this->getModelAlias() : null, $relationAlias);
+		if ($previousJoin = $this->getPreviousJoin()) {
+			$join->setPreviousJoin($previousJoin);
+		}
+		
+		// add the ModelJoin to the current object
+		if($relationAlias) {
+			$this->addAlias($relationAlias, $relationMap->getRightTable()->getName());
+			$this->addJoinObject($join, $relationAlias);
+		} else {
+			$this->addJoinObject($join, 'Goods');
+		}
+		
+		return $this;
+	}
+
+	/**
+	 * Use the Goods relation Goods object
+	 *
+	 * @see       useQuery()
+	 * 
+	 * @param     string $relationAlias optional alias for the relation,
+	 *                                   to be used as main alias in the secondary query
+	 * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
+	 *
+	 * @return    GoodsQuery A secondary query class using the current class as primary query
+	 */
+	public function useGoodsQuery($relationAlias = null, $joinType = Criteria::INNER_JOIN)
+	{
+		return $this
+			->joinGoods($relationAlias, $joinType)
+			->useQuery($relationAlias ? $relationAlias : 'Goods', 'GoodsQuery');
 	}
 
 	/**

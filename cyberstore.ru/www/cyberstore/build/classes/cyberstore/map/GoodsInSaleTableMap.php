@@ -35,13 +35,13 @@ class GoodsInSaleTableMap extends TableMap {
 		$this->setPhpName('GoodsInSale');
 		$this->setClassname('GoodsInSale');
 		$this->setPackage('cyberstore');
-		$this->setUseIdGenerator(false);
+		$this->setUseIdGenerator(true);
 		// columns
 		$this->addPrimaryKey('ID', 'Id', 'INTEGER', true, null, null);
 		$this->addColumn('PRICE', 'Price', 'FLOAT', true, null, null);
 		$this->addColumn('COUNT', 'Count', 'INTEGER', true, null, null);
-		$this->addColumn('SALE_ID', 'SaleId', 'INTEGER', true, null, null);
-		$this->addColumn('GOOD_ID', 'GoodId', 'INTEGER', true, null, null);
+		$this->addForeignKey('SALE_ID', 'SaleId', 'INTEGER', 'sales', 'ID', true, null, null);
+		$this->addForeignKey('GOOD_ID', 'GoodId', 'INTEGER', 'goods', 'ID', true, null, null);
 		// validators
 	} // initialize()
 
@@ -50,6 +50,8 @@ class GoodsInSaleTableMap extends TableMap {
 	 */
 	public function buildRelations()
 	{
+    $this->addRelation('Goods', 'Goods', RelationMap::MANY_TO_ONE, array('good_id' => 'id', ), 'CASCADE', 'CASCADE');
+    $this->addRelation('Sales', 'Sales', RelationMap::MANY_TO_ONE, array('sale_id' => 'id', ), 'CASCADE', 'CASCADE');
 	} // buildRelations()
 
 } // GoodsInSaleTableMap
