@@ -1,4 +1,4 @@
-#summary One-sentence summary of this page.
+#summary Разные замечания по проекту (по кодингу, стилу и тд и тп)
 
 = Замечания =
 
