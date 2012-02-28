@@ -29,7 +29,7 @@ input {
 
 /* Header
 -----------------------------------------------------------------------------*/
-#header {
+#our_header {
 	height: 150px;
 	background: #FFE680;}
 #logo {
@@ -70,7 +70,7 @@ input {
 	width: 100%;
 	float: left;
 	overflow: hidden;}
-#content {
+#our_content {
 	padding: 0 0 0 270px;}
 /* Sidebar Left
 -----------------------------------------------------------------------------*/
@@ -82,7 +82,7 @@ input {
 	background: #B5E3FF;}
 /* Footer
 -----------------------------------------------------------------------------*/
-#footer {
+#our_footer {
 	margin: -100px auto 0;
 	min-width: 1000px;
 	height: 100px;

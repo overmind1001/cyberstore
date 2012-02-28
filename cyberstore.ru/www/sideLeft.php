@@ -8,7 +8,7 @@ function printSideLeft($activeLink) {
     }
     else
     {
-        print "	<li><a href=\"./../index.php\">Главная</a></li>";
+        print "	<li><a data-transition=\"none\" href=\"./../index.php\">Главная</a></li>";
     }
     print "	<li>Новости</li>";
     
@@ -18,7 +18,7 @@ function printSideLeft($activeLink) {
     }
     else 
     {
-        print "	<li><a href=\"/catalog/\">Каталог</a></li>";
+        print "	<li><a data-transition=\"none\" href=\"./catalog/index.php\">Каталог</a></li>";
     }
     
     print "    </ul>";
