@@ -1,0 +1,11 @@
+#summary One-sentence summary of this page.
+
+= Замечания =
+
+Написал конструкторы для классов, чтобы можно было просто сразу при создании заполнять их данными.
+Пример:
+
+<code language="php">
+$user = new User("Anton","passw");
+$user->save();
+</code>
