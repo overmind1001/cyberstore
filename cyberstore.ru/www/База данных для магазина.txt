@@ -1,9 +1,6 @@
 CREATE DATABASE  `db_cyberstore` ;
 USE `db_cyberstore`;
 
-SET SQL_MODE="NO_AUTO_VALUE_ON_ZERO";
-SET time_zone = "+00:00";
-
 CREATE TABLE IF NOT EXISTS `basket` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `user_id` int(11) NOT NULL,
@@ -13,9 +10,10 @@ CREATE TABLE IF NOT EXISTS `basket` (
 
 CREATE TABLE IF NOT EXISTS `catalog_div` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `name` text NOT NULL,
+  `name` varchar(32) NOT NULL,
   `parent_catalog_div_id` int(11) DEFAULT NULL,
   PRIMARY KEY (`id`),
+  UNIQUE KEY `name` (`name`),
   KEY `parent_catalog_constraint` (`parent_catalog_div_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=cp1251 COMMENT='Разделы каталога. Каталог иерархический' AUTO_INCREMENT=1 ;
 
@@ -71,10 +69,11 @@ CREATE TABLE IF NOT EXISTS `sales` (
 
 CREATE TABLE IF NOT EXISTS `user` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `login` text NOT NULL,
-  `password` text NOT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=cp1251 COMMENT='Пользователи' AUTO_INCREMENT=1 ;
+  `login` varchar(32) NOT NULL,
+  `password` varchar(32) NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `login` (`login`)
+) ENGINE=InnoDB  DEFAULT CHARSET=cp1251 COMMENT='Пользователи' AUTO_INCREMENT=5 ;
 
 
 ALTER TABLE `basket`
@@ -87,13 +86,12 @@ ALTER TABLE `feedback`
   ADD CONSTRAINT `good_id_constraint` FOREIGN KEY (`good_id`) REFERENCES `goods` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 ALTER TABLE `goods_in_sale`
-  ADD CONSTRAINT `sale_constraint` FOREIGN KEY (`sale_id`) REFERENCES `sales` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  ADD CONSTRAINT `good1_constraint` FOREIGN KEY (`good_id`) REFERENCES `goods` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+  ADD CONSTRAINT `good1_constraint` FOREIGN KEY (`good_id`) REFERENCES `goods` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `sale_constraint` FOREIGN KEY (`sale_id`) REFERENCES `sales` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 ALTER TABLE `good_in_basket`
-  ADD CONSTRAINT `good_constraint` FOREIGN KEY (`good_id`) REFERENCES `goods` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  ADD CONSTRAINT `basket_constraint` FOREIGN KEY (`basket_id`) REFERENCES `basket` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+  ADD CONSTRAINT `basket_constraint` FOREIGN KEY (`basket_id`) REFERENCES `basket` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `good_constraint` FOREIGN KEY (`good_id`) REFERENCES `goods` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 ALTER TABLE `sales`
   ADD CONSTRAINT `user_id1_constraint` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
-

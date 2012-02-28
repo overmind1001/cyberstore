@@ -31,9 +31,10 @@ DROP TABLE IF EXISTS `catalog_div`;
 CREATE TABLE `catalog_div`
 (
 	`id` INTEGER NOT NULL AUTO_INCREMENT,
-	`name` TEXT NOT NULL,
+	`name` VARCHAR(32) NOT NULL,
 	`parent_catalog_div_id` INTEGER,
 	PRIMARY KEY (`id`),
+	UNIQUE INDEX `name` (`name`),
 	INDEX `parent_catalog_constraint` (`parent_catalog_div_id`),
 	CONSTRAINT `parent_catalog_constraint`
 		FOREIGN KEY (`parent_catalog_div_id`)
@@ -166,9 +167,10 @@ DROP TABLE IF EXISTS `user`;
 CREATE TABLE `user`
 (
 	`id` INTEGER NOT NULL AUTO_INCREMENT,
-	`login` TEXT NOT NULL,
-	`password` TEXT NOT NULL,
-	PRIMARY KEY (`id`)
+	`login` VARCHAR(32) NOT NULL,
+	`password` VARCHAR(32) NOT NULL,
+	PRIMARY KEY (`id`),
+	UNIQUE INDEX `login` (`login`)
 ) ENGINE=MyISAM;
 
 # This restores the fkey checks, after having unset them earlier

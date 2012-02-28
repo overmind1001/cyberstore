@@ -15,4 +15,10 @@
  */
 class User extends BaseUser {
 
+	public function __construct($login, $password) {
+		parent::__construct();
+		$this->setLogin($login);
+		$this->setPassword($password);
+	}
+
 } // User

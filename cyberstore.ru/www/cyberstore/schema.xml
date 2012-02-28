@@ -13,11 +13,14 @@
   </table>
   <table name="catalog_div" phpName="CatalogDiv">
     <column name="id" phpName="Id" type="INTEGER" primaryKey="true" autoIncrement="true" required="true"/>
-    <column name="name" phpName="Name" type="LONGVARCHAR" required="true"/>
+    <column name="name" phpName="Name" type="VARCHAR" size="32" required="true"/>
     <column name="parent_catalog_div_id" phpName="ParentCatalogDivId" type="INTEGER" required="false"/>
     <foreign-key foreignTable="catalog_div" name="parent_catalog_constraint" onDelete="SET NULL" onUpdate="SET NULL">
       <reference local="parent_catalog_div_id" foreign="id"/>
     </foreign-key>
+    <unique name="name">
+      <unique-column name="name"/>
+    </unique>
     <index name="parent_catalog_constraint">
       <index-column name="parent_catalog_div_id"/>
     </index>
@@ -94,7 +97,10 @@
   </table>
   <table name="user" phpName="User">
     <column name="id" phpName="Id" type="INTEGER" primaryKey="true" autoIncrement="true" required="true"/>
-    <column name="login" phpName="Login" type="LONGVARCHAR" required="true"/>
-    <column name="password" phpName="Password" type="LONGVARCHAR" required="true"/>
+    <column name="login" phpName="Login" type="VARCHAR" size="32" required="true"/>
+    <column name="password" phpName="Password" type="VARCHAR" size="32" required="true"/>
+    <unique name="login">
+      <unique-column name="login"/>
+    </unique>
   </table>
 </database>

@@ -15,4 +15,16 @@
  */
 class Goods extends BaseGoods {
 
+	public function __construct($name, $description, $priceCurrent,
+							$count, $pictureId, $catalogId) 
+	{
+		parent::__construct();
+		$this->setName($name);
+		$this->setDescription($description);
+		$this->setPriceCurrent($priceCurrent);
+		$this->setCount($count);
+		$this->setPictureId($pictureId);
+		$this->setCatalogId($catalogId);
+	}
+
 } // Goods
