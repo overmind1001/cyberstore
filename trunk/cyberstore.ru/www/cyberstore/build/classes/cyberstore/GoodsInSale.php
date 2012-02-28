@@ -15,4 +15,13 @@
  */
 class GoodsInSale extends BaseGoodsInSale {
 
+	public function __construct($price, $count, $saleId, $goodId)
+	{
+		parent::__construct();
+		$this->setPrice($price);
+		$this->setCount($count);
+		$this->setSaleId($saleId);
+		$this->setGoodId($goodId);
+	}
+	
 } // GoodsInSale

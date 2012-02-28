@@ -15,4 +15,10 @@
  */
 class Sales extends BaseSales {
 
+	public function __construct($date, $userId) {
+		parent::__construct();
+		$this->setDate($date);
+		$this->setUserId($userId);		
+	}
+	
 } // Sales

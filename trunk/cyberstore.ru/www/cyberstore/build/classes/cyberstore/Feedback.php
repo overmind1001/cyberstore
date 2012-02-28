@@ -15,4 +15,13 @@
  */
 class Feedback extends BaseFeedback {
 
+	public function __construct($text, $date, $mark, $goodId)
+	{
+		parent::__construct();
+		$this->setText($text);
+		$this->setDate($date);
+		$this->setMark($mark);
+		$this->setGoodId($goodId);
+	}
+
 } // Feedback

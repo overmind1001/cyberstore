@@ -13,17 +13,9 @@ echo "ololo3";
 set_include_path("./cyberstore/build/classes" . PATH_SEPARATOR . get_include_path());
 echo "ololo4";
 
-$author = new User();
+$author = new User("Anton","passw");
 echo "ololo5";
-$author->setLogin("sdf");
-echo "ololo6";
-$author->setPassword("sdfsdf");
-echo "ololo7";
-$author->setSessionId(10);
-echo "ololo8";
-$author->setId(1);
-echo "ololo9";
 $author->save();
-echo "ololo10";
+echo "ololo6";
 
 ?>

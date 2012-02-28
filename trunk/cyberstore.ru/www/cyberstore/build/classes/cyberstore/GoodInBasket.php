@@ -15,4 +15,12 @@
  */
 class GoodInBasket extends BaseGoodInBasket {
 
+	public function __construct($count, $goodId, $basketId) 
+	{
+		parent::__construct();
+		$this->setCount($count);
+		$this->setGoodId($goodId);
+		$this->setBasketId($basketId);		
+	}
+
 } // GoodInBasket
