@@ -11,7 +11,7 @@
 
 <div data-role="page">
 
-	<div data-role="header" data-position="fixed" data-theme="c">
+	<div data-role="header" data-theme="c">
 		<table width="100%">
 			<tr>
 				<td rowspan="2" style="width:30%;"><img src="logo.gif"></td>
@@ -34,7 +34,11 @@
 		</table>
 	</div><!-- /header -->
 
-	<div data-role="content">	
+	<div data-role="content">
+<?
+	for ($i=0; $i < 100; $i++)
+	echo "<p>Hello world</p>";
+?>
 		<p>Hello world</p>		
 	</div><!-- /content -->
 	

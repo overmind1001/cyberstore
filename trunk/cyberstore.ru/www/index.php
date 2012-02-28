@@ -3,9 +3,14 @@
 <head>
 	<title>CyberStore - все для киборгов</title>
 	<link rel="stylesheet" type="text/css" href="style.css">
-	
+		<style>
+			#fullpage 
+			{
+				max-width:800px;
+			}
+		</style>
 </head>
-<body>
+<body id="fullpage">
 	<div id="wrapper">
 		<div id="our_header">
                         <?php include "logo.php";?>
