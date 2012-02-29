@@ -16,6 +16,9 @@
           <dsn>mysql:host=localhost;dbname=db_cyberstore</dsn>
           <user>root</user>
           <password></password>
+          <settings>
+			  <setting id="charset">utf8</setting>
+          </settings>
         </connection>
       </datasource>
     </datasources>
