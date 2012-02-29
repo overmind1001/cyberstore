@@ -12,6 +12,13 @@ $conf = array (
         'dsn' => 'mysql:host=localhost;dbname=db_cyberstore',
         'user' => 'root',
         'password' => '',
+        'settings' => 
+        array (
+          'charset' => 
+          array (
+            'value' => 'utf8',
+          ),
+        ),
       ),
     ),
     'default' => 'cyberstore',

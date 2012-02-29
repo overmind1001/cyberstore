@@ -37,6 +37,19 @@
 		}
 		</style>
 </head> 
+
+<!--
+<?
+require_once './../vendor/propel/runtime/lib/Propel.php';
+// Initialize Propel with the runtime configuration
+Propel::init("./../cyberstore/build/conf/cyberstore-conf.php");
+
+// Add the generated 'classes' directory to the include path
+set_include_path("./../cyberstore/build/classes" . PATH_SEPARATOR . get_include_path());
+?>
+-->
+	
+	
 <body> 
 
 <div id="wrapper">
@@ -69,41 +82,8 @@
 						<table border="0px">
 							<tr>
 								<td style="width:10%; vertical-align:top;" rowspan="3">
-									<div data-role="collapsible-set" data-theme="c" data-content-theme="d">
-										<div data-role="collapsible" data-collapsed="false">
-										<h3>Категория 1</h3>
-										<ul data-role="listview">
-											<li data-theme="b"><a href="#">Подкатегория 1</a></li>
-											<li><a href="#">Подкатегория 2</a></li>
-											<li><a href="#">Подкатегория 3</a></li>
-											<li><a href="#">Подкатегория 4</a></li>
-											<li><a href="#">Подкатегория 5</a></li>
-										</ul>
-										</div>
-										
-										<div data-role="collapsible">
-										<h3>Категория 2</h3>
-										<ul data-role="listview">
-											<li><a href="#">Подкатегория 1</a></li>
-											<li><a href="#">Подкатегория 2</a></li>
-											<li><a href="#">Подкатегория 3</a></li>
-											<li><a href="#">Подкатегория 4</a></li>
-											<li><a href="#">Подкатегория 5</a></li>
-										</ul>
-										</div>
-										
-										<div data-role="collapsible">
-										<h3>Категория 3</h3>
-										<ul data-role="listview">
-											<li><a href="#">Подкатегория 1</a></li>
-											<li><a href="#">Подкатегория 2</a></li>
-											<li><a href="#">Подкатегория 3</a></li>
-											<li><a href="#">Подкатегория 4</a></li>
-											<li><a href="#">Подкатегория 5</a></li>
-										</ul>
-										</div>
-
-									</div>
+									<!-- Категоризатор -->
+									<?include 'loadcategories.php';?>									
 								</td>
 								<td width="13%" align="center">
 									<table>
@@ -123,6 +103,7 @@
 									</table>
 								</td>
 								<td align="center">
+									<!-- Страницы-->
 									<div data-role="controlgroup" data-type="horizontal" class="localnav">
 										<a href="#" data-role="button" data-inline="true" class="ui-btn-active">1</a>
 										<a href="#" data-role="button" data-inline="true">2</a>
