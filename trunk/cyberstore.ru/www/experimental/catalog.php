@@ -41,10 +41,7 @@
 <!--
 <?
 require_once './../vendor/propel/runtime/lib/Propel.php';
-// Initialize Propel with the runtime configuration
 Propel::init("./../cyberstore/build/conf/cyberstore-conf.php");
-
-// Add the generated 'classes' directory to the include path
 set_include_path("./../cyberstore/build/classes" . PATH_SEPARATOR . get_include_path());
 ?>
 -->
@@ -85,7 +82,7 @@ set_include_path("./../cyberstore/build/classes" . PATH_SEPARATOR . get_include_
 									<!-- Категоризатор -->
 									<?include 'loadcategories.php';?>									
 								</td>
-								<td width="13%" align="center">
+								<td width="110px" align="left">
 									<table>
 										<tr>
 											<td>
@@ -106,14 +103,13 @@ set_include_path("./../cyberstore/build/classes" . PATH_SEPARATOR . get_include_
 									<!-- Страницы-->
 									<div data-role="controlgroup" data-type="horizontal" class="localnav">
 										<a href="#" data-role="button" data-inline="true" class="ui-btn-active">1</a>
-										<a href="#" data-role="button" data-inline="true">2</a>
-										<a href="#" data-role="button" data-inline="true">3</a>
 									</div>
 								</td>
 							</tr>
 							<tr>
 								<td style="padding-left:10px; padding-top:6px;" colspan="2">
-									<div class="ui-grid-b">
+									<a href="#" data-role="button" data-icon="info">Выберите категорию, чтобы начать просмотр каталога.</a>
+									<!--div class="ui-grid-b">
 										<div class="ui-block-a">
 											<div class="ui-bar ui-bar-c" style="height:200px">
 												Товар 1
@@ -154,8 +150,6 @@ set_include_path("./../cyberstore/build/classes" . PATH_SEPARATOR . get_include_
 									<div style="text-align:center;"> 
 										<div data-role="controlgroup" data-type="horizontal" class="localnav">
 											<a href="#" data-role="button" data-inline="true" class="ui-btn-active">1</a>
-											<a href="#" data-role="button" data-inline="true">2</a>
-											<a href="#" data-role="button" data-inline="true">3</a>
 										</div>
 									</div></td>
 							</tr>
