@@ -100,10 +100,12 @@
                             set_include_path("../cyberstore/build/classes" . PATH_SEPARATOR . get_include_path());
                             
                             $users=UserQuery::create()->find();
-                        
+                  
+                            
                             
                             foreach ($users as $user)   {
-                                echo "<option>Пользователь $user->getLogin()</option>";
+                                $login=$user->getLogin();
+                                echo "<option>$login</option>";
                             }
                             
                             //for($i=0;$i<100;$i++)
