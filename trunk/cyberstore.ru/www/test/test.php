@@ -24,9 +24,17 @@ set_include_path("../cyberstore/build/classes" . PATH_SEPARATOR . get_include_pa
 
 $i=9;
 $user = new User();
-$user->setLogin("alex$i");
-$user->setPassword("alex$i");
+//$user->setLogin("alex$i");
+//$user->setPassword("alex$i");
 //$user->setId($i);
 $user->save();
+
+//function makecoffee($type = "капуччино")
+//{
+//    return "Готовим чашку $type.\n";
+//}
+//echo makecoffee();
+//echo makecoffee(null);
+//echo makecoffee("эспрессо");
 
 ?>
