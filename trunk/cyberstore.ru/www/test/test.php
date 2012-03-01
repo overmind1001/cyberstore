@@ -22,11 +22,11 @@ Propel::init("../cyberstore/build/conf/cyberstore-conf.php");
 // Add the generated 'classes' directory to the include path
 set_include_path("../cyberstore/build/classes" . PATH_SEPARATOR . get_include_path());
 
-$i=8;
+$i=9;
 $user = new User();
 $user->setLogin("alex$i");
 $user->setPassword("alex$i");
-$user->setId($i);
+//$user->setId($i);
 $user->save();
 
 ?>
