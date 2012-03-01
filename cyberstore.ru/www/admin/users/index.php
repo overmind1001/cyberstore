@@ -1,4 +1,4 @@
-<!DOCTYPE html> 
+<!--<!DOCTYPE html> 
 <html> 
     <head> 
 	<title>CyberStore - всё для киборгов</title> 
@@ -19,7 +19,7 @@
                     height: 100%;}
             p {
                     margin: 0 0 18px}
-            #wrapper {
+            #wrapper {     
                     width: 1000px;
                     margin: 0 auto;
                     min-height: 100%;
@@ -83,30 +83,36 @@
             })
         </script>
     </head> 
-    <body>
-    
+    <body style="halign:center;">
+
 <div id="wrapper">
     <div id="header" data-role="header">
         <h1>Пользователи</h1>
-    </div><!-- /header -->
+    </div> /header 
     <div id="content" data-role="content">	
-        <form>
+        <center>-->
+
+<?php
+    include '../adminHead.php';
+    $name="Пользователи";
+    generateHead($name, $name)
+?>
+
+    <form method="POST" action="selectAED.php">
             <table>
                 <tr><!--Лист-->
-                    <select name="listUsers" size="20" required  style="width: 500px;">
+                    <select id="listUsers" name="login" size="20" required  style="width: 500px;">
                         <?php
-                            include_once '../initPropel.php';
-                            Propel::init("../cyberstore/build/conf/cyberstore-conf.php");
-                            set_include_path("../cyberstore/build/classes" . PATH_SEPARATOR . get_include_path());
+                            include_once '../../initPropel.php';
+                            Propel::init("../../cyberstore/build/conf/cyberstore-conf.php");
+                            set_include_path("../../cyberstore/build/classes" . PATH_SEPARATOR . get_include_path());
                             
                             $users=UserQuery::create()->find();
-                  
-                            
-                            
                             foreach ($users as $user)   {
                                 $login=$user->getLogin();
                                 echo "<option>$login</option>";
                             }
+                            
                             
                             //for($i=0;$i<100;$i++)
                             //{
@@ -116,26 +122,34 @@
                     </select>
                 </tr>
 
-                <tr><!--Кнопки-->
+                <tr style="height: 100px;"><!--Кнопки-->
                     <td>
-                        <input name="btnAdd" type="button" value="Добавить пользователя"  onClick="window.location = 'usersAdd.php';" />
+                        <input name="formAddUser" type="submit" value="Добавить пользователя" />
                     </td>
                     <td>
-                        <input name="btnEdit" type="button" value="Редактировать пользователя" onClick="window.location = 'usersAdd.php';" />
+                        <input name="formEditUser" type="submit" value="Редактировать пользователя" />
                     </td>
                     <td>
-                        <input name="btnDelete" type="button" value="Удалить пользователя" />
+                        <input name="formDeleteUser" type="submit" value="Удалить пользователя" />
                     </td>
                 </tr>
             </table>
         </form>
+        
         <div>
-            <a data-role="button" href="adminMain.php">В админку</a>
+            <a data-role="button" href="../adminMain.php">В админку</a>
         </div>	
-    </div><!-- /content -->
-</div><!-- #wrapper -->
+
+<?php
+    include '../adminFoot.php';
+?>
+<!--        </center>
+    </div> /content 
+</div> #wrapper 
+
 <div id="footer">
     <h1>Админка</h1>
-</div><!-- #footer -->
+</div> #footer 
+
     </body>
-</html>
+</html>-->
