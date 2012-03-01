@@ -67,8 +67,21 @@
             {
                 color: yellow;
             }
+            
+            .ui-button
+            {
+                background-color: white;
+            }
+            .ui-state-hover
+            {
+                background-color: black;
+            }
         </style>
-        
+        <script>
+            $(function(){
+                $("input:button").button();
+            })
+        </script>
     </head> 
     <body>
     
@@ -82,17 +95,28 @@
                 <tr><!--Лист-->
                     <select name="listUsers" size="20" required  style="width: 500px;">
                         <?php
-                            for($i=0;$i<100;$i++)
-                            {
-                                echo "<option>Пользователь $i</option>";
+                            include_once '../initPropel.php';
+                            Propel::init("../cyberstore/build/conf/cyberstore-conf.php");
+                            set_include_path("../cyberstore/build/classes" . PATH_SEPARATOR . get_include_path());
+                            
+                            $users=UserQuery::create()->find();
+                        
+                            
+                            foreach ($users as $user)   {
+                                echo "<option>Пользователь $user->getLogin()</option>";
                             }
+                            
+                            //for($i=0;$i<100;$i++)
+                            //{
+                            //    echo "<option>Пользователь $i</option>";
+                            //}
                         ?>
                     </select>
                 </tr>
 
                 <tr><!--Кнопки-->
                     <td>
-                        <input name="btnAdd" type="button" value="Добавить пользователя" class="ui-button ui-button-text-only ui-widget ui-state-default ui-corner-all" onClick="window.location = 'usersAdd.php';" />
+                        <input name="btnAdd" type="button" value="Добавить пользователя"  onClick="window.location = 'usersAdd.php';" />
                     </td>
                     <td>
                         <input name="btnEdit" type="button" value="Редактировать пользователя" onClick="window.location = 'usersAdd.php';" />
@@ -107,23 +131,9 @@
             <a data-role="button" href="adminMain.php">В админку</a>
         </div>	
     </div><!-- /content -->
-         
-
 </div><!-- #wrapper -->
 <div id="footer">
     <h1>Админка</h1>
 </div><!-- #footer -->
-
-            
-            
-            
-            
-        
-        
-        
-       <script language="JavaSript">
-            $('select').selectmenu();
-            alert("ds");
-        </script> 
     </body>
 </html>
