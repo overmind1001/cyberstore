@@ -1,3 +1,13 @@
+
+<?php
+    if(isset($_POST['login']))  {
+                $login = $_POST['login'];
+    }
+    else    {
+        echo "Ошибка! Пользователь для редактирования не выбран!";
+        return;
+    }
+?>
 <?php
     include '../adminHead.php';
     $name="Изменить пользователя";
@@ -7,9 +17,6 @@
             <table>
                 <input hidden type="text" name="oldLogin" 
                        <?php
-                            if(isset($_POST['login']))  {
-                                        $login = $_POST['login'];
-                            }
                             echo "value='$login'";
                        ?>
                        />
