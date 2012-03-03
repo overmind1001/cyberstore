@@ -37,7 +37,7 @@
                     color: yellow;}
             #header h1  {
                     text-align: center;
-                    padding-top: 15px;
+                    padding-top: 0px;
                     color: white;
                     font-family: Arial;}
             /* Middle
@@ -70,7 +70,7 @@
                 $("ul.treeview").treeview({
                     animated: "slow",
                     persist: "location",
-                    collapsed: true,
+                    collapsed: false,
                     unique: true
                 });
             })
@@ -90,62 +90,50 @@
 <form>
     <table>
         <tr><!--Лист-->
-            
-        <ul class="treeview">
-            <li><span class="folder">root</span>
-                <ul>
-                    <?php
-                        include_once '../../initPropel.php';
-                        Propel::init("../../cyberstore/build/conf/cyberstore-conf.php");
-                        set_include_path("../../cyberstore/build/classes" . PATH_SEPARATOR . get_include_path());
-
-                        $divs=CatalogDivQuery::create()->findByParentCatalogDivId(NULL);
-
-                    ?>
-                </ul>
-            </li>
-        </ul>  
-        <ul class="treeview">
-		
-		<li class="closed"><span class="folder">Folder 2</span>
-			<ul>
-				<li><span class="folder">Subfolder 2.1</span>
-					<ul id="folder21">
-						<li><span class="file">File 2.1.1</span></li>
-						<li><span class="file">File 2.1.2</span></li>
-						<li><span class="file">File 2.1.3</span></li>
-						<li><span class="file">File 2.1.4</span></li>
-						<li><span class="file">File 2.1.5</span></li>
-						<li><span class="file">File 2.1.6</span></li>
-						<li><span class="file">File 2.1.7</span></li>
-					</ul>
-				</li>
-				<li><span class="file">File 2.2</span></li>
-			</ul>
-		</li>
-		
-	</ul>
-        
-            
-            
-            
+            <ul class="treeview">
+                <?php
+                    function printAddEditDel($div_id) {
+                        echo "<span style='margin: 3px 3px 3px 20px; font-size:0.7em;'><a href='formAddDiv.php?div_id=$div_id'>Add</a></span>";
+                        echo "<span style='margin: 3px; font-size:0.7em;'><a href='formEditDiv.php?div_id=$div_id'>Edit</a></span>";
+                        echo "<span style='margin: 3px; font-size:0.7em;'><a href='deleteDiv.php?div_id=$div_id'>Delete</a></span>";             
+                    }
+                    function printElement($div) {
+                        //$div1 = new CatalogDiv();
+                        if($div->countCatalogDivsRelatedById()==0) {//нет детей
+                            echo "<li><span class=\"file\">";
+                            echo $div->getName();printAddEditDel($div->getId());
+                            echo "</span></li>";
+                        }   
+                        else    {//есть дети
+                            echo "<li><span class=\"folder\" style='cursor:pointer;'>";
+                            echo $div->getName();printAddEditDel($div->getId());
+                            echo "</span>";
+                            $subdivs=$div->getCatalogDivsRelatedById();
+                            echo "<ul>";
+                            foreach ($subdivs as $subdiv) {
+                                printElement($subdiv);
+                            }	
+                            echo "</ul>";
+                            echo "</li>";
+                        }
+                    }
+                        
+                    include_once '../../initPropel.php';
+                    Propel::init("../../cyberstore/build/conf/cyberstore-conf.php");
+                    set_include_path("../../cyberstore/build/classes" . PATH_SEPARATOR . get_include_path());
+                    //получаем разделы первого уровня
+                    $divs=CatalogDivQuery::create()->findByParentCatalogDivId(NULL);
+                    $root=$divs[0];
+                    printElement($root);
+                ?>
+            </ul>   
         </tr>
         
-        <tr><!--Кнопки-->
-            <td>
-                <input name="btnAdd" type="button" value="Добавить раздел" onClick="window.location = 'div_partAdd.php';"/>
-            </td>
-            <td>
-                <input name="btnEdit" type="button" value="Редактировать раздел" onClick="window.location = 'div_partAdd.php';" />
-            </td>
-            <td>
-                <input name="btnDelete" type="button" value="Удалить раздел" />
-            </td>
-        </tr>
+        
     </table>
 </form>
 <div>
-    <a href="adminMain.php">В админку</a>
+    <a href="../adminMain.php">В админку</a>
 </div>
 
 <?php

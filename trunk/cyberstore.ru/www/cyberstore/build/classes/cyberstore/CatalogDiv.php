@@ -15,7 +15,7 @@
  */
 class CatalogDiv extends BaseCatalogDiv {
 
-	public function __construct($name, $parentDivId)
+	public function __construct($name="", $parentDivId=NULL)
 	{
 		parent::__construct();
 		$this->setName($name);
