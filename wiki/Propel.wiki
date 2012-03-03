@@ -1,0 +1,14 @@
+#здесь описаны примеры различных действий с ORM Propel.
+
+= Добавление объекта в базу=
+
+$user = new User($login,$password);
+$user->save();
+//or
+$user = new User();
+$user->seLogin("login");
+$user->setPassword("password");
+$user->save();
+
+
+= Поиск объекта в базе =
