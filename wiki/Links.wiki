@@ -11,4 +11,6 @@ http://anton.shevchuk.name/wp-demo/mootools-for-beginners/animated-hover1.html -
 
 http://anton.shevchuk.name/javascript/mootools-for-beginners/ - Mootools для начинающих. Стоит посмотреть.
 
+http://ruseller.com/lessons/les278/example/demo.html
+
 http://jquery.com/
