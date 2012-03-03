@@ -14,3 +14,5 @@ http://anton.shevchuk.name/javascript/mootools-for-beginners/ - Mootools для 
 http://ruseller.com/lessons/les278/example/demo.html
 
 http://jquery.com/
+
+http://ruseller.com/ - хороший сайт про все.
