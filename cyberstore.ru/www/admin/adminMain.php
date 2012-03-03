@@ -10,7 +10,7 @@
         <a href="goodsMain.php">Товары</a>
     </li>
     <li  style="margin:20px;">
-        <a href="div_partMain.php">Разделы каталога</a>
+        <a href="divs/">Разделы каталога</a>
     </li>
     <li style="margin:20px;"> 
         <a href="users/">Пользователи</a>
