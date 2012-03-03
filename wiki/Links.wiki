@@ -1,8 +1,9 @@
 #summary Полезные ссылки.
 
-= Ссылки по JavaScript=
+= Ссылки по JavaScript =
 
 http://ruseller.com/lessons/les288/example/index.html - Галерея для картинок, которая клево всплывает.
+
 http://ruseller.com/lessons.php?rub=33&id=288
 
 ----
