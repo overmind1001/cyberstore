@@ -2,6 +2,7 @@
 
 = Добавление объекта в базу=
 
+<code landuage="php">
 $user = new User($login,$password);
 $user->save();
 //or
@@ -9,6 +10,7 @@ $user = new User();
 $user->seLogin("login");
 $user->setPassword("password");
 $user->save();
+</code>
 
 
 = Поиск объекта в базе =
