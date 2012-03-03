@@ -1,4 +1,4 @@
-#Немного об установке и настройке Propel
+#summary Немного об установке и настройке Propel, а также Denwer, XDebug...
 
 = Установка =
 
@@ -55,8 +55,6 @@ xdebug.remote_port=9000
 Открыть консоль в папке с файлами schema.xml,build.properties,...
 Запустить propel-gen
 В файле pging.bat поменять путь к php.exe
-
-
 
 
 
