@@ -56,7 +56,7 @@ echo "<!DOCTYPE html>
             -----------------------------------------------------------------------------*/
             #footer {
                     width: 1000px;
-                    margin: -50px auto 0;
+                    margin: -70px auto 0;
                     height: 50px;
                     background: black;
                     position: relative;
