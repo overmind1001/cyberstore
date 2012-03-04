@@ -1,3 +1,4 @@
+name description price count catalog_name picture
 <?php
     $error=false;
     if(!isset($_POST['login'])) {
