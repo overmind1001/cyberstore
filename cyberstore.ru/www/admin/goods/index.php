@@ -1,3 +1,9 @@
+<?php
+    include '../adminHead.php';
+    $name="Товары";
+    generateHead($name, $name)
+?>
+
 <form >
     <table>
         <tr><!--Заголовок-->

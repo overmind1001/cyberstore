@@ -15,6 +15,10 @@
     $old_div_name=$_POST['old_div_name'];
     $div_name=$_POST['div_name'];
     
+    if($old_div_name == "root") {
+        echo "Нельзя изменить root!";
+        return;
+    }
     
     include_once '../../initPropel.php';
     Propel::init("../../cyberstore/build/conf/cyberstore-conf.php");

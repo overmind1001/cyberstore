@@ -7,7 +7,7 @@
 
 <ul style="padding-top:30px;font-size: 20pt;">
     <li style="margin:20px;">
-        <a href="goodsMain.php">Товары</a>
+        <a href="goods/">Товары</a>
     </li>
     <li  style="margin:20px;">
         <a href="divs/">Разделы каталога</a>
