@@ -37,7 +37,7 @@
         </form>
         
         <div>
-            <a data-role="button" href="../adminMain.php">В админку</a>
+            <a data-role="button" href="../index.php">В админку</a>
         </div>	
 
 <?php

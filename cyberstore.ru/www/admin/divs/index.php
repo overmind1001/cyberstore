@@ -38,18 +38,19 @@
             #header h1  {
                     text-align: center;
                     padding-top: 0px;
+                   
                     color: white;
                     font-family: Arial;}
             /* Middle
             -----------------------------------------------------------------------------*/
             #content {
-                    margin: 20px;
+                    /*margin: 20px;*/
                     padding: 0 0 40px;}
             /* Footer
             -----------------------------------------------------------------------------*/
             #footer {
                     width: 1000px;
-                    margin: -50px auto 0;
+                    margin: -70px auto 0;
                     height: 50px;
                     background: black;
                     position: relative;
@@ -133,7 +134,7 @@
     </table>
 </form>
 <div>
-    <a href="../adminMain.php">В админку</a>
+    <a href="../index.php">В админку</a>
 </div>
 
 <?php
