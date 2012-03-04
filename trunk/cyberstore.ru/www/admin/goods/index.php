@@ -6,12 +6,9 @@
 
 <form >
     <table>
-        <tr><!--Заголовок-->
-            <h1>Товары</h1>
-        </tr>
 
         <tr><!--Лист-->
-            <select name="listGoods" size="20" required style="width: 500;">
+            <select name="good_name" size="20" style="width: 500;">
                 <?php
                     for($i=0;$i<100;$i++)
                     {
@@ -35,5 +32,9 @@
     </table>
 </form>
 <div>
-    <a href="adminMain.php">В админку</a>
+    <a href="../">В админку</a>
 </div>
+
+<?php
+    include '../adminFoot.php';
+?>
