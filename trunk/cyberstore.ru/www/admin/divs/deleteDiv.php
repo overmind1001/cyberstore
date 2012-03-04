@@ -17,6 +17,11 @@
     $divs=  CatalogDivQuery::create()->findById($div_id);
     $div=$divs[0];
     $div_name = $div->getName();
+    
+    if($div_name == "root") {
+        echo "Нельзя удалить root!";
+        return;
+    }
     $div->delete();
 ?>
 <?php
