@@ -25,11 +25,11 @@
         <table>
             <tr>
                 <td>Старое название каталога:</td>
-                <td><input type="text" name="old_div_name" readonly value=<?php echo "$oldDivName"; ?> /></td>
+                <td><input type="text" name="old_div_name" readonly value=<?php echo "'$oldDivName'"; ?> /></td>
             </tr>
             <tr>
                 <td>Новое название каталога:</td>
-                <td><input type="text" name="div_name" value=<?php echo "$oldDivName"; ?> /></td>
+                <td><input type="text" name="div_name" value=<?php echo "'$oldDivName'"; ?> /></td>
             </tr>
         </table>
     </div>
