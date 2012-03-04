@@ -15,8 +15,8 @@
  */
 class Goods extends BaseGoods {
 
-	public function __construct($name, $description, $priceCurrent,
-							$count, $pictureId, $catalogId) 
+	public function __construct($name="", $description="", $priceCurrent=0,
+							$count=0, $pictureId=NULL, $catalogId=NULL) 
 	{
 		parent::__construct();
 		$this->setName($name);
