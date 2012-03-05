@@ -25,29 +25,4 @@ class Goods extends BaseGoods {
 		$this->setCatalogId($catalogId);
 	}
 
-	/**
-     * @return Строковое JSON-представление товара
-     * Поля:
-     * - name
-     * - description
-     * - priceCurrent
-     * - count
-     * - picture
-     * - catalogId
-     */
-    public function toJSON()
-    {
-        $pid = $this->getPictureId();
-        $result = '{';
-        $result .= '"name":"'.$this->getName().'",';
-        $result .= '"description":"'.$this->getDescription().'",';
-        $result .= '"priceCurrent":'.$this->getPriceCurrent().',';
-        $result .= '"count":'.$this->getCount().',';
-        if ($pid != null)
-            $result .= '"picture":'.$this->getPictureId().',';
-        $result .= '"catalogId":'.$this->getCatalogId();
-        $result .= '}';
-        return $result;
-    }
-
 } // Goods

@@ -112,15 +112,15 @@
                                                     <td align="center">
                                                         <!-- Страницы-->
                                                         <div id="topPagesLine" data-role="controlgroup" data-type="horizontal" class="localnav">
-                                                            <a href="#" data-role="button" data-inline="true" class="ui-btn-active">1</a>
                                                         </div>
                                                     </td>
                                                 </tr>
                                                 <tr>
                                                     <td style="padding-left:10px; padding-top:6px;" colspan="2">
+                                                        <div id="catalogWindow">
+                                                        <div id="catalogGrid" class="ui-grid-b">
                                                         <a href="#" data-role="button" data-icon="info">Выберите категорию, чтобы начать просмотр каталога.</a>
-                                                        <!--div class="ui-grid-b">
-                                                        <div class="ui-block-a">
+                                                        <!--div class="ui-block-a">
                                                             <div class="ui-bar ui-bar-c" style="height:200px">
                                                                 Товар 1
                                                             </div>
@@ -150,17 +150,17 @@
                                                                 Товар 6
                                                             </div>
                                                         </div>
-                                                        </div>
-                                                        <!-- /grid-b -->
+                                                        </div-->
+                                                        </grid-b>
                                                         </td>
+                                                        </div>
                                                     </tr>
                                                     <tr>
                                                         <td>
                                                         </td>
                                                         <td>
                                                             <div style="text-align:center;">
-                                                                <div data-role="controlgroup" data-type="horizontal" class="localnav">
-                                                                    <a href="#" data-role="button" data-inline="true" class="ui-btn-active">1</a>
+                                                                <div id="bottomPagesLine" data-role="controlgroup" data-type="horizontal" class="localnav">
                                                                 </div>
                                                                 </div>
                                                             </td>

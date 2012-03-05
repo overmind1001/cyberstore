@@ -37,10 +37,9 @@ $goodsResponse = '"goods":[';
 $firsttime = true;
 for ($i = 0; $i < $count && $i < $N; $i++) {
     $good = $goods[$i];
-    if ($firsttime) {
-        $goodsResponse .= ",";
+    if ($firsttime)        
         $firsttime = false;
-    }
+    else $goodsResponse .= ",";
     $goodsResponse .= $good->toJSON();
 }
 $goodsResponse .= ']';

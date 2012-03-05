@@ -1,7 +1,17 @@
+function goodToDiv(good, letter)
+{
+    result = '<div class="ui-block-'+ letter + '">';
+    result += '<div class="ui-bar ui-bar-c" style="height:200px;">';
+    result += '<h3>' + good.Name + '</h3>';
+    result += '<p>' + good.Description + '</p>';
+    result += '</div>'
+    result += '</div';
+    return result;
+}
+
 function categoryClicked(id)
 {
-    //Надо узнать количество страниц, текущую страницу
-    //загрузить товары
+    //Загрузить товары
     $.post(
         "loadGoods.php",
         {
@@ -16,14 +26,24 @@ function categoryClicked(id)
             goodsCount = response.goodsCount;
             goods = response.goods;
 
-            html = "";
-            $("#topPagesLine").html('');
+            $('#category' + id).addClass('ui-btn-active');
+            $('#topPagesLine').html('');
+            $('#bottomPagesLine').html('');
             for (i = 0; i < pageCount; ++i) {
-                $("#topPagesLine").append("<a id=\"btnp" + i + "\" href=\"#\" data-role=\"button\" data-inline=\"true\">" + (i+1) + "</a>");
-                //$("#btnp" + i).button();
-                $("#btnp" + i).buttonMarkup({ inline: "true"});
-                //if ((i+1) == currentPage)
-                //    $("#btnp" + i).buttonMarkup({ active: "true" });
+                $("#topPagesLine").append("<a id=\"btnpt" + i + "\" href=\"#\" data-role=\"button\" data-inline=\"true\">" + (i+1) + "</a>");
+                $("#bottomPagesLine").append("<a id=\"btnpb" + i + "\" href=\"#\" data-role=\"button\" data-inline=\"true\">" + (i+1) + "</a>");
+                $("#btnpt" + i).buttonMarkup({ inline: "true"});
+                $("#btnpb" + i).buttonMarkup({ inline: "true"});
+                if ((i+1) == currentPage) {
+                    $("#btnpt" + i).addClass('ui-btn-active');
+                    $("#btnpb" + i).addClass('ui-btn-active');
+                }
+            }
+            $('#catalogGrid').html('');
+            lts = ['a','b','c'];
+            for (i = 0; i < goodsCount; ++i) {
+                good = goods[i];
+                $('#catalogGrid').append(goodToDiv(good, lts[i%3]));
             }
         },
         "text"        
