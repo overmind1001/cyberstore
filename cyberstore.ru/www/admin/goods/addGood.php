@@ -1,4 +1,3 @@
-name description price count catalog_name picture
 <?php
     $error=false;
     if(!isset($_POST['name'])) {
@@ -16,9 +15,9 @@ name description price count catalog_name picture
     if(!isset($_POST['catalog_name'])) {
         $error=true;
     }
-    if(!isset($_POST['picture'])) {
-        $error=true;
-    }
+//    if(!isset($_POST['picture'])) {
+//        $error=true;
+//    }
     
     if($error)  {
         echo "Ошибка!";
@@ -30,26 +29,70 @@ name description price count catalog_name picture
     $price=$_POST['price'];
     $count=$_POST['count'];
     $catalog_name=$_POST['catalog_name'];
-    $picture=$_POST['picture'];
+    //$picture=$_POST['picture'];
     
     include_once '../../initPropel.php';
     Propel::init("../../cyberstore/build/conf/cyberstore-conf.php");
     set_include_path("../../cyberstore/build/classes" . PATH_SEPARATOR . get_include_path());
         
-    
-    ыыыы$users = UserQuery::create()->findByLogin($login);
-    
-    
-    if(count($users)>0)  {
-        echo "Ошибка!";
-        echo "Пользователь $login уже существует.";
+    $good=  GoodsQuery::create()->findOneByName($good_name);
+    if($good!=NULL) {
+        echo 'Товар с таки именем уже существует';
         return;
     }
     
-    $user = new User($login,$password);
-    $user->save();
     
     
+    //разбираемся с картинкой
+    //надо узнать свободный id-картинки
+    /*Подключаемся к БД*/
+    $db = mysql_connect('localhost','root','');
+    mysql_select_db('db_cyberstore', $db);
+    /*Делаем запрос к БД*/
+    $result = mysql_query("SELECT max(picture_id) FROM goods",$db);
+    /*Преобразовываем результат в массив*/
+    $myrow = mysql_fetch_array($result);
+    /*Выводим результат на экран*/
+    $max_picture_id=$myrow['max(picture_id)'];
+    if($max_picture_id==NULL)    {
+        $max_picture_id=1;
+    }
+    else    {
+        $max_picture_id++;
+    }
+    
+
+    
+    $uploaddir = '../../pictures/';
+    if (isset($_FILES["picture"])) {
+	if (is_uploaded_file($_FILES['picture']['tmp_name'])) {
+            if (move_uploaded_file($_FILES['picture']['tmp_name'], $uploaddir . $max_picture_id.".jpg")) {
+                print "File is valid, and was successfully uploaded.";
+            } 
+            else {
+                print "Файл не загружен!";
+                return;
+            }
+        }
+    }
+    
+    $catalog = CatalogDivQuery::create()->findOneByName($catalog_name);
+    if($catalog==NULL)  {
+        echo "Нет каталога.";
+        return;
+    }
+    $catalog_id = $catalog->getId();
+    
+    $good = new Goods();
+    $good->setName($good_name);
+    $good->setDescription($description);
+    $good->setPriceCurrent($price);
+    $good->setCount($count);
+    $good->setCatalogId($catalog_id);
+    $good->setPictureId($max_picture_id);
+    $good->save();
+    
+
 ?>
 <?php
     include '../adminHead.php';
