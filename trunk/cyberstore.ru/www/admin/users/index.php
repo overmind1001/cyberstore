@@ -36,8 +36,8 @@
             </table>
         </form>
         
-        <div>
-            <a data-role="button" href="../index.php">В админку</a>
+        <div class="goto_admin">
+            <a data-role="button" href="../">В админку</a>
         </div>	
 
 <?php

@@ -47,9 +47,7 @@
             </table>
         </form>
         
-        <div>
-            <a data-role="button" href="../adminMain.php">В админку</a>
-        </div>	
+       	
 
 <?php
     include '../adminFoot.php';

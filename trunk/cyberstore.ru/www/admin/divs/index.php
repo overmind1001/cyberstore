@@ -133,7 +133,7 @@
         
     </table>
 </form>
-<div>
+<div style="padding: 20px;">
     <a href="../index.php">В админку</a>
 </div>
 

@@ -38,7 +38,7 @@
         </tr>
     </table>
 </form>
-<div>
+<div class="goto_admin">
     <a href="../">В админку</a>
 </div>
 
