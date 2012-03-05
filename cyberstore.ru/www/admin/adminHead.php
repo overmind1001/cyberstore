@@ -72,13 +72,8 @@ echo "<!DOCTYPE html>
                 color: yellow;
             }
             
-            .ui-button
-            {
-                background-color: white;
-            }
-            .ui-state-hover
-            {
-                background-color: black;
+            div.goto_admin  {
+                padding: 20px;
             }
         </style>
         <script>
