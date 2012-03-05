@@ -11,15 +11,15 @@ foreach ($categories as $category)
         echo '<h3>'.trim($category->getName()).'</h3>';
         if ($category->countCatalogDivsRelatedById() > 0) {
             $subcatalogs = $category->getCatalogDivsRelatedById();
-            echo '<ul data-role="listview">';
+            echo '<div id="topcategory'.$category->getId().'" data-role="controlgroup">';
             foreach ($subcatalogs as $subcategory) {
                 $cid = $subcategory->getId();
                 echo '<li><a href="#" id="category'
-                        .$cid.'" onclick="categoryClicked('
+                        .$cid.'" data-role="button" onclick="categoryClicked('
                         .$cid.');">'
                         .trim($subcategory->getName()).'</a></li>';
             }
-            echo '</ul>';
+            echo '</div>';
         }
         echo '</div>';
     }
