@@ -4,7 +4,7 @@
     generateHead($name, $name)
 ?>
 
-<form method="POST" action="addGood.php">
+<form method="POST" enctype="multipart/form-data" action="addGood.php">
     <div><!-- -->
         <table>
             
@@ -44,7 +44,7 @@
                 </td>
             </tr>
             <tr>
-                <td>Изображение:</td>
+                <td>Изображение(jpeg):</td>
                 <td><input type="file" name="picture" /></td>
             </tr>
         </table>
