@@ -28,7 +28,7 @@
                     <?php
                         $divs = CatalogDivQuery::create()->findById($parentDivId);
                         $div = $divs[0];
-                        echo $div->getName();
+                        echo '"'.$div->getName().'"';
                     ?>
                     />
                 </td>
