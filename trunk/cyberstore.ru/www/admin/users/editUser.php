@@ -22,8 +22,7 @@
     Propel::init("../../cyberstore/build/conf/cyberstore-conf.php");
     set_include_path("../../cyberstore/build/classes" . PATH_SEPARATOR . get_include_path());
     
-    $users = UserQuery::create()->findByLogin($oldLogin);
-    $user=$users[0];
+    $user = UserQuery::create()->findOneByLogin($oldLogin);
     $user->setLogin($login);
     $user->setPassword($password);
     $user->save();
@@ -31,7 +30,7 @@
 <?php
     include '../adminHead.php';
     $name="Пользоваетль изменен";
-    generateHead($name, $name)
+    generateHead($name, $name, "default", "");
 ?>
 <h2>
     <?php
@@ -44,7 +43,7 @@
 ?>
 <script>
     window.alert("Сейчас произойдет возврат к пользователям!");
-    window.location = "index.php";
+    window.location = "./";
 </script>
 
 

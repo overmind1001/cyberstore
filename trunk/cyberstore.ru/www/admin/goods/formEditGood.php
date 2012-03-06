@@ -11,7 +11,7 @@
 <?php
     include '../adminHead.php';
     $name="Изменить товар";
-    generateHead($name, $name)
+    generateHead($name, $name, "default", "");
 ?>
 <?php
     include_once '../../initPropel.php';
@@ -20,9 +20,10 @@
     
     $good = GoodsQuery::create()->findOneByName($good_name);
 ?>
+<center>
     <form method="POST" enctype="multipart/form-data" action="editGood.php">
     <div>
-        <table>
+        <table class="goodTable">
             <tr>
                 <input type="text" name="old_name" hidden value=
                        <?php echo "'".$good->getName()."'";?>
@@ -52,7 +53,6 @@
                 <td>Раздел каталога:</td>
                 <?php
                     $catalog_id=$good->getCatalogId();
-                    $catalog= CatalogDivQuery::create()->findOneById($catalog_id);
                 ?>
                 <td><select name="catalog_name" size="1" > 
                         <?php
@@ -85,29 +85,29 @@
         </table>
     </div>
     <div>
-        <img src=
-                     <?php 
-                        if($good->getPictureId()!=NULL){
-                            echo "'"."../../pictures/".$good->getPictureId().".jpg"."'";
-                        }
-                     ?>
-                     >
+        <?php 
+        if($good->getPictureId()!=NULL){
+            echo "<img src='"."../../pictures/".$good->getPictureId().".jpg"."'>";
+        }
+        ?>
     </div>
     <div>
         <table>
             <tr>
-                <input type="submit" name="OK" value="OK"/>
-            </tr>
-            <tr>
-                <input type="reset" value="Очистить"/>
-            </tr>
-            <tr>
-                <input type="button" name="Back_to_goods" value="Назад к товарам" onClick="window.location = 'index.php';"/>
+                <td>
+                    <input type="submit" name="OK" value="OK"/>
+                </td>
+                <td>
+                    <input type="reset" value="Очистить"/>
+                </td>
+                <td>
+                    <input type="button" name="Back_to_goods" value="Назад к товарам" onClick="window.location = './';"/>
+                </td>
             </tr>
         </table>
     </div>
 </form>
-        
+</center>        
 
 <?php
     include '../adminFoot.php';

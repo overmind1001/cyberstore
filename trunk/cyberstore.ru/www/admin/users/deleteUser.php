@@ -15,14 +15,13 @@
     Propel::init("../../cyberstore/build/conf/cyberstore-conf.php");
     set_include_path("../../cyberstore/build/classes" . PATH_SEPARATOR . get_include_path());
     
-    $users = UserQuery::create()->findByLogin($login);
-    $user=$users[0];
+    $user = UserQuery::create()->findOneByLogin($login);
     $user->delete();
 ?>
 <?php
     include '../adminHead.php';
     $name="Пользоваетль удален";
-    generateHead($name, $name)
+    generateHead($name, $name, "default", "");
 ?>
 <h2>
     <?php
@@ -35,6 +34,6 @@
 ?>
 <script>
     window.alert("Сейчас произойдет возврат к пользователям!");
-    window.location = "index.php";
+    window.location = "./";
 </script>
 

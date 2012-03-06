@@ -14,8 +14,9 @@
 <?php
     include '../adminHead.php';
     $name="Добавить подраздел";
-    generateHead($name, $name)
+    generateHead($name, $name,"default","");
 ?>
+<center>
 <form method="POST" action="addDiv.php">
     <div><!-- -->
         <table>
@@ -26,8 +27,7 @@
                 <td>
                     <input type="text" name="parent_div_name" readonly value=
                     <?php
-                        $divs = CatalogDivQuery::create()->findById($parentDivId);
-                        $div = $divs[0];
+                        $div = CatalogDivQuery::create()->findOneById($parentDivId);
                         echo '"'.$div->getName().'"';
                     ?>
                     />
@@ -42,17 +42,20 @@
     <div>
         <table>
             <tr>
-                <input type="submit" name="OK" value="OK"/>
-            </tr>
-            <tr>
-                <input type="reset" value="Очистить"/>
-            </tr>
-            <tr>
-                <input type="button" name="Back_to_goods" value="Назад к разделам" onClick="window.location = 'index.php';"/>
+                <td>
+                    <input type="submit" name="OK" value="OK"/>
+                </td>
+                <td>
+                    <input type="reset" value="Очистить"/>
+                </td>
+                <td>
+                    <input type="button" name="Back_to_goods" value="Назад к разделам" onClick="window.location = './';"/>
+                </td>
             </tr>
         </table>
     </div>
 </form>
+</center>
 <?php
     include '../adminFoot.php';
 ?>

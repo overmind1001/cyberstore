@@ -7,7 +7,6 @@
     if(!isset($_POST['password'])) {
         $error=true;
     }
-    
     if($error)  {
         echo "Ошибка!";
         return;
@@ -31,13 +30,11 @@
     
     $user = new User($login,$password);
     $user->save();
-    
-    
 ?>
 <?php
     include '../adminHead.php';
     $name="Пользоваетль добавлен";
-    generateHead($name, $name)
+    generateHead($name, $name, "default", "");
 ?>
 <h2>
     <?php

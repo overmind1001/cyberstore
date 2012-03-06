@@ -36,7 +36,7 @@
 <?php
     include '../adminHead.php';
     $name="Товар удален";
-    generateHead($name, $name)
+    generateHead($name, $name, "default", "");
 ?>
 <h2>
     <?php
@@ -49,5 +49,5 @@
 ?>
 <script>
     window.alert("Сейчас произойдет возврат к товарам!");
-    window.location = "index.php";
+    window.location = "./";
 </script>

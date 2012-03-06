@@ -1,0 +1,75 @@
+/* * {
+    margin: 0;
+    padding: 0;}*/
+
+html {
+    height: 100%;}
+body {
+    font: 12px/18px Arial, Tahoma, Verdana, sans-serif;
+    width: 100%;
+    height: 100%;
+    margin: 0px;
+    padding: 0px;}
+    
+p {
+    margin: 0 0 18px}
+#wrapper {     
+    width: 1000px;
+    margin: 0 auto;
+    min-height: 100%;
+    height: auto !important;
+    height: 100%;}
+/* Header
+-----------------------------------------------------------------------------*/
+#header {
+    height: 50px;
+    background: black;
+    border-radius: 20px;
+    border: grey solid;
+    margin: 0px;
+    padding: 0px;
+}
+#header:hover h1{
+    color: yellow;}
+#header h1  {
+    text-align: center;
+    /*padding-top: 15px;*/
+    color: white;
+    font-family: Arial;}
+/* Middle
+-----------------------------------------------------------------------------*/
+#content {
+    margin: 20px;
+    padding: 0 0 40px;}
+/* Footer
+-----------------------------------------------------------------------------*/
+#footer {
+    width: 1000px;
+    margin: -70px auto 0;
+    height: 50px;
+    background: black;
+    position: relative;
+    border-radius: 20px;
+    border: grey solid;}
+#footer h1  {
+    text-align: center;
+    /*padding-top: 15px;*/
+    color: white;
+    font-family: Arial;}
+#footer:hover h1{
+    color: yellow;}
+div.goto_admin  {
+    padding: 20px;}
+
+/*admin index*/
+ul.admin_main{
+    padding-top:30px;
+    font-size: 20pt;}
+
+ul.admin_main li{
+    margin:20px;}
+
+table.goodTable tr td{
+    text-align:left;
+}
+

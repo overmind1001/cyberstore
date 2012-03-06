@@ -1,12 +1,11 @@
 <?php
     include '../adminHead.php';
     $name="Товары";
-    generateHead($name, $name);
+    generateHead($name, $name, "default", "");
 ?>
-
+<center>
 <form method="POST" action="selectAED.php" >
     <table>
-
         <tr><!--Лист-->
             <select name="good_name" size="20" style="width: 500px;">
                 <?php
@@ -15,8 +14,6 @@
                     set_include_path("../../cyberstore/build/classes" . PATH_SEPARATOR . get_include_path());
 
                     $goods = GoodsQuery::create()->find();
-                    //$a=  new Goods();
-                    //$a->getn
                     foreach ($goods as $good)   {
                         $good_name=$good->getName();
                         echo "<option>$good_name</option>";
@@ -41,6 +38,7 @@
 <div class="goto_admin">
     <a href="../">В админку</a>
 </div>
+</center>
 
 <?php
     include '../adminFoot.php';
