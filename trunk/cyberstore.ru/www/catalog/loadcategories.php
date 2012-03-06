@@ -3,7 +3,7 @@
 $rootc = CatalogDivQuery::create()->findOneByName("root");
 $categories = $rootc->getCatalogDivsRelatedById();
    
-echo '<div data-role="collapsible-set" data-theme="c" data-content-theme="d">';
+echo '<div data-role="collapsible-set" data-theme="c" data-content-theme="d" data-mini="true">';
 foreach ($categories as $category)
 {
     if ($category->getParentCatalogDivId() == $rootc->getId()) {
@@ -11,7 +11,7 @@ foreach ($categories as $category)
         echo '<h3>'.trim($category->getName()).'</h3>';
         if ($category->countCatalogDivsRelatedById() > 0) {
             $subcatalogs = $category->getCatalogDivsRelatedById();
-            echo '<div id="topcategory'.$category->getId().'" data-role="controlgroup">';
+            echo '<div id="topcategory'.$category->getId().'" data-role="controlgroup" data-mini="true">';
             foreach ($subcatalogs as $subcategory) {
                 $cid = $subcategory->getId();
                 echo '<li><a href="#" id="category'

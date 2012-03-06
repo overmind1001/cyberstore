@@ -5,47 +5,15 @@
         <link rel="stylesheet" href="http://code.jquery.com/mobile/1.0.1/jquery.mobile-1.0.1.min.css" />
         <script src="jquery-1.6.4.min.js"></script>
         <script src="jquery.mobile-1.0.1.min.js"></script>
-        <script src="catalog.js"></script>
-        <style>
-            .ui-page
-            {
-            background:white;
-            }
-            .ui-content
-            {
-            background:#eee;
-            }
-            body
-            {
-            height:100%;
-            min-height:100%;
-            }
-            #mainpage
-            {
-            height:100%;
-            min-height:100%;
-            }
-            #wrapper
-            {
-            background:white;
-            height:auto !important;
-            margin-bottom:0;
-            margin-left:auto;
-            margin-right:auto;
-            margin-top:0;
-            min-height:100%;
-            width:900px;
-            }
-        </style>
     </head>
     
-    <!--
-    <?
+<!--
+<?
     require_once './../vendor/propel/runtime/lib/Propel.php';
     Propel::init("./../cyberstore/build/conf/cyberstore-conf.php");
     set_include_path("./../cyberstore/build/classes" . PATH_SEPARATOR . get_include_path());
-        ?>
-            -->
+?>
+-->
             
             
                 <body>
@@ -54,33 +22,37 @@
                         <div id="mainpage">
                             
                             <div data-role="header" data-theme="c">
-                                <table padding="0" margin="0" border="0" width="100%">
-                                    <tr>
-                                    <td rowspan="2" style="width:30%;">
-                                        <img src="./../logo.gif">
-                                        </td>
-                                        <td valign="top" align="right">
-                                            <a href="#" data-role="button" data-inline="true">Корзина: 0 товаров на 0 руб.</a>
-                                            <a href="#" data-role="button" data-inline="true">Вход</a>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td valign="bottom">
-                                            <div data-role="navbar">
-                                                <ul>
-                                                <li>
-                                                    <a href="./../">Главная</a>
-                                                </li>
-                                                <li>
-                                                    <a href="#" class="ui-btn-active">Каталог</a>
-                                                </li>
-                                                <li>
-                                                    <a href="#">Помощь</a>
-                                                </li>
-                                            </ul>
-                                        </div>
-                                    </td>
-                                </table>
+                <table style="background:url('./../logo.png');" padding="0" margin="0" border="0px" width="100%">
+                    <tr>
+                        <td rowspan="2" style="width:35%; height:130px;">
+                            <!--img src="logo.gif"-->
+                        </td>
+                        <td valign="top" align="right">
+                            <a href="#" data-role="button" data-inline="true">Вход</a>
+                        </td>
+                    </tr>
+                        <td align="right" valign="bottom">
+                            <a href="#" data-role="button" data-inline="true">Корзина: 0 товаров на 0 руб.</a>
+                        </td>
+                    <tr>
+                    </table>
+                    <div data-role="navbar" >
+                            <ul>
+                            <li>
+                                <a href="./../"  data-theme="a">Главная</a>
+                            </li>
+                            <li>
+                                <a href="#"class="ui-btn-active" data-theme="a">Каталог</a>
+                            </li>
+                            <li>
+                                <a href="#" data-theme="a">Корзина</a>
+                            </li>
+                            <li>
+                                <a href="#" data-theme="a">Помощь</a>
+                            </li>
+                            </ul>
+                        </div>
+
                                 </div>
                                 <!-- /header -->
                                 
@@ -118,39 +90,8 @@
                                                 <tr>
                                                     <td style="padding-left:10px; padding-top:6px;" colspan="2">
                                                         <div id="catalogWindow">
-                                                        <div id="catalogGrid" class="ui-grid-b">
+                                                        <div id="catalogGrid" class="ui-grid-a">
                                                         <a href="#" data-role="button" data-icon="info">Выберите категорию, чтобы начать просмотр каталога.</a>
-                                                        <!--div class="ui-block-a">
-                                                            <div class="ui-bar ui-bar-c" style="height:200px">
-                                                                Товар 1
-                                                            </div>
-                                                        </div>
-                                                        <div class="ui-block-b">
-                                                            <div class="ui-bar ui-bar-c" style="height:200px">
-                                                                Товар 2
-                                                            </div>
-                                                        </div>
-                                                        <div class="ui-block-c">
-                                                            <div class="ui-bar ui-bar-c" style="height:200px">
-                                                                Товар 3
-                                                            </div>
-                                                        </div>
-                                                        <div class="ui-block-a">
-                                                            <div class="ui-bar ui-bar-c" style="height:200px">
-                                                                Товар 4
-                                                            </div>
-                                                        </div>
-                                                        <div class="ui-block-b">
-                                                            <div class="ui-bar ui-bar-c" style="height:200px">
-                                                                Товар 5
-                                                            </div>
-                                                        </div>
-                                                        <div class="ui-block-c">
-                                                            <div class="ui-bar ui-bar-c" style="height:200px">
-                                                                Товар 6
-                                                            </div>
-                                                        </div>
-                                                        </div-->
                                                         </grid-b>
                                                         </td>
                                                         </div>
@@ -170,9 +111,9 @@
 
     </div><!-- /content -->
 
-    <!--div data-role="footer" data-position="fixed" data-theme="c">
-        copyright
-    </div-->
+<div data-role="footer">
+    <h1>© ДаЁжСофт</h1>
+</div><!-- #footer -->
 
 </div><!-- /page -->
 </div><!-- /wrapper-->

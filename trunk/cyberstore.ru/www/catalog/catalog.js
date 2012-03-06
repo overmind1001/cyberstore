@@ -4,6 +4,8 @@ function goodToDiv(good, letter)
     result += '<div class="ui-bar ui-bar-c" style="height:200px;">';
     result += '<h3>' + good.Name + '</h3>';
     result += '<p>' + good.Description + '</p>';
+    result += '<a id="good' + good.Id + '" data-role="button">Купить</a>'
+    $('#good' + good.Id).button();
     result += '</div>'
     result += '</div';
     return result;
@@ -40,10 +42,10 @@ function categoryClicked(id)
                 }
             }
             $('#catalogGrid').html('');
-            lts = ['a','b','c'];
+            lts = ['a','b'];
             for (i = 0; i < goodsCount; ++i) {
                 good = goods[i];
-                $('#catalogGrid').append(goodToDiv(good, lts[i%3]));
+                $('#catalogGrid').append(goodToDiv(good, lts[i%2]));
             }
         },
         "text"        
