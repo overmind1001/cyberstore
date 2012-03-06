@@ -6,7 +6,6 @@
     if(!isset($_POST['div_name'])) {
         $error=true;
     }
-    
     if($error)  {
         echo "Ошибка!";
         return;
@@ -24,15 +23,14 @@
     Propel::init("../../cyberstore/build/conf/cyberstore-conf.php");
     set_include_path("../../cyberstore/build/classes" . PATH_SEPARATOR . get_include_path());
     
-    $divs=  CatalogDivQuery::create()->findByName($old_div_name);
-    $div=$divs[0];
+    $div=  CatalogDivQuery::create()->findOneByName($old_div_name);
     $div->setName($div_name);
     $div->save();
 ?>
 <?php
     include '../adminHead.php';
     $name="Раздел каталога изменен";
-    generateHead($name, $name)
+    generateHead($name, $name,"default","");
 ?>
 <h2>
     <?php
@@ -45,5 +43,5 @@
 ?>
 <script>
     window.alert("Сейчас произойдет возврат к разделам каталога!");
-    window.location = "index.php";
+    window.location = "./";
 </script>

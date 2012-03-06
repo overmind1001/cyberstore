@@ -15,8 +15,6 @@
     if(!isset($_POST['catalog_name'])) {
         $error=true;
     }
-
-    
     if($error)  {
         echo "Ошибка!";
         return;
@@ -44,8 +42,6 @@
         return;
     }
     $catalog_id = $catalog->getId();
-    
-    
     //надо узнать свободный id-картинки
     $db = mysql_connect('localhost','root','');
     mysql_select_db('db_cyberstore', $db);
@@ -59,13 +55,11 @@
         $max_picture_id++;
     }
     
-
-    
     $uploaddir = '../../pictures/';
     if (isset($_FILES["picture"])) {
 	if (is_uploaded_file($_FILES['picture']['tmp_name'])) {
             if (move_uploaded_file($_FILES['picture']['tmp_name'], $uploaddir . $max_picture_id.".jpg")) {
-                print "File is valid, and was successfully uploaded.";
+                //print "File is valid, and was successfully uploaded.";
             } 
             else {
                 print "Файл не загружен!";
@@ -76,8 +70,6 @@
     else    {
         $max_picture_id=NULL;
     }
-    
-    
     
     $good = new Goods();
     $good->setName($good_name);
@@ -91,7 +83,7 @@
 <?php
     include '../adminHead.php';
     $name="Товар добавлен";
-    generateHead($name, $name)
+    generateHead($name, $name, "default", "");
 ?>
 <h2>
     <?php

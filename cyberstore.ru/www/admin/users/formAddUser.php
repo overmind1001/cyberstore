@@ -1,8 +1,9 @@
 <?php
     include '../adminHead.php';
     $name="Добавить пользователя";
-    generateHead($name, $name)
+    generateHead($name, $name, "default", "");
 ?>
+<center>
         <form method="POST" action="addUser.php">
             <table>
                 <tr>
@@ -22,16 +23,16 @@
                         <input type="reset" value="Очистить"/>
                     </td>
                     <td>
-                        <input type="button" name="Back_to_goods" value="Назад к пользователям" onClick="window.location = 'index.php';"/>
+                        <input type="button" name="Back_to_goods" value="Назад к пользователям" onClick="window.location = './';"/>
                     </td>
                 </tr>
             </table>
         </form>
         
         <div>
-            <a data-role="button" href="../adminMain.php">В админку</a>
+            <a data-role="button" href="../">В админку</a>
         </div>	
-
+</center>
 <?php
     include '../adminFoot.php';
 ?>

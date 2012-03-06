@@ -1,5 +1,4 @@
 <?php
-   
     if(isset($_GET['div_id']))  {
         //do nothing
     }
@@ -14,8 +13,7 @@
     Propel::init("../../cyberstore/build/conf/cyberstore-conf.php");
     set_include_path("../../cyberstore/build/classes" . PATH_SEPARATOR . get_include_path());
     
-    $divs=  CatalogDivQuery::create()->findById($div_id);
-    $div=$divs[0];
+    $div=  CatalogDivQuery::create()->findOneById($div_id);
     $div_name = $div->getName();
     
     if($div_name == "root") {
@@ -27,7 +25,7 @@
 <?php
     include '../adminHead.php';
     $name="Раздел удален";
-    generateHead($name, $name)
+    generateHead($name, $name, "default", "");
 ?>
 <h2>
     <?php
@@ -40,5 +38,5 @@
 ?>
 <script>
     window.alert("Сейчас произойдет возврат к пользователям!");
-    window.location = "index.php";
+    window.location = "./";
 </script>

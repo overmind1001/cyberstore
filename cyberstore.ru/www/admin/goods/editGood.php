@@ -62,12 +62,11 @@
         $max_picture_id++;
     }
     
-    
     $uploaddir = '../../pictures/';
     if (isset($_FILES["picture"])) {
 	if (is_uploaded_file($_FILES['picture']['tmp_name'])) {
             if (move_uploaded_file($_FILES['picture']['tmp_name'], $uploaddir . $max_picture_id.".jpg")) {
-                print "File is valid, and was successfully uploaded.";
+                //print "File is valid, and was successfully uploaded.";
             } 
             else {
                 print "Файл не загружен!";
@@ -94,8 +93,6 @@
         //файла не было
     }
     
-    
-    
     //сохранить запись
     $good->setName($good_name);
     $good->setDescription($description);
@@ -109,7 +106,7 @@
 <?php
     include '../adminHead.php';
     $name="Товар изменен";
-    generateHead($name, $name)
+    generateHead($name, $name, "default", "");
 ?>
 <h2>
     <?php

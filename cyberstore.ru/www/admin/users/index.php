@@ -1,12 +1,12 @@
 <?php
     include '../adminHead.php';
     $name="Пользователи";
-    generateHead($name, $name)
+    generateHead($name, $name, "default", "");
 ?>
-
+<center>
     <form method="POST" action="selectAED.php">
             <table>
-                <tr><!--Лист-->
+                <tr>
                     <select id="listUsers" name="login" size="20" style="width: 500px;">
                         <?php
                             include_once '../../initPropel.php';
@@ -39,7 +39,7 @@
         <div class="goto_admin">
             <a data-role="button" href="../">В админку</a>
         </div>	
-
+</center>
 <?php
     include '../adminFoot.php';
 ?>

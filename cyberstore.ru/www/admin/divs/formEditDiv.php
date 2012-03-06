@@ -11,17 +11,17 @@
         return;
     }
     
-    $divs = CatalogDivQuery::create()->findById($div_id);
-    $div = $divs[0];
+    $div = CatalogDivQuery::create()->findOneById($div_id);
     $oldDivName = $div->getName();
 ?>
 <?php
     include '../adminHead.php';
     $name="Изаменить подраздел";
-    generateHead($name, $name)
+    generateHead($name, $name,"default","");
 ?>
+<center>
 <form method="POST" action="editDiv.php">
-    <div><!-- -->
+    <div>
         <table>
             <tr>
                 <td>Старое название каталога:</td>
@@ -36,17 +36,20 @@
     <div>
         <table>
             <tr>
-                <input type="submit" name="OK" value="OK"/>
-            </tr>
-            <tr>
-                <input type="reset" value="Очистить"/>
-            </tr>
-            <tr>
-                <input type="button" name="Back_to_goods" value="Назад к разделам" onClick="window.location = 'index.php';"/>
+                <td>
+                    <input type="submit" name="OK" value="OK"/>
+                </td>
+                <td>
+                    <input type="reset" value="Очистить"/>
+                </td>
+                <td>
+                    <input type="button" name="Back_to_goods" value="Назад к разделам" onClick="window.location = './';"/>
+                </td>
             </tr>
         </table>
     </div>
 </form>
+</center>
 <?php
     include '../adminFoot.php';
 ?>
