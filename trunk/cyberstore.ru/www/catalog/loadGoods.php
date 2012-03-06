@@ -24,7 +24,9 @@ $goodsCount = GoodsQuery::create()
     ->findByCatalogId($cid)
     ->count();
 
-$pageCount = ($goodsCount > 0) ? (int)($goodsCount / $count) + 1 : 0;
+$pageCount = ($goodsCount > 0) ? (int)($goodsCount / $count) : 0;
+if ($goodsCount % $count > 0)
+    $pageCount++;
 $currentPage = (int)($skip / $count) + 1;
 
 $goods = GoodsQuery::create()

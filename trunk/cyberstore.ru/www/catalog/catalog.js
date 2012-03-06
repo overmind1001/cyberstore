@@ -1,10 +1,16 @@
 function goodToDiv(good, letter)
 {
-    result = '<div class="ui-block-'+ letter + '">';
-    result += '<div class="ui-bar ui-bar-c" style="height:200px;">';
-    result += '<h3>' + good.Name + '</h3>';
-    result += '<p>' + good.Description + '</p>';
-    result += '<a href="#" id="good' + good.Id + '" data-role="button">Купить</a>'
+    result =  '<div class="ui-block-'+ letter + '">';
+    result += '<div class="ui-bar ui-bar-c" style="height:250px;">';
+    result += '<table border="0px" width="100%" height="100%">';
+    result += '<tr><td align="center" colspan="2">' + good.Name + '</td></tr>';
+    result += '<tr><td align="center" colspan="2"><img src="./../0a.jpg"/></td></tr>';
+    result += '<tr><td valign="top" colspan="2">' + good.Description + '</td></tr>';
+    result += '<tr><td align="left" width="50%"><a href="#" id="showgood' + good.Id +
+                '">Подробнее</a></td>';
+    result += '<td align="right" width="50%"><a href="#" id="buygood' + good.Id +
+                '">Купить</a></td></tr>';
+    result += '</table';
     result += '</div>'
     result += '</div';
     return result;
@@ -12,7 +18,6 @@ function goodToDiv(good, letter)
 
 function categoryClicked(id)
 {
-    //Загрузить товары
     $.post(
         "loadGoods.php",
         {
@@ -31,10 +36,10 @@ function categoryClicked(id)
             $('#topPagesLine').html('');
             $('#bottomPagesLine').html('');
             for (i = 0; i < pageCount; ++i) {
-                $("#topPagesLine").append("<a id=\"btnpt" + i + "\" href=\"#\" data-role=\"button\" data-inline=\"true\">" + (i+1) + "</a>");
-                $("#bottomPagesLine").append("<a id=\"btnpb" + i + "\" href=\"#\" data-role=\"button\" data-inline=\"true\">" + (i+1) + "</a>");
-                $("#btnpt" + i).buttonMarkup({ inline: "true"});
-                $("#btnpb" + i).buttonMarkup({ inline: "true"});
+                $('#topPagesLine').append('<a id="btnpt' + i + '" href="#">' + (i+1) + '</a>');
+                $('#bottomPagesLine').append('<a id="btnpb' + i + '" href="#">' + (i+1) + '</a>');
+                $('#btnpt' + i).buttonMarkup({ inline: "true"});
+                $('#btnpb' + i).buttonMarkup({ inline: "true"});
                 if ((i+1) == currentPage) {
                     $("#btnpt" + i).addClass('ui-btn-active');
                     $("#btnpb" + i).addClass('ui-btn-active');
@@ -45,7 +50,8 @@ function categoryClicked(id)
             for (i = 0; i < 6; ++i) {
                 good = goods[i];
                 $('#catalogGrid').append(goodToDiv(good, lts[i%2]));
-                $('#good' + good.Id).button();
+                $('#showgood' + good.Id).button();
+                $('#buygood' + good.Id).button();
             }
         },
         "text"        
