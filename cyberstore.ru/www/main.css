@@ -44,3 +44,18 @@ body
     min-height:100%;
     width:900px;
 }
+
+
+
+table.startTable{
+    
+}
+table.startTable tr td{
+    width: 100px;
+    max-width: 100px;
+}
+
+table.startTable img{
+    height: 100px;
+    width: 100px;
+}
