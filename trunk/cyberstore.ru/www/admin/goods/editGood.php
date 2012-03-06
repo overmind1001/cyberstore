@@ -19,9 +19,6 @@
     if(!isset($_POST['catalog_name'])) {
         $error=true;
     }
-//    if(!isset($_POST['picture'])) {
-//        $error=true;
-//    }
     
     if($error)  {
         echo "Ошибка!";
@@ -34,7 +31,6 @@
     $price=$_POST['price'];
     $count=$_POST['count'];
     $catalog_name=$_POST['catalog_name'];
-    //$picture=$_POST['picture'];
     
     include_once '../../initPropel.php';
     Propel::init("../../cyberstore/build/conf/cyberstore-conf.php");
@@ -46,38 +42,6 @@
         return;
     }
     
-    
-    
-//    //разбираемся с картинкой
-//    //надо узнать свободный id-картинк
-//    $db = mysql_connect('localhost','root','');
-//    mysql_select_db('db_cyberstore', $db);
-//    $result = mysql_query("SELECT max(picture_id) FROM goods",$db);
-//    $myrow = mysql_fetch_array($result);
-//    $max_picture_id=$myrow['max(picture_id)'];
-//    if($max_picture_id==NULL)    {
-//        $max_picture_id=1;
-//    }
-//    else    {
-//        $max_picture_id++;
-//    }
-    
-    
-    $picture_id = $good->getPictureId();
-    
-    $uploaddir = '../../pictures/';
-    if (isset($_FILES["picture"])) {
-	if (is_uploaded_file($_FILES['picture']['tmp_name'])) {
-            if (move_uploaded_file($_FILES['picture']['tmp_name'], $uploaddir . $picture_id.".jpg")) {
-                print "File is valid, and was successfully uploaded.";
-            } 
-            else {
-                print "Файл не загружен!";
-                return;
-            }
-        }
-    }
-    
     $catalog = CatalogDivQuery::create()->findOneByName($catalog_name);
     if($catalog==NULL)  {
         echo "Нет каталога.";
@@ -85,13 +49,60 @@
     }
     $catalog_id = $catalog->getId();
     
+    //разбираемся с картинкой
+    $db = mysql_connect('localhost','root','');
+    mysql_select_db('db_cyberstore', $db);
+    $result = mysql_query("SELECT max(picture_id) FROM goods",$db);
+    $myrow = mysql_fetch_array($result);
+    $max_picture_id=$myrow['max(picture_id)'];
+    if($max_picture_id==NULL)    {
+        $max_picture_id=1;
+    }
+    else    {
+        $max_picture_id++;
+    }
     
+    
+    $uploaddir = '../../pictures/';
+    if (isset($_FILES["picture"])) {
+	if (is_uploaded_file($_FILES['picture']['tmp_name'])) {
+            if (move_uploaded_file($_FILES['picture']['tmp_name'], $uploaddir . $max_picture_id.".jpg")) {
+                print "File is valid, and was successfully uploaded.";
+            } 
+            else {
+                print "Файл не загружен!";
+                return;
+            }
+        }
+        else    {
+            $max_picture_id=NULL;//нет картинки
+        }
+    }
+  
+    //удалить старую картинку
+    $old_picture_id = $good->getPictureId();
+    $old_picture_path = $uploaddir.$old_picture_id.".jpg";
+    if (file_exists($old_picture_path)) {
+        if (unlink($old_picture_path)) {
+            //файл удален
+        }
+        else    { 
+            echo "Ошибка при удалении файла";
+        }
+    }
+    else {
+        //файла не было
+    }
+    
+    
+    
+    //сохранить запись
     $good->setName($good_name);
     $good->setDescription($description);
     $good->setPriceCurrent($price);
     $good->setCount($count);
     $good->setCatalogId($catalog_id);
-   
+    $good->setPictureId($max_picture_id);
     $good->save();
    
 ?>

@@ -6,6 +6,6 @@
         include 'formEditGood.php';
     }
     else if(isset($_POST['formDeleteGood']))  {
-        include 'formDeleteGood.php';
+        include 'deleteGood.php';
     }
 ?>
