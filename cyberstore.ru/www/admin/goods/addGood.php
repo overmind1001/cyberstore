@@ -15,9 +15,7 @@
     if(!isset($_POST['catalog_name'])) {
         $error=true;
     }
-//    if(!isset($_POST['picture'])) {
-//        $error=true;
-//    }
+
     
     if($error)  {
         echo "Ошибка!";
@@ -29,7 +27,6 @@
     $price=$_POST['price'];
     $count=$_POST['count'];
     $catalog_name=$_POST['catalog_name'];
-    //$picture=$_POST['picture'];
     
     include_once '../../initPropel.php';
     Propel::init("../../cyberstore/build/conf/cyberstore-conf.php");
@@ -41,18 +38,19 @@
         return;
     }
     
+    $catalog = CatalogDivQuery::create()->findOneByName($catalog_name);
+    if($catalog==NULL)  {
+        echo "Нет каталога.";
+        return;
+    }
+    $catalog_id = $catalog->getId();
     
     
-    //разбираемся с картинкой
     //надо узнать свободный id-картинки
-    /*Подключаемся к БД*/
     $db = mysql_connect('localhost','root','');
     mysql_select_db('db_cyberstore', $db);
-    /*Делаем запрос к БД*/
     $result = mysql_query("SELECT max(picture_id) FROM goods",$db);
-    /*Преобразовываем результат в массив*/
     $myrow = mysql_fetch_array($result);
-    /*Выводим результат на экран*/
     $max_picture_id=$myrow['max(picture_id)'];
     if($max_picture_id==NULL)    {
         $max_picture_id=1;
@@ -75,13 +73,11 @@
             }
         }
     }
-    
-    $catalog = CatalogDivQuery::create()->findOneByName($catalog_name);
-    if($catalog==NULL)  {
-        echo "Нет каталога.";
-        return;
+    else    {
+        $max_picture_id=NULL;
     }
-    $catalog_id = $catalog->getId();
+    
+    
     
     $good = new Goods();
     $good->setName($good_name);
@@ -91,8 +87,6 @@
     $good->setCatalogId($catalog_id);
     $good->setPictureId($max_picture_id);
     $good->save();
-    
-
 ?>
 <?php
     include '../adminHead.php';

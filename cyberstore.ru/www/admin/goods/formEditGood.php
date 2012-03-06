@@ -21,9 +21,8 @@
     $good = GoodsQuery::create()->findOneByName($good_name);
 ?>
     <form method="POST" enctype="multipart/form-data" action="editGood.php">
-    <div><!-- -->
+    <div>
         <table>
-            
             <tr>
                 <input type="text" name="old_name" hidden value=
                        <?php echo "'".$good->getName()."'";?>
@@ -81,13 +80,17 @@
             
             <tr>
                 <td>Изображение(jpeg):</td>
-                <td><input type="file" name="picture" /></td>
+                <td><input type="file" name="picture"  accept="image/jpeg"/></td>
             </tr>
         </table>
     </div>
     <div>
         <img src=
-                     <?php echo "'"."../../pictures/".$good->getPictureId().".jpg"."'";?>
+                     <?php 
+                        if($good->getPictureId()!=NULL){
+                            echo "'"."../../pictures/".$good->getPictureId().".jpg"."'";
+                        }
+                     ?>
                      >
     </div>
     <div>

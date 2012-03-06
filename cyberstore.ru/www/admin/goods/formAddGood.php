@@ -1,6 +1,6 @@
 <?php
     include '../adminHead.php';
-    $name="Добавить пользователя";
+    $name="Добавить товар";
     generateHead($name, $name)
 ?>
 
