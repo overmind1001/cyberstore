@@ -53,6 +53,38 @@
                     
                     <div data-role="content">
                         <p>Hello world</p>
+                        
+                        <table class="startTable">
+                            <tr>
+                                <td>Изображение</td><td>Название</td><td>Описание</td>
+                            </tr>
+                            <?php
+                                include_once 'propel.inc.php';
+                                
+                                function printRow($good) {
+                                    $name=$good->getname();
+                                    $description=$good->getDescription();
+                                    
+                                    if($good->getPictureId()!=NULL){
+                                        $picture_path = './pictures/'.$good->getPictureId().'.jpg';
+                                    }
+                                    else{
+                                        $picture_path='0a.jpg';
+                                    }
+                                    
+                                    echo "<tr>";
+                                    
+                                    echo "<td><img src='$picture_path'></td><td>$name</td><td>$description</td>";
+                                    
+                                    echo '</tr>';
+                                }
+                                
+                                $goods=GoodsQuery::create()->limit(3)->find();
+                                foreach ($goods as $good) {
+                                    printRow($good);
+                                }
+                            ?>
+                        </table>
                     </div>
                                     <!-- /content -->
 
