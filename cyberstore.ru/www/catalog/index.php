@@ -71,11 +71,11 @@
                                                                     <!--label for="select-count" class="select">На странице: </label-->
                                                                 </td>
                                                                 <td>
-                                                                    <select id="select-count" name="select-choice-1" data-native-menu="false">
-                                                                        <option value="six">6</option>
-                                                                        <option value="twelte">12</option>
-                                                                        <option value="twentyfour">24</option>
-                                                                        <option value="fortyeight">48</option>
+                                                                    <select id="select-count" name="select-choice-1" data-native-menu="false" onchange="countChanged();">
+                                                                        <option value="6">6</option>
+                                                                        <option value="12">12</option>
+                                                                        <option value="24">24</option>
+                                                                        <option value="48">48</option>
                                                                     </select>
                                                                 </td>
                                                             </tr>

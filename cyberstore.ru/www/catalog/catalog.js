@@ -1,3 +1,8 @@
+var currentCategory = -1;
+var goodsOnPage = 6;
+var currentPage = -1;
+var currentSkip = 0;
+
 function goodToDiv(good, letter)
 {
     result =  '<div class="ui-block-'+ letter + '">';
@@ -18,17 +23,18 @@ function goodToDiv(good, letter)
 
 function categoryClicked(id)
 {
+    currentCategory = id;
     $.post(
         "loadGoods.php",
         {
             categoryId: id,
-            count: 6,
-            skip: 0
+            count: goodsOnPage,
+            skip: currentSkip
         },
         function(data, textStatus, jqXHR) {
             response = eval("(" + data + ")");
             pageCount = response.pageCount;
-            currentPage = response.currentPage;
+            currentPage = response.currentPage - 1;
             goodsCount = response.goodsCount;
             goods = response.goods;
 
@@ -40,14 +46,17 @@ function categoryClicked(id)
                 $('#bottomPagesLine').append('<a id="btnpb' + i + '" href="#">' + (i+1) + '</a>');
                 $('#btnpt' + i).buttonMarkup({ inline: "true"});
                 $('#btnpb' + i).buttonMarkup({ inline: "true"});
-                if ((i+1) == currentPage) {
+                if (i == currentPage) {
                     $("#btnpt" + i).addClass('ui-btn-active');
                     $("#btnpb" + i).addClass('ui-btn-active');
+                } else {
+                    $("#btnpt" + i).attr('onclick', 'pageClicked(' + i + ');');
+                    $("#btnpb" + i).attr('onclick', 'pageClicked(' + i + ');');
                 }
             }
             $('#catalogGrid').html('');
             lts = ['a','b'];
-            for (i = 0; i < 6; ++i) {
+            for (i = 0; i < goodsOnPage; ++i) {
                 good = goods[i];
                 $('#catalogGrid').append(goodToDiv(good, lts[i%2]));
                 $('#showgood' + good.Id).button();
@@ -56,4 +65,17 @@ function categoryClicked(id)
         },
         "text"        
     );
-} 
+}
+
+function pageClicked(num)
+{
+    currentPage = num;
+    currentSkip = num * goodsOnPage;
+    categoryClicked(currentCategory);
+}
+
+function countChanged()
+{
+    goodsOnPage = $('#select-count').val();
+    categoryClicked(currentCategory);
+}

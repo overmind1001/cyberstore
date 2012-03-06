@@ -30,14 +30,17 @@ if ($goodsCount % $count > 0)
 $currentPage = (int)($skip / $count) + 1;
 
 $goods = GoodsQuery::create()
-    ->limit($skip, $count)
+    //->limit($skip, $count)
     ->findByCatalogId($cid);
 
 $N = count($goods);
 
+if ($goodsCount > $N - $skip)
+    $goodsCount = $N - $skip;
+
 $goodsResponse = '"goods":[';
 $firsttime = true;
-for ($i = 0; $i < $count && $i < $N; $i++) {
+for ($i = $skip; $i < ($count + $skip) && $i < ($goodsCount + $skip); $i++) {
     $good = $goods[$i];
     if ($firsttime)        
         $firsttime = false;
