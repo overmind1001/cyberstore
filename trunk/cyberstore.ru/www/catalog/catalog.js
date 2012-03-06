@@ -4,8 +4,7 @@ function goodToDiv(good, letter)
     result += '<div class="ui-bar ui-bar-c" style="height:200px;">';
     result += '<h3>' + good.Name + '</h3>';
     result += '<p>' + good.Description + '</p>';
-    result += '<a id="good' + good.Id + '" data-role="button">Купить</a>'
-    $('#good' + good.Id).button();
+    result += '<a href="#" id="good' + good.Id + '" data-role="button">Купить</a>'
     result += '</div>'
     result += '</div';
     return result;
@@ -43,9 +42,10 @@ function categoryClicked(id)
             }
             $('#catalogGrid').html('');
             lts = ['a','b'];
-            for (i = 0; i < goodsCount; ++i) {
+            for (i = 0; i < 6; ++i) {
                 good = goods[i];
                 $('#catalogGrid').append(goodToDiv(good, lts[i%2]));
+                $('#good' + good.Id).button();
             }
         },
         "text"        
