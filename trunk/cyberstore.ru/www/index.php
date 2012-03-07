@@ -54,19 +54,20 @@
                     <div data-role="content">
                         <p>Hello world</p>
                         
-                        <table class="startTable">
-                            <tr>
+                        <table  class="startTable">
+                            <!--tr>
                                 <td>Изображение</td><td>Название</td><td>Описание</td>
-                            </tr>
+                            </tr-->
                             <?php
                                 include_once 'propel.inc.php';
                                 
                                 function printRow($good) {
                                     $name=$good->getname();
                                     $description=$good->getDescription();
+                                    $price=$good->getPriceCurrent();
                                     
                                     if($good->getPictureId()!=NULL){
-                                        $picture_path = './pictures/'.$good->getPictureId().'.jpg';
+                                        $picture_path = './pictures/'."m".$good->getPictureId().'.jpg';
                                     }
                                     else{
                                         $picture_path='0a.jpg';
@@ -74,7 +75,15 @@
                                     
                                     echo "<tr>";
                                     
-                                    echo "<td><img src='$picture_path'></td><td>$name</td><td>$description</td>";
+                                    echo "
+                                    <td class='pic' style='max-width:100px;'>
+                                        <table style='align: center;'>
+                                            <tr><td style='align:center;'><img src='$picture_path'> </td></tr>
+                                            <tr><td style='align:center;'>$name </td></tr>
+                                            <tr><td style='align:center;'>$price </td></tr>
+                                        </table>
+                                    </td>
+                                    <td >$description</td>";
                                     
                                     echo '</tr>';
                                 }

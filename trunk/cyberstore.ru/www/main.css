@@ -48,7 +48,12 @@ body
 
 
 table.startTable{
-    
+    width: 100%;
+}
+table.startTable tr td.pic{
+    width: 100px;
+    height:100px;
+
 }
 table.startTable tr td{
     width: 100px;
