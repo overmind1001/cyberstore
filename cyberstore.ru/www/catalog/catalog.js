@@ -11,10 +11,10 @@ function goodToDiv(good, letter)
     result += '<tr><td align="center" colspan="2">' + good.Name + '</td></tr>';
     result += '<tr><td align="center" colspan="2"><img src="./../0a.jpg"/></td></tr>';
     result += '<tr><td valign="top" colspan="2">' + good.Description + '</td></tr>';
-    result += '<tr><td align="left" width="50%"><a href="#" id="showgood' + good.Id +
+    result += '<tr><td align="left" width="50%"><a href="good.php?goodId=' + good.Id + '" target="_blank" id="showgood' + good.Id +
                 '">Подробнее</a></td>';
     result += '<td align="right" width="50%"><a href="#" id="buygood' + good.Id +
-                '">Купить</a></td></tr>';
+                '">Купить: ' + good.PriceCurrent + ' кб</a></td></tr>';
     result += '</table';
     result += '</div>'
     result += '</div';
