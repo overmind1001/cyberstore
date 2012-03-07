@@ -18,6 +18,11 @@
 
     if ($gid != null) {
         $good = GoodsQuery::create()->findOneById($gid);
+        if($good->getPictureId() != NULL){
+            $picture_path = './../pictures/'.$good->getPictureId().'.jpg';
+        } else {
+            $picture_path='./../0a.jpg';
+        }
     }
 ?>
 -->
@@ -50,7 +55,8 @@
     echo $good->getName();
 ?>
             </h1>
-            <img src="" align="left" width="350px" height="350px" style="margin-right:15px;"></img>
+            
+            <img src="<?echo $picture_path;?>" align="left" width="350px" height="350px" style="margin-right:15px;"></img>
 <?
     echo $good->getDescription();
 ?>
