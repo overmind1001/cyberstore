@@ -75,9 +75,6 @@
                     </select>
                 </td>
             </tr>
-            
-                
-            
             <tr>
                 <td>Изображение(jpeg):</td>
                 <td><input type="file" name="picture"  accept="image/jpeg"/></td>
@@ -86,8 +83,11 @@
     </div>
     <div>
         <?php 
-        if($good->getPictureId()!=NULL){
-            echo "<img src='"."../../pictures/".$good->getPictureId().".jpg"."'>";
+        $picture_dir="../../pictures/";
+        $picture_path = $picture_dir .$good->getPictureId().".jpg";
+        
+        if(file_exists($picture_path)){
+            echo "<img src='$picture_path'>";
         }
         ?>
     </div>

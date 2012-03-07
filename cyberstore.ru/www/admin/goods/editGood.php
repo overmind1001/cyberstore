@@ -1,4 +1,5 @@
 <?php
+    include_once 'resize_jpg.php';
     $error=false;
     
     if(!isset($_POST['old_name'])) {
@@ -24,13 +25,23 @@
         echo "Ошибка!";
         return;
     }
-
+    
     $good_old_name=$_POST['old_name'];
     $good_name=$_POST['name'];
     $description=$_POST['description'];
     $price=$_POST['price'];
     $count=$_POST['count'];
     $catalog_name=$_POST['catalog_name'];
+    
+    if(trim($good_name)==""){
+        die("Название товара не может быть пустым!");
+    }
+    if($price<0){
+        die("Цена не может быть отрицательной!");
+    }
+    if($count<0){
+        die("Количество не может быть отрицательным!");
+    }
     
     include_once '../../initPropel.php';
     Propel::init("../../cyberstore/build/conf/cyberstore-conf.php");
@@ -65,8 +76,12 @@
     $uploaddir = '../../pictures/';
     if (isset($_FILES["picture"])) {
 	if (is_uploaded_file($_FILES['picture']['tmp_name'])) {
-            if (move_uploaded_file($_FILES['picture']['tmp_name'], $uploaddir . $max_picture_id.".jpg")) {
+            if (move_uploaded_file($_FILES['picture']['tmp_name'], $uploaddir ."source". $max_picture_id.".jpg")) {
                 //print "File is valid, and was successfully uploaded.";
+                //изображение для каталога (миниатюра)
+                resize_jpeg($uploaddir ."source". $max_picture_id.".jpg", $uploaddir ."m". $max_picture_id.".jpg", 100);
+                //изображение для страницы товара
+                resize_jpeg($uploaddir ."source". $max_picture_id.".jpg", $uploaddir . $max_picture_id.".jpg", 350);
             } 
             else {
                 print "Файл не загружен!";
@@ -80,9 +95,33 @@
   
     //удалить старую картинку
     $old_picture_id = $good->getPictureId();
-    $old_picture_path = $uploaddir.$old_picture_id.".jpg";
+    $old_picture_path = $uploaddir."source".$old_picture_id.".jpg";
+    $old_mini_picture_path = $uploaddir."m".$old_picture_id.".jpg";
+    $old_standard_picture_path = $uploaddir.$old_picture_id.".jpg";
     if (file_exists($old_picture_path)) {
         if (unlink($old_picture_path)) {
+            //файл удален
+        }
+        else    { 
+            echo "Ошибка при удалении файла";
+        }
+    }
+    else {
+        //файла не было
+    }
+    if (file_exists($old_mini_picture_path)) {
+        if (unlink($old_mini_picture_path)) {
+            //файл удален
+        }
+        else    { 
+            echo "Ошибка при удалении файла";
+        }
+    }
+    else {
+        //файла не было
+    }
+    if (file_exists($old_standard_picture_path)) {
+        if (unlink($old_standard_picture_path)) {
             //файл удален
         }
         else    { 
