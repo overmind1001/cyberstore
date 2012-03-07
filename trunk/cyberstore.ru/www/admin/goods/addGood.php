@@ -1,4 +1,6 @@
 <?php
+    include_once 'resize_jpg.php';
+
     $error=false;
     if(!isset($_POST['name'])) {
         $error=true;
@@ -25,6 +27,16 @@
     $price=$_POST['price'];
     $count=$_POST['count'];
     $catalog_name=$_POST['catalog_name'];
+    
+    if(trim($good_name)==""){
+        die("Название товара не может быть пустым!");
+    }
+    if($price<0){
+        die("Цена не может быть отрицательной!");
+    }
+    if($count<0){
+        die("Количество не может быть отрицательным!");
+    }
     
     include_once '../../initPropel.php';
     Propel::init("../../cyberstore/build/conf/cyberstore-conf.php");
@@ -58,13 +70,20 @@
     $uploaddir = '../../pictures/';
     if (isset($_FILES["picture"])) {
 	if (is_uploaded_file($_FILES['picture']['tmp_name'])) {
-            if (move_uploaded_file($_FILES['picture']['tmp_name'], $uploaddir . $max_picture_id.".jpg")) {
+            if (move_uploaded_file($_FILES['picture']['tmp_name'], $uploaddir ."source". $max_picture_id.".jpg")) {
                 //print "File is valid, and was successfully uploaded.";
+                //изображение для каталога (миниатюра)
+                resize_jpeg($uploaddir ."source". $max_picture_id.".jpg", $uploaddir ."m". $max_picture_id.".jpg", 100);
+                //изображение для страницы товара
+                resize_jpeg($uploaddir ."source". $max_picture_id.".jpg", $uploaddir . $max_picture_id.".jpg", 350);
             } 
             else {
                 print "Файл не загружен!";
                 return;
             }
+        }
+        else    {
+            $max_picture_id=NULL;
         }
     }
     else    {

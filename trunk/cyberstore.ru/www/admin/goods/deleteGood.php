@@ -18,9 +18,33 @@
     //удалить картинку
     $uploaddir = '../../pictures/';
     $picture_id = $good->getPictureId();
-    $picture_path = $uploaddir.$picture_id.".jpg";
+    $picture_path = $uploaddir."source".$picture_id.".jpg";
+    $mini_picture_path = $uploaddir."m".$picture_id.".jpg";
+    $standard_picture_path = $uploaddir.$picture_id.".jpg";
     if (file_exists($picture_path)) {
         if (unlink($picture_path)) {
+            //файл удален
+        }
+        else    { 
+            echo "Ошибка при удалении файла";
+        }
+    }
+    else {
+        //файла не было
+    }
+    if (file_exists($mini_picture_path)) {
+        if (unlink($mini_picture_path)) {
+            //файл удален
+        }
+        else    { 
+            echo "Ошибка при удалении файла";
+        }
+    }
+    else {
+        //файла не было
+    }
+    if (file_exists($standard_picture_path)) {
+        if (unlink($standard_picture_path)) {
             //файл удален
         }
         else    { 
