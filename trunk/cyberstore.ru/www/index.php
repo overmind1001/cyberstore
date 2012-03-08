@@ -76,14 +76,14 @@
                                     echo "<tr>";
                                     
                                     echo "
-                                    <td class='pic' style='max-width:100px;'>
+                                    <td class='pic'>
                                         <table style='align: center;'>
-                                            <tr><td style='align:center;'><img src='$picture_path'> </td></tr>
-                                            <tr><td style='align:center;'>$name </td></tr>
-                                            <tr><td style='align:center;'>$price </td></tr>
+                                            <tr><td class='mainLeft'><img src='$picture_path'> </td></tr>
+                                            <tr><td class='mainLeft'>$name </td></tr>
+                                            <tr><td class='mainLeft'>Цена: $price квазибит</td></tr>
                                         </table>
                                     </td>
-                                    <td >$description</td>";
+                                    <td class='descr'>$description</td>";
                                     
                                     echo '</tr>';
                                 }
