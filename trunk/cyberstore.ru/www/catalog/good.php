@@ -56,7 +56,7 @@
 ?>
             </h1>
             
-            <img src="<?echo $picture_path;?>" align="left" width="350px" height="350px" style="margin-right:15px;"></img>
+            <img src="<?echo $picture_path;?>" align="left" style="margin-right:15px;"></img>
 <?
     echo $good->getDescription();
 ?>

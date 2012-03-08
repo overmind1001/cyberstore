@@ -8,18 +8,22 @@ function goodToDiv(good, letter)
     if (good.PictureId == null)
         picpath = './../0a.jpg';
     else picpath = './../pictures/m' + good.PictureId + '.jpg';
+    description = good.Description.toString();
+    if (description.length > 60)
+        description = good.Description.substring(0, 60) + '...';
+    else description = good.Description;
     result =  '<div class="ui-block-'+ letter + '">';
     result += '<div class="ui-bar ui-bar-c" style="height:250px;">';
     result += '<table border="0px" width="100%" height="100%">';
     result += '<tr><td align="center" colspan="2">' + good.Name + '</td></tr>';
     result += '<tr><td align="center" colspan="2"><img src="' + picpath + '"/></td></tr>';
-    result += '<tr><td valign="top" colspan="2">' + good.Description + '</td></tr>';
+    result += '<tr><td valign="top" colspan="2">' + description + '</td></tr>';
     result += '<tr><td align="left" width="50%"><a href="good.php?goodId=' + good.Id + '" target="_blank" id="showgood' + good.Id +
                 '">Подробнее</a></td>';
     result += '<td align="right" width="50%"><a href="#" id="buygood' + good.Id +
                 '">Купить: ' + good.PriceCurrent + ' кб</a></td></tr>';
     result += '</table';
-    result += '</div>'
+    result += '</div>';
     result += '</div';
     return result;
 }
