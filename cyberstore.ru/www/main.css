@@ -50,14 +50,16 @@ body
 table.startTable{
     width: 100%;
 }
-table.startTable tr td.pic{
-    width: 100px;
-    height:100px;
-
+table.startTable td.pic {
+    width: 10%;
 }
-table.startTable tr td{
-    width: 100px;
-    max-width: 100px;
+table.startTable td.descr {
+    vertical-align: top;
+    margin: 100px;
+}
+.mainLeft {
+    text-align: center;
+    color: blue;
 }
 
 table.startTable img{
