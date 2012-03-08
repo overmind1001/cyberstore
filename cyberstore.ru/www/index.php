@@ -2,14 +2,31 @@
 <html>
     <head>
         <title>CyberStore - всё для киборгов</title>
+
+        <link type="text/css" href="css/black-tie/jquery-ui-1.8.18.custom.css" rel="stylesheet" />
+        <script type="text/javascript" src="js/jquery-1.7.1.min.js"></script>
+        <script type="text/javascript" src="js/jquery-ui-1.8.18.custom.min.js"></script>
+
         <link rel="stylesheet" href="http://code.jquery.com/mobile/1.0.1/jquery.mobile-1.0.1.min.css" />
-        <script src="jquery-1.6.4.min.js"></script>
-        <script src="jquery.mobile-1.0.1.min.js"></script>
+        <script src="./jquery.mobile-1.0.1.min.js"></script>
+
         <script src="./catalog/catalog.js"></script>
         <link rel="stylesheet" href="main.css" />
         <script>
             $(function(){
                 $.mobile.defaultPageTransition = "fade";
+                $.mobile.ajaxLinksEnabled = false;
+
+                $( 'div' ).live( 'pageshow',function(event, ui){
+                    $('#accordion').accordion();
+                    $('#accordion').css('width','200px');
+                    $('#accordion').css('margin','10px');
+                    $('.ui-accordion-content').css('padding-top','5px');
+                    $('.ui-accordion-content').css('padding-bottom','5px');
+                    $('.ui-accordion-content').css('padding-left','15px');
+                    $('.ui-accordion-content').css('padding-right','15px');
+                });
+
             });
         </script>
     </head>
@@ -35,10 +52,10 @@
                             <div data-role="navbar" >
                                 <ul>
                                 <li>
-                                    <a href="#" class="ui-btn-active" data-theme="a">Главная</a>
+                                    <a href="#" data-theme="a">Главная</a>
                                 </li>
                                 <li>
-                                    <a href="./catalog/" data-theme="a">Каталог</a>
+                                    <a href="#" onclick="$.mobile.changePage('./catalog/index.php');" data-theme="a">Каталог</a>
                                 </li>
                                 <li>
                                     <a href="#" data-theme="a">Корзина</a>
