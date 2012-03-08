@@ -3,10 +3,23 @@
     <head>
         <title>CyberStore - всё для киборгов</title>
         <link rel="stylesheet" href="http://code.jquery.com/mobile/1.0.1/jquery.mobile-1.0.1.min.css" />
-        <script src="./../jquery-1.6.4.min.js"></script>
+
+        <link type="text/css" href="./../css/black-tie/jquery-ui-1.8.18.custom.css" rel="stylesheet" />
+        <script type="text/javascript" src="./../js/jquery-1.7.1.min.js"></script>
+        <script type="text/javascript" src="./../js/jquery-ui-1.8.18.custom.min.js"></script>
+        
         <script src="./../jquery.mobile-1.0.1.min.js"></script>
+        <script src="./catalog.js"></script>
         <link rel="stylesheet" href="./../main.css" />
+
+        <script>
+            $(function(){
+                $.mobile.defaultPageTransition = "fade";
+                $.mobile.ajaxLinksEnabled = false;
+            });
+        </script>
     </head>
+    
     
 <!--
 <?
@@ -36,23 +49,23 @@
                 <div data-role="navbar" >
                     <ul>
                         <li>
-                            <a href="./../"  data-theme="a">Главная</a>
+                            <a id="1" href="#" onclick="$.mobile.changePage('./../index.php');" data-theme="a">Главная</a>
                         </li>
                         <li>
-                            <a href="#"class="ui-btn-active" data-theme="a">Каталог</a>
+                            <a id="2" href="#" data-theme="a">Каталог</a>
                         </li>
                         <li>
-                            <a href="#" data-theme="a">Корзина</a>
+                            <a id="3" href="#" data-theme="a">Корзина</a>
                         </li>
                         <li>
-                            <a href="#" data-theme="a">Помощь</a>
+                            <a id="4" href="#" data-theme="a">Помощь</a>
                         </li>
                     </ul>
                 </div>
             </div><!-- /header -->
             <div data-role="content">
                 <div id="catalog">
-                    <table border="0px">
+                    <table border="0px" width="100%">
                         <tr>
                             <td style="width:10%; vertical-align:top;" rowspan="3">
                                 <!-- Категоризатор -->

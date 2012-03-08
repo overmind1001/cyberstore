@@ -3,12 +3,12 @@
 $rootc = CatalogDivQuery::create()->findOneByName("root");
 $categories = $rootc->getCatalogDivsRelatedById();
    
-echo '<div data-role="collapsible-set" data-theme="c" data-content-theme="d" data-mini="true">';
+echo '<div id="accordion" data-theme="c" data-content-theme="d" data-mini="true" style="width=100px">';
 foreach ($categories as $category)
 {
     if ($category->getParentCatalogDivId() == $rootc->getId()) {
-        echo '<div data-role="collapsible">';
-        echo '<h3>'.trim($category->getName()).'</h3>';
+        echo '<h3><a href="#" >'.trim($category->getName()).'</a></h3>';
+        echo '<div>';
         if ($category->countCatalogDivsRelatedById() > 0) {
             $subcatalogs = $category->getCatalogDivsRelatedById();
             echo '<div id="topcategory'.$category->getId().'" data-role="controlgroup" data-mini="true">';
@@ -25,5 +25,8 @@ foreach ($categories as $category)
     }
 }
 echo '</div>';
+echo '<script>';
+echo '$("accordion").accordion();';
+echo '</script>';
 
 ?>
