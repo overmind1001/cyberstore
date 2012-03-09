@@ -258,7 +258,7 @@ abstract class BaseUserQuery extends ModelCriteria
 	 *
 	 * @return    UserQuery The current query, for fluid interface
 	 */
-	public function joinBasket($relationAlias = null, $joinType = Criteria::INNER_JOIN)
+	public function joinBasket($relationAlias = null, $joinType = Criteria::LEFT_JOIN)
 	{
 		$tableMap = $this->getTableMap();
 		$relationMap = $tableMap->getRelation('Basket');
@@ -293,7 +293,7 @@ abstract class BaseUserQuery extends ModelCriteria
 	 *
 	 * @return    BasketQuery A secondary query class using the current class as primary query
 	 */
-	public function useBasketQuery($relationAlias = null, $joinType = Criteria::INNER_JOIN)
+	public function useBasketQuery($relationAlias = null, $joinType = Criteria::LEFT_JOIN)
 	{
 		return $this
 			->joinBasket($relationAlias, $joinType)

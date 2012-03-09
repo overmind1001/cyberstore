@@ -37,6 +37,12 @@ abstract class BaseBasket extends BaseObject  implements Persistent
 	protected $user_id;
 
 	/**
+	 * The value for the session_id field.
+	 * @var        string
+	 */
+	protected $session_id;
+
+	/**
 	 * @var        User
 	 */
 	protected $aUser;
@@ -78,6 +84,16 @@ abstract class BaseBasket extends BaseObject  implements Persistent
 	public function getUserId()
 	{
 		return $this->user_id;
+	}
+
+	/**
+	 * Get the [session_id] column value.
+	 * 
+	 * @return     string
+	 */
+	public function getSessionId()
+	{
+		return $this->session_id;
 	}
 
 	/**
@@ -125,6 +141,26 @@ abstract class BaseBasket extends BaseObject  implements Persistent
 	} // setUserId()
 
 	/**
+	 * Set the value of [session_id] column.
+	 * 
+	 * @param      string $v new value
+	 * @return     Basket The current object (for fluent API support)
+	 */
+	public function setSessionId($v)
+	{
+		if ($v !== null) {
+			$v = (string) $v;
+		}
+
+		if ($this->session_id !== $v) {
+			$this->session_id = $v;
+			$this->modifiedColumns[] = BasketPeer::SESSION_ID;
+		}
+
+		return $this;
+	} // setSessionId()
+
+	/**
 	 * Indicates whether the columns in this object are only set to default values.
 	 *
 	 * This method can be used in conjunction with isModified() to indicate whether an object is both
@@ -158,6 +194,7 @@ abstract class BaseBasket extends BaseObject  implements Persistent
 
 			$this->id = ($row[$startcol + 0] !== null) ? (int) $row[$startcol + 0] : null;
 			$this->user_id = ($row[$startcol + 1] !== null) ? (int) $row[$startcol + 1] : null;
+			$this->session_id = ($row[$startcol + 2] !== null) ? (string) $row[$startcol + 2] : null;
 			$this->resetModified();
 
 			$this->setNew(false);
@@ -166,7 +203,7 @@ abstract class BaseBasket extends BaseObject  implements Persistent
 				$this->ensureConsistency();
 			}
 
-			return $startcol + 2; // 2 = BasketPeer::NUM_HYDRATE_COLUMNS.
+			return $startcol + 3; // 3 = BasketPeer::NUM_HYDRATE_COLUMNS.
 
 		} catch (Exception $e) {
 			throw new PropelException("Error populating Basket object", $e);
@@ -517,6 +554,9 @@ abstract class BaseBasket extends BaseObject  implements Persistent
 			case 1:
 				return $this->getUserId();
 				break;
+			case 2:
+				return $this->getSessionId();
+				break;
 			default:
 				return null;
 				break;
@@ -548,6 +588,7 @@ abstract class BaseBasket extends BaseObject  implements Persistent
 		$result = array(
 			$keys[0] => $this->getId(),
 			$keys[1] => $this->getUserId(),
+			$keys[2] => $this->getSessionId(),
 		);
 		if ($includeForeignObjects) {
 			if (null !== $this->aUser) {
@@ -593,6 +634,9 @@ abstract class BaseBasket extends BaseObject  implements Persistent
 			case 1:
 				$this->setUserId($value);
 				break;
+			case 2:
+				$this->setSessionId($value);
+				break;
 		} // switch()
 	}
 
@@ -619,6 +663,7 @@ abstract class BaseBasket extends BaseObject  implements Persistent
 
 		if (array_key_exists($keys[0], $arr)) $this->setId($arr[$keys[0]]);
 		if (array_key_exists($keys[1], $arr)) $this->setUserId($arr[$keys[1]]);
+		if (array_key_exists($keys[2], $arr)) $this->setSessionId($arr[$keys[2]]);
 	}
 
 	/**
@@ -632,6 +677,7 @@ abstract class BaseBasket extends BaseObject  implements Persistent
 
 		if ($this->isColumnModified(BasketPeer::ID)) $criteria->add(BasketPeer::ID, $this->id);
 		if ($this->isColumnModified(BasketPeer::USER_ID)) $criteria->add(BasketPeer::USER_ID, $this->user_id);
+		if ($this->isColumnModified(BasketPeer::SESSION_ID)) $criteria->add(BasketPeer::SESSION_ID, $this->session_id);
 
 		return $criteria;
 	}
@@ -695,6 +741,7 @@ abstract class BaseBasket extends BaseObject  implements Persistent
 	public function copyInto($copyObj, $deepCopy = false, $makeNew = true)
 	{
 		$copyObj->setUserId($this->getUserId());
+		$copyObj->setSessionId($this->getSessionId());
 
 		if ($deepCopy) {
 			// important: temporarily setNew(false) because this affects the behavior of
@@ -949,6 +996,7 @@ abstract class BaseBasket extends BaseObject  implements Persistent
 	{
 		$this->id = null;
 		$this->user_id = null;
+		$this->session_id = null;
 		$this->alreadyInSave = false;
 		$this->alreadyInValidation = false;
 		$this->clearAllReferences();

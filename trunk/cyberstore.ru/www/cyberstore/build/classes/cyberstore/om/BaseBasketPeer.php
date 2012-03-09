@@ -26,19 +26,22 @@ abstract class BaseBasketPeer {
 	const TM_CLASS = 'BasketTableMap';
 	
 	/** The total number of columns. */
-	const NUM_COLUMNS = 2;
+	const NUM_COLUMNS = 3;
 
 	/** The number of lazy-loaded columns. */
 	const NUM_LAZY_LOAD_COLUMNS = 0;
 
 	/** The number of columns to hydrate (NUM_COLUMNS - NUM_LAZY_LOAD_COLUMNS) */
-	const NUM_HYDRATE_COLUMNS = 2;
+	const NUM_HYDRATE_COLUMNS = 3;
 
 	/** the column name for the ID field */
 	const ID = 'basket.ID';
 
 	/** the column name for the USER_ID field */
 	const USER_ID = 'basket.USER_ID';
+
+	/** the column name for the SESSION_ID field */
+	const SESSION_ID = 'basket.SESSION_ID';
 
 	/** The default string format for model objects of the related table **/
 	const DEFAULT_STRING_FORMAT = 'YAML';
@@ -59,12 +62,12 @@ abstract class BaseBasketPeer {
 	 * e.g. self::$fieldNames[self::TYPE_PHPNAME][0] = 'Id'
 	 */
 	protected static $fieldNames = array (
-		BasePeer::TYPE_PHPNAME => array ('Id', 'UserId', ),
-		BasePeer::TYPE_STUDLYPHPNAME => array ('id', 'userId', ),
-		BasePeer::TYPE_COLNAME => array (self::ID, self::USER_ID, ),
-		BasePeer::TYPE_RAW_COLNAME => array ('ID', 'USER_ID', ),
-		BasePeer::TYPE_FIELDNAME => array ('id', 'user_id', ),
-		BasePeer::TYPE_NUM => array (0, 1, )
+		BasePeer::TYPE_PHPNAME => array ('Id', 'UserId', 'SessionId', ),
+		BasePeer::TYPE_STUDLYPHPNAME => array ('id', 'userId', 'sessionId', ),
+		BasePeer::TYPE_COLNAME => array (self::ID, self::USER_ID, self::SESSION_ID, ),
+		BasePeer::TYPE_RAW_COLNAME => array ('ID', 'USER_ID', 'SESSION_ID', ),
+		BasePeer::TYPE_FIELDNAME => array ('id', 'user_id', 'session_id', ),
+		BasePeer::TYPE_NUM => array (0, 1, 2, )
 	);
 
 	/**
@@ -74,12 +77,12 @@ abstract class BaseBasketPeer {
 	 * e.g. self::$fieldNames[BasePeer::TYPE_PHPNAME]['Id'] = 0
 	 */
 	protected static $fieldKeys = array (
-		BasePeer::TYPE_PHPNAME => array ('Id' => 0, 'UserId' => 1, ),
-		BasePeer::TYPE_STUDLYPHPNAME => array ('id' => 0, 'userId' => 1, ),
-		BasePeer::TYPE_COLNAME => array (self::ID => 0, self::USER_ID => 1, ),
-		BasePeer::TYPE_RAW_COLNAME => array ('ID' => 0, 'USER_ID' => 1, ),
-		BasePeer::TYPE_FIELDNAME => array ('id' => 0, 'user_id' => 1, ),
-		BasePeer::TYPE_NUM => array (0, 1, )
+		BasePeer::TYPE_PHPNAME => array ('Id' => 0, 'UserId' => 1, 'SessionId' => 2, ),
+		BasePeer::TYPE_STUDLYPHPNAME => array ('id' => 0, 'userId' => 1, 'sessionId' => 2, ),
+		BasePeer::TYPE_COLNAME => array (self::ID => 0, self::USER_ID => 1, self::SESSION_ID => 2, ),
+		BasePeer::TYPE_RAW_COLNAME => array ('ID' => 0, 'USER_ID' => 1, 'SESSION_ID' => 2, ),
+		BasePeer::TYPE_FIELDNAME => array ('id' => 0, 'user_id' => 1, 'session_id' => 2, ),
+		BasePeer::TYPE_NUM => array (0, 1, 2, )
 	);
 
 	/**
@@ -153,9 +156,11 @@ abstract class BaseBasketPeer {
 		if (null === $alias) {
 			$criteria->addSelectColumn(BasketPeer::ID);
 			$criteria->addSelectColumn(BasketPeer::USER_ID);
+			$criteria->addSelectColumn(BasketPeer::SESSION_ID);
 		} else {
 			$criteria->addSelectColumn($alias . '.ID');
 			$criteria->addSelectColumn($alias . '.USER_ID');
+			$criteria->addSelectColumn($alias . '.SESSION_ID');
 		}
 	}
 
