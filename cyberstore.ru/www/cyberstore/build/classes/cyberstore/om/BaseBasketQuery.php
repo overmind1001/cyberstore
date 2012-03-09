@@ -8,9 +8,11 @@
  *
  * @method     BasketQuery orderById($order = Criteria::ASC) Order by the id column
  * @method     BasketQuery orderByUserId($order = Criteria::ASC) Order by the user_id column
+ * @method     BasketQuery orderBySessionId($order = Criteria::ASC) Order by the session_id column
  *
  * @method     BasketQuery groupById() Group by the id column
  * @method     BasketQuery groupByUserId() Group by the user_id column
+ * @method     BasketQuery groupBySessionId() Group by the session_id column
  *
  * @method     BasketQuery leftJoin($relation) Adds a LEFT JOIN clause to the query
  * @method     BasketQuery rightJoin($relation) Adds a RIGHT JOIN clause to the query
@@ -29,9 +31,11 @@
  *
  * @method     Basket findOneById(int $id) Return the first Basket filtered by the id column
  * @method     Basket findOneByUserId(int $user_id) Return the first Basket filtered by the user_id column
+ * @method     Basket findOneBySessionId(string $session_id) Return the first Basket filtered by the session_id column
  *
  * @method     array findById(int $id) Return Basket objects filtered by the id column
  * @method     array findByUserId(int $user_id) Return Basket objects filtered by the user_id column
+ * @method     array findBySessionId(string $session_id) Return Basket objects filtered by the session_id column
  *
  * @package    propel.generator.cyberstore.om
  */
@@ -210,6 +214,34 @@ abstract class BaseBasketQuery extends ModelCriteria
 	}
 
 	/**
+	 * Filter the query on the session_id column
+	 * 
+	 * Example usage:
+	 * <code>
+	 * $query->filterBySessionId('fooValue');   // WHERE session_id = 'fooValue'
+	 * $query->filterBySessionId('%fooValue%'); // WHERE session_id LIKE '%fooValue%'
+	 * </code>
+	 *
+	 * @param     string $sessionId The value to use as filter.
+	 *              Accepts wildcards (* and % trigger a LIKE)
+	 * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+	 *
+	 * @return    BasketQuery The current query, for fluid interface
+	 */
+	public function filterBySessionId($sessionId = null, $comparison = null)
+	{
+		if (null === $comparison) {
+			if (is_array($sessionId)) {
+				$comparison = Criteria::IN;
+			} elseif (preg_match('/[\%\*]/', $sessionId)) {
+				$sessionId = str_replace('*', '%', $sessionId);
+				$comparison = Criteria::LIKE;
+			}
+		}
+		return $this->addUsingAlias(BasketPeer::SESSION_ID, $sessionId, $comparison);
+	}
+
+	/**
 	 * Filter the query by a related User object
 	 *
 	 * @param     User|PropelCollection $user The related object(s) to use as filter
@@ -241,7 +273,7 @@ abstract class BaseBasketQuery extends ModelCriteria
 	 *
 	 * @return    BasketQuery The current query, for fluid interface
 	 */
-	public function joinUser($relationAlias = null, $joinType = Criteria::INNER_JOIN)
+	public function joinUser($relationAlias = null, $joinType = Criteria::LEFT_JOIN)
 	{
 		$tableMap = $this->getTableMap();
 		$relationMap = $tableMap->getRelation('User');
@@ -276,7 +308,7 @@ abstract class BaseBasketQuery extends ModelCriteria
 	 *
 	 * @return    UserQuery A secondary query class using the current class as primary query
 	 */
-	public function useUserQuery($relationAlias = null, $joinType = Criteria::INNER_JOIN)
+	public function useUserQuery($relationAlias = null, $joinType = Criteria::LEFT_JOIN)
 	{
 		return $this
 			->joinUser($relationAlias, $joinType)

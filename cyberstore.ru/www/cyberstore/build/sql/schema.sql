@@ -1,5 +1,4 @@
-create database db_cyberstore;
-use db_cyberstore;
+
 # This is a fix for InnoDB in MySQL >= 4.1.x
 # It "suspends judgement" for fkey relationships until are tables are set.
 SET FOREIGN_KEY_CHECKS = 0;
@@ -13,7 +12,8 @@ DROP TABLE IF EXISTS `basket`;
 CREATE TABLE `basket`
 (
 	`id` INTEGER NOT NULL AUTO_INCREMENT,
-	`user_id` INTEGER NOT NULL,
+	`user_id` INTEGER,
+	`session_id` VARCHAR(32) NOT NULL,
 	PRIMARY KEY (`id`),
 	INDEX `user_id_constraint` (`user_id`),
 	CONSTRAINT `user_id_constraint`

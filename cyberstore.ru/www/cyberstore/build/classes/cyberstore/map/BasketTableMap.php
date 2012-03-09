@@ -38,7 +38,8 @@ class BasketTableMap extends TableMap {
 		$this->setUseIdGenerator(true);
 		// columns
 		$this->addPrimaryKey('ID', 'Id', 'INTEGER', true, null, null);
-		$this->addForeignKey('USER_ID', 'UserId', 'INTEGER', 'user', 'ID', true, null, null);
+		$this->addForeignKey('USER_ID', 'UserId', 'INTEGER', 'user', 'ID', false, null, null);
+		$this->addColumn('SESSION_ID', 'SessionId', 'VARCHAR', true, 32, null);
 		// validators
 	} // initialize()
 

@@ -3,7 +3,8 @@
 <database name="cyberstore" defaultIdMethod="native">
   <table name="basket" phpName="Basket">
     <column name="id" phpName="Id" type="INTEGER" primaryKey="true" autoIncrement="true" required="true"/>
-    <column name="user_id" phpName="UserId" type="INTEGER" required="true"/>
+    <column name="user_id" phpName="UserId" type="INTEGER" required="false"/>
+    <column name="session_id" phpName="SessionId" type="VARCHAR" size="32" required="true"/>
     <foreign-key foreignTable="user" name="user_id_constraint" onDelete="CASCADE" onUpdate="CASCADE">
       <reference local="user_id" foreign="id"/>
     </foreign-key>
