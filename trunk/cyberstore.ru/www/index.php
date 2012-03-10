@@ -1,3 +1,17 @@
+<?
+    include_once 'propel.inc.php';
+
+    if ($_COOKIE['cybersession']!='') {//если узнали чувака
+            //TODO достаём его корзину из БД.
+    } else {
+        $str = date("d.m.Y H:i").rand(125000);
+        $cokie = md5($str);
+        setcookie('cybersession', $cokie, time()+60*60*24*7);//кука живёт 7 дней
+        //TODO запоминаем его в БД
+    }
+?>
+
+
 <!DOCTYPE html>
 <html>
     <head>
@@ -17,7 +31,7 @@
                 $.mobile.defaultPageTransition = "fade";
                 $.mobile.ajaxLinksEnabled = false;
 
-                $( 'div' ).live( 'pageshow',function(event, ui){
+                $( 'div' ).live( 'pageshow', function(event, ui){
                     $('#accordion').accordion();
                     $('#accordion').css('width','200px');
                     $('#accordion').css('margin','10px');
@@ -76,7 +90,6 @@
                                 <td>Изображение</td><td>Название</td><td>Описание</td>
                             </tr-->
                             <?php
-                                include_once 'propel.inc.php';
                                 
                                 function printRow($good) {
                                     $name=$good->getname();
