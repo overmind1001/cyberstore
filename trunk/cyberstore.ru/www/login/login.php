@@ -20,7 +20,7 @@
         return;
     }
 
-    $login=$_POST['parent_div_name'];
+    $login=$_POST['login'];
     $password=$_POST['password'];
     
     $defaultNextPage = "./";//TODO
