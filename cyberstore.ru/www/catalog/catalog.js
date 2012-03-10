@@ -6,7 +6,7 @@ var currentSkip = 0;
 function goodToDiv(good, letter)
 {
     if (good.PictureId == null)
-        picpath = './../0a.jpg';
+        picpath = './../pictures/m0.jpg';
     else picpath = './../pictures/m' + good.PictureId + '.jpg';
     if (good.Description.length > 60)
         description = good.Description.substring(0, 60) + '...';

@@ -91,7 +91,7 @@
                                         $picture_path = './pictures/'."m".$good->getPictureId().'.jpg';
                                     }
                                     else{
-                                        $picture_path='0a.jpg';
+                                        $picture_path='./pictures/m0.jpg';
                                     }
                                     
                                     echo "<tr>";
