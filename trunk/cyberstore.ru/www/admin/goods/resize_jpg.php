@@ -3,8 +3,15 @@
         $source_image = imagecreatefromjpeg($SOURCE) or die('Cannot load original JPEG');
         $source_width = imagesx($source_image);
         $source_height = imagesy($source_image);
-        $scale=$target_width/$source_width;
+        if($source_width>$source_height){
+            $scale=$target_width/$source_width;
+        }
+        else {
+            $scale=$target_width/$source_height;
+        }
+        
         $target_height = round($source_height*$scale);
+        $target_width = round($source_width*$scale);
         // Создаем новое изображение
         $target_image = imagecreatetruecolor($target_width, $target_height);
         // Копируем существующее изображение в новое с изменением размера:
