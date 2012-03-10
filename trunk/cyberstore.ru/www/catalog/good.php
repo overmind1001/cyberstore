@@ -21,7 +21,7 @@
         if($good->getPictureId() != NULL){
             $picture_path = './../pictures/'.$good->getPictureId().'.jpg';
         } else {
-            $picture_path='./../0a.jpg';
+            $picture_path='./../pictures/0.jpg';
         }
     }
 ?>
