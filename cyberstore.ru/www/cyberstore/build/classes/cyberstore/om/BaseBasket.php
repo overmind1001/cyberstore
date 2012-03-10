@@ -32,6 +32,7 @@ abstract class BaseBasket extends BaseObject  implements Persistent
 
 	/**
 	 * The value for the user_id field.
+	 * Note: this column has a database default value of: 0
 	 * @var        int
 	 */
 	protected $user_id;
@@ -65,6 +66,27 @@ abstract class BaseBasket extends BaseObject  implements Persistent
 	 * @var        boolean
 	 */
 	protected $alreadyInValidation = false;
+
+	/**
+	 * Applies default values to this object.
+	 * This method should be called from the object's constructor (or
+	 * equivalent initialization method).
+	 * @see        __construct()
+	 */
+	public function applyDefaultValues()
+	{
+		$this->user_id = 0;
+	}
+
+	/**
+	 * Initializes internal state of BaseBasket object.
+	 * @see        applyDefaults()
+	 */
+	public function __construct()
+	{
+		parent::__construct();
+		$this->applyDefaultValues();
+	}
 
 	/**
 	 * Get the [id] column value.
@@ -128,7 +150,7 @@ abstract class BaseBasket extends BaseObject  implements Persistent
 			$v = (int) $v;
 		}
 
-		if ($this->user_id !== $v) {
+		if ($this->user_id !== $v || $this->isNew()) {
 			$this->user_id = $v;
 			$this->modifiedColumns[] = BasketPeer::USER_ID;
 		}
@@ -170,6 +192,10 @@ abstract class BaseBasket extends BaseObject  implements Persistent
 	 */
 	public function hasOnlyDefaultValues()
 	{
+			if ($this->user_id !== 0) {
+				return false;
+			}
+
 		// otherwise, everything was equal, so return TRUE
 		return true;
 	} // hasOnlyDefaultValues()
@@ -810,7 +836,7 @@ abstract class BaseBasket extends BaseObject  implements Persistent
 	public function setUser(User $v = null)
 	{
 		if ($v === null) {
-			$this->setUserId(NULL);
+			$this->setUserId(0);
 		} else {
 			$this->setUserId($v->getId());
 		}
@@ -1000,6 +1026,7 @@ abstract class BaseBasket extends BaseObject  implements Persistent
 		$this->alreadyInSave = false;
 		$this->alreadyInValidation = false;
 		$this->clearAllReferences();
+		$this->applyDefaultValues();
 		$this->resetModified();
 		$this->setNew(true);
 		$this->setDeleted(false);

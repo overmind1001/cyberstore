@@ -12,15 +12,15 @@ DROP TABLE IF EXISTS `basket`;
 CREATE TABLE `basket`
 (
 	`id` INTEGER NOT NULL AUTO_INCREMENT,
-	`user_id` INTEGER,
+	`user_id` INTEGER DEFAULT 0,
 	`session_id` VARCHAR(32) NOT NULL,
 	PRIMARY KEY (`id`),
-	INDEX `user_id_constraint` (`user_id`),
-	CONSTRAINT `user_id_constraint`
+	INDEX `user_id_basket_constraint` (`user_id`),
+	CONSTRAINT `user_id_basket_constraint`
 		FOREIGN KEY (`user_id`)
 		REFERENCES `user` (`id`)
-		ON UPDATE CASCADE
-		ON DELETE CASCADE
+		ON UPDATE SET NULL
+		ON DELETE SET NULL
 ) ENGINE=MyISAM;
 
 -- ---------------------------------------------------------------------
