@@ -49,7 +49,7 @@
                             </td>
                         </tr>
                             <td align="right" valign="bottom">
-                                <a href="#" data-role="button" data-inline="true">Корзина: 0 товаров на 0 руб.</a>
+                                <a href="#" data-role="button" data-inline="true">Корзина: 0 товаров на 0 квазибит</a>
                             </td>
                         <tr>
                         </td>
@@ -57,10 +57,10 @@
                             <div data-role="navbar" >
                                 <ul>
                                 <li>
-                                    <a href="#" data-theme="a">Главная</a>
+                                    <a id="link1" href="#" data-theme="a">Главная</a>
                                 </li>
                                 <li>
-                                    <a href="#" onclick="$.mobile.changePage('./catalog/index.php');" data-theme="a">Каталог</a>
+                                    <a id="link2" href="" onclick="$.mobile.changePage('./catalog/index.php'); $('#link2').addClass('ui-btn-active'); $('#link1').removeClass('ui-btn-active');" data-theme="a">Каталог</a>
                                 </li>
                                 <li>
                                     <a href="#" data-theme="a">Корзина</a>

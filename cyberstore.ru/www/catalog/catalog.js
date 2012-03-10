@@ -20,7 +20,7 @@ function goodToDiv(good, letter)
     result += '<tr><td align="left" width="50%"><a href="good.php?goodId=' + good.Id + '" target="_blank" id="showgood' + good.Id +
                 '">Подробнее</a></td>';
     result += '<td align="right" width="50%"><a href="#" id="buygood' + good.Id +
-                '">Купить: ' + good.PriceCurrent + ' кб</a></td></tr>';
+                '">В корзину: ' + good.PriceCurrent + ' кб</a></td></tr>';
     result += '</table';
     result += '</div>';
     result += '</div';

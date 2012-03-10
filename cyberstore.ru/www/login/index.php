@@ -70,7 +70,7 @@
                     
                     <div data-role="content">
                         <h1 align="center">Авторизация</h1>
-                        <form method="POST" action="login.php">
+                        <form method="post" action="login.php" data-ajax="false">
                             <table  align="center">
                                 <tr>
                                     <td>Логин:</td>
@@ -87,10 +87,10 @@
                                 </tr>
                                 <tr>
                                     <td>   
-                                        <input type="text" name="nextPage" hidden readonly>
+                                        <input type="text" name="nextPage" style="display:none;" hidden readonly>
                                     </td>
                                     <td>
-                                        <input type="submit" name="OK" value="Войти" style="width:5%;">
+                                        <button type="submit" name="submit" value="submit-value">Войти</button>
                                     </td>
                                 </tr>
                         </table>
