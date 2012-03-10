@@ -49,10 +49,10 @@
                 <div data-role="navbar" >
                     <ul>
                         <li>
-                            <a id="1" href="#" onclick="$.mobile.changePage('./../index.php');" data-theme="a">Главная</a>
+                            <a id="link1" href="#" onclick="$.mobile.changePage('./../index.php'); $('#link1').addClass('ui-btn-active'); $('#link2').removeClass('ui-btn-active');" data-theme="a">Главная</a>
                         </li>
                         <li>
-                            <a id="2" href="#" data-theme="a">Каталог</a>
+                            <a id="link2" href="#" data-theme="a">Каталог</a>
                         </li>
                         <li>
                             <a id="3" href="#" data-theme="a">Корзина</a>
