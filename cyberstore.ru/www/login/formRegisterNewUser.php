@@ -86,7 +86,7 @@
                                         <input type="text" name="nextPage" hidden readonly>
                                     </td>
                                     <td>
-                                        <input type="submit" name="OK" value="Зарегистрировать" style="width:5%;">
+                                        <button type="submit" name="submit">Зарегистрировать</button>
                                     </td>
                                 </tr>
                         </table>
