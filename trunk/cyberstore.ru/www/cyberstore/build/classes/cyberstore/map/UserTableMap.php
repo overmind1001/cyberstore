@@ -48,7 +48,7 @@ class UserTableMap extends TableMap {
 	 */
 	public function buildRelations()
 	{
-    $this->addRelation('Basket', 'Basket', RelationMap::ONE_TO_MANY, array('id' => 'user_id', ), 'CASCADE', 'CASCADE');
+    $this->addRelation('Basket', 'Basket', RelationMap::ONE_TO_MANY, array('id' => 'user_id', ), 'SET NULL', 'SET NULL');
     $this->addRelation('Sales', 'Sales', RelationMap::ONE_TO_MANY, array('id' => 'user_id', ), 'CASCADE', 'CASCADE');
 	} // buildRelations()
 

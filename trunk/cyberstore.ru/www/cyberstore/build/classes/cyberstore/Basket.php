@@ -15,10 +15,11 @@
  */
 class Basket extends BaseBasket {
 
-	public function __construct($userId) 
+	public function __construct($ssid = '', $userId = '')
 	{
 		parent::__construct();
 		$this->setUserId($userId);
+		$this->setSessionId($ssid);
 	}
 
 } // Basket

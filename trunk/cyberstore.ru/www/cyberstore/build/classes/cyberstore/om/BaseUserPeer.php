@@ -589,6 +589,7 @@ abstract class BaseUserPeer {
 			// for more than one table or we could emulating ON DELETE CASCADE, etc.
 			$con->beginTransaction();
 			$affectedRows += UserPeer::doOnDeleteCascade(new Criteria(UserPeer::DATABASE_NAME), $con);
+			UserPeer::doOnDeleteSetNull(new Criteria(UserPeer::DATABASE_NAME), $con);
 			$affectedRows += BasePeer::doDeleteAll(UserPeer::TABLE_NAME, $con, UserPeer::DATABASE_NAME);
 			// Because this db requires some delete cascade/set null emulation, we have to
 			// clear the cached instance *after* the emulation has happened (since
@@ -645,6 +646,10 @@ abstract class BaseUserPeer {
 			$c = clone $criteria;
 			$affectedRows += UserPeer::doOnDeleteCascade($c, $con);
 			
+			// cloning the Criteria in case it's modified by doSelect() or doSelectStmt()
+			$c = clone $criteria;
+			UserPeer::doOnDeleteSetNull($c, $con);
+			
 			// Because this db requires some delete cascade/set null emulation, we have to
 			// clear the cached instance *after* the emulation has happened (since
 			// instances get re-added by the select statement contained therein).
@@ -691,12 +696,6 @@ abstract class BaseUserPeer {
 		foreach ($objects as $obj) {
 
 
-			// delete related Basket objects
-			$criteria = new Criteria(BasketPeer::DATABASE_NAME);
-			
-			$criteria->add(BasketPeer::USER_ID, $obj->getId());
-			$affectedRows += BasketPeer::doDelete($criteria, $con);
-
 			// delete related Sales objects
 			$criteria = new Criteria(SalesPeer::DATABASE_NAME);
 			
@@ -704,6 +703,37 @@ abstract class BaseUserPeer {
 			$affectedRows += SalesPeer::doDelete($criteria, $con);
 		}
 		return $affectedRows;
+	}
+
+	/**
+	 * This is a method for emulating ON DELETE SET NULL DBs that don't support this
+	 * feature (like MySQL or SQLite).
+	 *
+	 * This method is not very speedy because it must perform a query first to get
+	 * the implicated records and then perform the deletes by calling those Peer classes.
+	 *
+	 * This method should be used within a transaction if possible.
+	 *
+	 * @param      Criteria $criteria
+	 * @param      PropelPDO $con
+	 * @return     void
+	 */
+	protected static function doOnDeleteSetNull(Criteria $criteria, PropelPDO $con)
+	{
+
+		// first find the objects that are implicated by the $criteria
+		$objects = UserPeer::doSelect($criteria, $con);
+		foreach ($objects as $obj) {
+
+			// set fkey col in related Basket rows to NULL
+			$selectCriteria = new Criteria(UserPeer::DATABASE_NAME);
+			$updateValues = new Criteria(UserPeer::DATABASE_NAME);
+			$selectCriteria->add(BasketPeer::USER_ID, $obj->getId());
+			$updateValues->add(BasketPeer::USER_ID, null);
+
+			BasePeer::doUpdate($selectCriteria, $updateValues, $con); // use BasePeer because generated Peer doUpdate() methods only update using pkey
+
+		}
 	}
 
 	/**

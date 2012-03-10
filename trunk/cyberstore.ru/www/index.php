@@ -1,16 +1,7 @@
 <?
-    include_once 'propel.inc.php';
-
-    if ($_COOKIE['cybersession']!='') {//если узнали чувака
-            //TODO достаём его корзину из БД.
-    } else {
-        $str = date("d.m.Y H:i").rand(125000);
-        $cokie = md5($str);
-        setcookie('cybersession', $cokie, time()+60*60*24*7);//кука живёт 7 дней
-        //TODO запоминаем его в БД
-    }
+    include_once 'findBasket.php';
+    $basket = findBasket();
 ?>
-
 
 <!DOCTYPE html>
 <html>
