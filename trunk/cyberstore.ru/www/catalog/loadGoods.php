@@ -12,9 +12,7 @@
     * - goods[] - массив товаров
     */
 
-require_once './../vendor/propel/runtime/lib/Propel.php';
-Propel::init("./../cyberstore/build/conf/cyberstore-conf.php");
-set_include_path("./../cyberstore/build/classes" . PATH_SEPARATOR . get_include_path());
+include_once './../propel.inc.php';
 
 $cid = $_POST["categoryId"];
 $count = $_POST["count"];

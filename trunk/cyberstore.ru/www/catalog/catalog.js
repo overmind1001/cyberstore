@@ -3,6 +3,18 @@ var goodsOnPage = 6;
 var currentPage = -1;
 var currentSkip = 0;
 
+function readCookie(name)
+{
+    var nameEQ = name + "=";
+    var ca = document.cookie.split(';');
+    for(var i=0;i < ca.length;i++) {
+        var c = ca[i];
+        while (c.charAt(0)==' ') c = c.substring(1,c.length);
+        if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length,c.length);
+    }
+    return null;
+}
+
 function goodToDiv(good, letter)
 {
     if (good.PictureId == null)
@@ -19,8 +31,8 @@ function goodToDiv(good, letter)
     result += '<tr><td valign="bottom" colspan="2">' + description + '</td></tr>';
     result += '<tr><td align="left" width="50%"><a href="good.php?goodId=' + good.Id + '" target="_blank" id="showgood' + good.Id +
                 '">Подробнее</a></td>';
-    result += '<td align="right" width="50%"><a href="#" id="buygood' + good.Id +
-                '">В корзину: ' + good.PriceCurrent + ' кб</a></td></tr>';
+    result += '<td align="right" width="50%"><div id="addGood' + good.Id + '"><a href="" onclick="addGoodToBasket(' + good.Id + ');" id="buygood' + good.Id +
+                '">В корзину: ' + good.PriceCurrent + ' кб</a><div></td></tr>';
     result += '</table';
     result += '</div>';
     result += '</div';
@@ -85,4 +97,23 @@ function countChanged()
 {
     goodsOnPage = $('#select-count').val();
     categoryClicked(currentCategory);
+}
+
+function addGoodToBasket(id)
+{
+    ssid = readCookie('cybersession');
+    count = 1;
+    $.post(
+        'goodToBasket.php',
+        {
+            ssid: ssid,
+            count: count,
+            goodId: id
+        },
+        function(data, textStatus, jqXHR){
+            response = eval("(" + data + ")");
+            if (response.success)
+                alert('Товар успешно добавлен в корзину!' + response.basketId);
+        },
+        'text');
 }
