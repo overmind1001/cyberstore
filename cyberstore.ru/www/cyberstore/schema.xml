@@ -5,9 +5,6 @@
     <column name="id" phpName="Id" type="INTEGER" primaryKey="true" autoIncrement="true" required="true"/>
     <column name="user_id" phpName="UserId" type="INTEGER" required="false" defaultValue="0"/>
     <column name="session_id" phpName="SessionId" type="VARCHAR" size="32" required="true"/>
-    <foreign-key foreignTable="user" name="user_id_basket_constraint" onDelete="SET NULL" onUpdate="SET NULL">
-      <reference local="user_id" foreign="id"/>
-    </foreign-key>
     <index name="user_id_basket_constraint">
       <index-column name="user_id"/>
     </index>

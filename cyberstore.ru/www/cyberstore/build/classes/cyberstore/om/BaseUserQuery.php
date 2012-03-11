@@ -18,10 +18,6 @@
  * @method     UserQuery rightJoin($relation) Adds a RIGHT JOIN clause to the query
  * @method     UserQuery innerJoin($relation) Adds a INNER JOIN clause to the query
  *
- * @method     UserQuery leftJoinBasket($relationAlias = null) Adds a LEFT JOIN clause to the query using the Basket relation
- * @method     UserQuery rightJoinBasket($relationAlias = null) Adds a RIGHT JOIN clause to the query using the Basket relation
- * @method     UserQuery innerJoinBasket($relationAlias = null) Adds a INNER JOIN clause to the query using the Basket relation
- *
  * @method     UserQuery leftJoinSales($relationAlias = null) Adds a LEFT JOIN clause to the query using the Sales relation
  * @method     UserQuery rightJoinSales($relationAlias = null) Adds a RIGHT JOIN clause to the query using the Sales relation
  * @method     UserQuery innerJoinSales($relationAlias = null) Adds a INNER JOIN clause to the query using the Sales relation
@@ -225,79 +221,6 @@ abstract class BaseUserQuery extends ModelCriteria
 			}
 		}
 		return $this->addUsingAlias(UserPeer::PASSWORD, $password, $comparison);
-	}
-
-	/**
-	 * Filter the query by a related Basket object
-	 *
-	 * @param     Basket $basket  the related object to use as filter
-	 * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
-	 *
-	 * @return    UserQuery The current query, for fluid interface
-	 */
-	public function filterByBasket($basket, $comparison = null)
-	{
-		if ($basket instanceof Basket) {
-			return $this
-				->addUsingAlias(UserPeer::ID, $basket->getUserId(), $comparison);
-		} elseif ($basket instanceof PropelCollection) {
-			return $this
-				->useBasketQuery()
-					->filterByPrimaryKeys($basket->getPrimaryKeys())
-				->endUse();
-		} else {
-			throw new PropelException('filterByBasket() only accepts arguments of type Basket or PropelCollection');
-		}
-	}
-
-	/**
-	 * Adds a JOIN clause to the query using the Basket relation
-	 * 
-	 * @param     string $relationAlias optional alias for the relation
-	 * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
-	 *
-	 * @return    UserQuery The current query, for fluid interface
-	 */
-	public function joinBasket($relationAlias = null, $joinType = Criteria::LEFT_JOIN)
-	{
-		$tableMap = $this->getTableMap();
-		$relationMap = $tableMap->getRelation('Basket');
-		
-		// create a ModelJoin object for this join
-		$join = new ModelJoin();
-		$join->setJoinType($joinType);
-		$join->setRelationMap($relationMap, $this->useAliasInSQL ? $this->getModelAlias() : null, $relationAlias);
-		if ($previousJoin = $this->getPreviousJoin()) {
-			$join->setPreviousJoin($previousJoin);
-		}
-		
-		// add the ModelJoin to the current object
-		if($relationAlias) {
-			$this->addAlias($relationAlias, $relationMap->getRightTable()->getName());
-			$this->addJoinObject($join, $relationAlias);
-		} else {
-			$this->addJoinObject($join, 'Basket');
-		}
-		
-		return $this;
-	}
-
-	/**
-	 * Use the Basket relation Basket object
-	 *
-	 * @see       useQuery()
-	 * 
-	 * @param     string $relationAlias optional alias for the relation,
-	 *                                   to be used as main alias in the secondary query
-	 * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
-	 *
-	 * @return    BasketQuery A secondary query class using the current class as primary query
-	 */
-	public function useBasketQuery($relationAlias = null, $joinType = Criteria::LEFT_JOIN)
-	{
-		return $this
-			->joinBasket($relationAlias, $joinType)
-			->useQuery($relationAlias ? $relationAlias : 'Basket', 'BasketQuery');
 	}
 
 	/**
