@@ -31,8 +31,8 @@ function goodToDiv(good, letter)
     result += '<tr><td valign="bottom" colspan="2">' + description + '</td></tr>';
     result += '<tr><td align="left" width="50%"><a href="good.php?goodId=' + good.Id + '" target="_blank" id="showgood' + good.Id +
                 '">Подробнее</a></td>';
-    result += '<td align="right" width="50%"><div id="addGood' + good.Id + '"><a href="" onclick="addGoodToBasket(' + good.Id + ');" id="buygood' + good.Id +
-                '">В корзину: ' + good.PriceCurrent + ' кб</a><div></td></tr>';
+    result += '<td align="right" width="50%"><a href="" onclick="addGoodToBasket(' + good.Id + ');" id="buygood' + good.Id +
+                '">В корзину: ' + good.PriceCurrent + ' кб</a></td></tr>';
     result += '</table';
     result += '</div>';
     result += '</div';
@@ -112,8 +112,41 @@ function addGoodToBasket(id)
         },
         function(data, textStatus, jqXHR){
             response = eval("(" + data + ")");
-            if (response.success)
-                alert('Товар успешно добавлен в корзину!' + response.basketId);
+            if (response.success) {
+                $('#buygood' + id + ' .ui-btn-text').text('Добавлен в корзину');
+                $('#buygood' + id).attr('onclick','');
+                updateBasketInfo_b(response.basketId);
+            }
         },
         'text');
+}
+
+function updateBasketInfo_b(id)
+{
+    $.post(
+        'basketInfo.php',
+        {
+            basketId : id
+        },
+        function(data, textStatus, jqXHR){
+            response = eval("(" + data + ")");
+            $('#basket .ui-btn-text').text('Корзина: ' + response.goodsCount + ' товаров на ' 
+                + response.sum + ' квазибит');
+        },
+        'text');
+}
+
+function updateBasketInfo_s(id)
+{
+    $.post(
+        'basketInfo.php',
+        {
+            sessionId : id
+        },
+        function(data, textStatus, jqXHR){
+            response = eval("(" + data + ")");
+            $('#basket .ui-btn-text').text('Корзина: ' + response.goodsCount + ' товаров на ' 
+                + response.sum + ' квазибит');
+        },
+        'text');    
 }

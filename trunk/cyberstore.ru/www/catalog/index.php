@@ -42,7 +42,7 @@
                         </td>
                     </tr>
                         <td align="right" valign="bottom">
-                            <a href="#" data-role="button" data-inline="true">Корзина: 0 товаров на 0 квазибит</a>
+                            <a id="basket" href="#" data-role="button" data-inline="true">Корзина: 0 товаров на 0 квазибит</a>
                         </td>
                     <tr>
                 </table>
