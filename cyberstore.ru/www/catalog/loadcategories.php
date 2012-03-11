@@ -1,5 +1,7 @@
 <?
 
+include_once './../propel.inc.php';
+
 $rootc = CatalogDivQuery::create()->findOneByName("root");
 $categories = $rootc->getCatalogDivsRelatedById();
    

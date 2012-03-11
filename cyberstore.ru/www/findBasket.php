@@ -1,6 +1,6 @@
 <?
     include_once 'propel.inc.php';
-
+    
     function findBasket()
     {
         if ($_COOKIE['cybersession']!='') {//если узнали чувака

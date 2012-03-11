@@ -1,7 +1,9 @@
+<!--
 <?
     include_once 'findBasket.php';
     $basket = findBasket();
 ?>
+    -->
 
 <!DOCTYPE html>
 <html>
