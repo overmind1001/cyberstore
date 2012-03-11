@@ -38,7 +38,7 @@ class BasketTableMap extends TableMap {
 		$this->setUseIdGenerator(true);
 		// columns
 		$this->addPrimaryKey('ID', 'Id', 'INTEGER', true, null, null);
-		$this->addForeignKey('USER_ID', 'UserId', 'INTEGER', 'user', 'ID', false, null, 0);
+		$this->addColumn('USER_ID', 'UserId', 'INTEGER', false, null, 0);
 		$this->addColumn('SESSION_ID', 'SessionId', 'VARCHAR', true, 32, null);
 		// validators
 	} // initialize()
@@ -48,7 +48,6 @@ class BasketTableMap extends TableMap {
 	 */
 	public function buildRelations()
 	{
-    $this->addRelation('User', 'User', RelationMap::MANY_TO_ONE, array('user_id' => 'id', ), 'SET NULL', 'SET NULL');
     $this->addRelation('GoodInBasket', 'GoodInBasket', RelationMap::ONE_TO_MANY, array('id' => 'basket_id', ), 'CASCADE', 'CASCADE');
 	} // buildRelations()
 

@@ -44,11 +44,6 @@ abstract class BaseBasket extends BaseObject  implements Persistent
 	protected $session_id;
 
 	/**
-	 * @var        User
-	 */
-	protected $aUser;
-
-	/**
 	 * @var        array GoodInBasket[] Collection to store aggregation of GoodInBasket objects.
 	 */
 	protected $collGoodInBaskets;
@@ -155,10 +150,6 @@ abstract class BaseBasket extends BaseObject  implements Persistent
 			$this->modifiedColumns[] = BasketPeer::USER_ID;
 		}
 
-		if ($this->aUser !== null && $this->aUser->getId() !== $v) {
-			$this->aUser = null;
-		}
-
 		return $this;
 	} // setUserId()
 
@@ -252,9 +243,6 @@ abstract class BaseBasket extends BaseObject  implements Persistent
 	public function ensureConsistency()
 	{
 
-		if ($this->aUser !== null && $this->user_id !== $this->aUser->getId()) {
-			$this->aUser = null;
-		}
 	} // ensureConsistency
 
 	/**
@@ -294,7 +282,6 @@ abstract class BaseBasket extends BaseObject  implements Persistent
 
 		if ($deep) {  // also de-associate any related objects?
 
-			$this->aUser = null;
 			$this->collGoodInBaskets = null;
 
 		} // if (deep)
@@ -407,18 +394,6 @@ abstract class BaseBasket extends BaseObject  implements Persistent
 		if (!$this->alreadyInSave) {
 			$this->alreadyInSave = true;
 
-			// We call the save method on the following object(s) if they
-			// were passed to this object by their coresponding set
-			// method.  This object relates to these object(s) by a
-			// foreign key reference.
-
-			if ($this->aUser !== null) {
-				if ($this->aUser->isModified() || $this->aUser->isNew()) {
-					$affectedRows += $this->aUser->save($con);
-				}
-				$this->setUser($this->aUser);
-			}
-
 			if ($this->isNew() ) {
 				$this->modifiedColumns[] = BasketPeer::ID;
 			}
@@ -432,11 +407,11 @@ abstract class BaseBasket extends BaseObject  implements Persistent
 					}
 
 					$pk = BasePeer::doInsert($criteria, $con);
-					$affectedRows += 1;
+					$affectedRows = 1;
 					$this->setId($pk);  //[IMV] update autoincrement primary key
 					$this->setNew(false);
 				} else {
-					$affectedRows += BasketPeer::doUpdate($this, $con);
+					$affectedRows = BasketPeer::doUpdate($this, $con);
 				}
 
 				$this->resetModified(); // [HL] After being saved an object is no longer 'modified'
@@ -514,18 +489,6 @@ abstract class BaseBasket extends BaseObject  implements Persistent
 			$retval = null;
 
 			$failureMap = array();
-
-
-			// We call the validate method on the following object(s) if they
-			// were passed to this object by their coresponding set
-			// method.  This object relates to these object(s) by a
-			// foreign key reference.
-
-			if ($this->aUser !== null) {
-				if (!$this->aUser->validate($columns)) {
-					$failureMap = array_merge($failureMap, $this->aUser->getValidationFailures());
-				}
-			}
 
 
 			if (($retval = BasketPeer::doValidate($this, $columns)) !== true) {
@@ -617,9 +580,6 @@ abstract class BaseBasket extends BaseObject  implements Persistent
 			$keys[2] => $this->getSessionId(),
 		);
 		if ($includeForeignObjects) {
-			if (null !== $this->aUser) {
-				$result['User'] = $this->aUser->toArray($keyType, $includeLazyLoadColumns,  $alreadyDumpedObjects, true);
-			}
 			if (null !== $this->collGoodInBaskets) {
 				$result['GoodInBaskets'] = $this->collGoodInBaskets->toArray(null, true, $keyType, $includeLazyLoadColumns, $alreadyDumpedObjects);
 			}
@@ -827,55 +787,6 @@ abstract class BaseBasket extends BaseObject  implements Persistent
 	}
 
 	/**
-	 * Declares an association between this object and a User object.
-	 *
-	 * @param      User $v
-	 * @return     Basket The current object (for fluent API support)
-	 * @throws     PropelException
-	 */
-	public function setUser(User $v = null)
-	{
-		if ($v === null) {
-			$this->setUserId(0);
-		} else {
-			$this->setUserId($v->getId());
-		}
-
-		$this->aUser = $v;
-
-		// Add binding for other direction of this n:n relationship.
-		// If this object has already been added to the User object, it will not be re-added.
-		if ($v !== null) {
-			$v->addBasket($this);
-		}
-
-		return $this;
-	}
-
-
-	/**
-	 * Get the associated User object
-	 *
-	 * @param      PropelPDO Optional Connection object.
-	 * @return     User The associated User object.
-	 * @throws     PropelException
-	 */
-	public function getUser(PropelPDO $con = null)
-	{
-		if ($this->aUser === null && ($this->user_id !== null)) {
-			$this->aUser = UserQuery::create()->findPk($this->user_id, $con);
-			/* The following can be used additionally to
-				guarantee the related object contains a reference
-				to this object.  This level of coupling may, however, be
-				undesirable since it could result in an only partially populated collection
-				in the referenced object.
-				$this->aUser->addBaskets($this);
-			 */
-		}
-		return $this->aUser;
-	}
-
-	/**
 	 * Clears out the collGoodInBaskets collection
 	 *
 	 * This does not modify the database; however, it will remove any associated objects, causing
@@ -1055,7 +966,6 @@ abstract class BaseBasket extends BaseObject  implements Persistent
 			$this->collGoodInBaskets->clearIterator();
 		}
 		$this->collGoodInBaskets = null;
-		$this->aUser = null;
 	}
 
 	/**

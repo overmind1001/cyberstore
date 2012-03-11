@@ -15,7 +15,7 @@
  */
 class GoodInBasket extends BaseGoodInBasket {
 
-	public function __construct($count, $goodId, $basketId) 
+	public function __construct($count = 0, $goodId = 0, $basketId = 0) 
 	{
 		parent::__construct();
 		$this->setCount($count);
