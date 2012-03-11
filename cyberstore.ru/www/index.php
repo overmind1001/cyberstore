@@ -32,6 +32,10 @@
                     $('.ui-accordion-content').css('padding-bottom','5px');
                     $('.ui-accordion-content').css('padding-left','15px');
                     $('.ui-accordion-content').css('padding-right','15px');
+<?
+    if ($basket != null)
+        echo 'updateBasketInfo_b('.$basket->getId().');';
+?>
                 });
 
             });
@@ -51,7 +55,7 @@
                             </td>
                         </tr>
                             <td align="right" valign="bottom">
-                                <a href="#" data-role="button" data-inline="true">Корзина: 0 товаров на 0 квазибит</a>
+                                <!--a id="basket" href="#" data-role="button" data-inline="true">Корзина: 0 товаров на 0 квазибит</a-->
                             </td>
                         <tr>
                         </td>
