@@ -31,7 +31,10 @@ function goodToDiv(good, letter)
     result += '<tr><td valign="bottom" colspan="2">' + description + '</td></tr>';
     result += '<tr><td align="left" width="50%"><a href="good.php?goodId=' + good.Id + '" target="_blank" id="showgood' + good.Id +
                 '">Подробнее</a></td>';
-    result += '<td align="right" width="50%"><a href="" onclick="addGoodToBasket(' + good.Id + ');" id="buygood' + good.Id +
+    if (good.already) 
+        result += '<td align="right" width="50%"><a href=""  id="buygood' + good.Id +
+                '">Добавлен в корзину</a></td></tr>';
+    else result += '<td align="right" width="50%"><a href="" onclick="addGoodToBasket(' + good.Id + ');" id="buygood' + good.Id +
                 '">В корзину: ' + good.PriceCurrent + ' кб</a></td></tr>';
     result += '</table';
     result += '</div>';
@@ -42,12 +45,14 @@ function goodToDiv(good, letter)
 function categoryClicked(id)
 {
     currentCategory = id;
+    ssid = readCookie('cybersession');
     $.post(
         "loadGoods.php",
         {
             categoryId: id,
             count: goodsOnPage,
-            skip: currentSkip
+            skip: currentSkip,
+            sessionId: ssid
         },
         function(data, textStatus, jqXHR) {
             response = eval("(" + data + ")");
@@ -62,8 +67,8 @@ function categoryClicked(id)
             for (i = 0; i < pageCount; ++i) {
                 $('#topPagesLine').append('<a id="btnpt' + i + '" href="#">' + (i+1) + '</a>');
                 $('#bottomPagesLine').append('<a id="btnpb' + i + '" href="#">' + (i+1) + '</a>');
-                $('#btnpt' + i).buttonMarkup({ inline: "true"});
-                $('#btnpb' + i).buttonMarkup({ inline: "true"});
+                $('#btnpt' + i).buttonMarkup({inline: "true"});
+                $('#btnpb' + i).buttonMarkup({inline: "true"});
                 if (i == currentPage) {
                     $("#btnpt" + i).addClass('ui-btn-active');
                     $("#btnpb" + i).addClass('ui-btn-active');
@@ -128,11 +133,7 @@ function updateBasketInfo_b(id)
         {
             basketId : id
         },
-        function(data, textStatus, jqXHR){
-            response = eval("(" + data + ")");
-            $('#basket .ui-btn-text').text('Корзина: ' + response.goodsCount + ' товаров на ' 
-                + response.sum + ' квазибит');
-        },
+        updateBasketText,
         'text');
 }
 
@@ -143,10 +144,13 @@ function updateBasketInfo_s(id)
         {
             sessionId : id
         },
-        function(data, textStatus, jqXHR){
-            response = eval("(" + data + ")");
-            $('#basket .ui-btn-text').text('Корзина: ' + response.goodsCount + ' товаров на ' 
-                + response.sum + ' квазибит');
-        },
+        updateBasketText,
         'text');    
+}
+
+function updateBasketText(data, textStatus, jqXHR)
+{
+    response = eval("(" + data + ")");
+    $('#basket .ui-btn-text').text('Корзина: ' + response.goodsCount + ' товаров на ' 
+        + response.sum + ' квазибит');
 }
