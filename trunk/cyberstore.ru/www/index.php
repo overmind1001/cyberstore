@@ -77,7 +77,24 @@
                     <!-- /header -->
                     
                     <div data-role="content">
-                        <p>Hello world</p>
+                        <p>
+                            <?php 
+                                if($basket==NULL) {
+                                    echo "Корзина = NULL";
+                                }
+                                else {
+                                    echo " Сессия: ".$basket->getSessionId(). " Корзина: ".$basket->getId()." ";
+                                    $user_id = $basket->getUserId();
+                                    $user = UserQuery::create()->findOneById($user_id);
+                                    if($user==NULL){
+                                        echo "Пользователь=NULL";
+                                    }
+                                    else {
+                                        echo "Пользователь: ".$user->getLogin();
+                                    }
+                                }
+                            ?>
+                        </p>
                         
                         <table  class="startTable">
                             <!--tr>
