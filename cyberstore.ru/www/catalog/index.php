@@ -16,7 +16,21 @@
             $(function(){
                 $.mobile.defaultPageTransition = "fade";
                 $.mobile.ajaxLinksEnabled = false;
-            });
+                
+                $( 'div' ).live( 'pageshow', function(event, ui){
+                    $('#accordion').accordion();
+                    $('#accordion').css('width','200px');
+                    $('#accordion').css('margin','10px');
+                    $('.ui-accordion-content').css('padding-top','5px');
+                    $('.ui-accordion-content').css('padding-bottom','5px');
+                    $('.ui-accordion-content').css('padding-left','15px');
+                    $('.ui-accordion-content').css('padding-right','15px');
+<?
+    if ($basket != null)
+        echo 'updateBasketInfo_b('.$basket->getId().');';
+?>
+                });
+            });            
         </script>
     </head>
     

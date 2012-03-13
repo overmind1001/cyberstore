@@ -44,7 +44,6 @@ if ($goodsCount % $count > 0)
 $currentPage = (int)($skip / $count) + 1;
 
 $goods = GoodsQuery::create()
-    //->limit($skip, $count)
     ->findByCatalogId($cid);
 
 $N = count($goods);

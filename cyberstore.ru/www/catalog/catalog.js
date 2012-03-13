@@ -44,6 +44,7 @@ function goodToDiv(good, letter)
 
 function categoryClicked(id)
 {
+    $('#category' + currentCategory).removeClass('ui-btn-active');
     currentCategory = id;
     ssid = readCookie('cybersession');
     $.post(
@@ -92,7 +93,7 @@ function categoryClicked(id)
 
 function pageClicked(num)
 {
-    $.mobile.silentScroll(0);
+    $.mobile.silentScroll(130);
     currentPage = num;
     currentSkip = num * goodsOnPage;
     categoryClicked(currentCategory);
@@ -137,12 +138,13 @@ function updateBasketInfo_b(id)
         'text');
 }
 
-function updateBasketInfo_s(id)
+function updateBasketInfo_s()
 {
+    ssid = readCookie('cybersession');
     $.post(
         'basketInfo.php',
         {
-            sessionId : id
+            sessionId : ssid
         },
         updateBasketText,
         'text');    

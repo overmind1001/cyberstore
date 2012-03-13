@@ -69,7 +69,7 @@
                     <!-- /header -->
                     
                     <div data-role="content">
-                        <h1 align="center">Регистарция нового пользователя</h1>
+                        <h1 align="center">Регистрация нового пользователя</h1>
                         <form method="POST" action="registerNewUser.php">
                             <table  align="center">
                                 <tr>

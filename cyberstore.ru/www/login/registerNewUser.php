@@ -43,7 +43,7 @@
         
         $user = new User($login, $password);
         $basket = findBasket();
-        $basket->setUser($user);
+        $basket->setUserId($user->getId());
         
         $basket->save();
         $user->save();

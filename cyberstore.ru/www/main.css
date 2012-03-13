@@ -62,11 +62,6 @@ table.startTable td.descr {
     color: blue;
 }
 
-table.startTable img{
-    height: 100px;
-    width: 100px;
-}
-
 .ui-accordeon-content
 {
     padding-top:0px;
