@@ -52,10 +52,10 @@
                             <div data-role="navbar" >
                                 <ul>
                                 <li>
-                                    <a href="#" data-theme="a">Главная</a>
+                                    <a href="#" data-theme="a" onclick="$.mobile.changePage('./../')">Главная</a>
                                 </li>
                                 <li>
-                                    <a href="#" onclick="$.mobile.changePage('./catalog/index.php');" data-theme="a">Каталог</a>
+                                    <a href="#" onclick="$.mobile.changePage('./../catalog/index.php');" data-theme="a">Каталог</a>
                                 </li>
                                 <li>
                                     <a href="#" data-theme="a">Корзина</a>

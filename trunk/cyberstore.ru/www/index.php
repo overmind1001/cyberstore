@@ -3,7 +3,7 @@
     include_once 'findBasket.php';
     $basket = findBasket();
 ?>
-    -->
+-->
 
 <!DOCTYPE html>
 <html>
@@ -32,10 +32,7 @@
                     $('.ui-accordion-content').css('padding-bottom','5px');
                     $('.ui-accordion-content').css('padding-left','15px');
                     $('.ui-accordion-content').css('padding-right','15px');
-<?
-    if ($basket != null)
-        echo 'updateBasketInfo_b('.$basket->getId().');';
-?>
+                    updateBasketInfo_s();
                 });
 
             });
@@ -51,7 +48,7 @@
                             <!--img src="logo.gif"-->
                             </td>
                             <td valign="top" align="right">
-                                <a href="#" data-role="button" data-inline="true">Вход</a>
+                                <a href="./login/" data-role="button" data-inline="true">Вход</a>
                             </td>
                         </tr>
                             <td align="right" valign="bottom">

@@ -57,11 +57,12 @@
             
             if($basket!=NULL)   {
                 setcookie('cybersession', $basket->getSessionId(), time()+60*60*24*7);
-                redirectToPage($nextPage);
+            } else {//
+                $basket = findBasket();
+                $basket->setUserId($user->getId());
+                $basket->save();
             }
-            else {//
-                redirectToPage("badLogin.php");
-            }
+            redirectToPage($nextPage);
         }
     }
 ?>

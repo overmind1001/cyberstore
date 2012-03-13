@@ -3,9 +3,13 @@
     
     function findBasket()
     {
-        if ($_COOKIE['cybersession']!='') {//если узнали чувака
+        if (isset($_COOKIE['cybersession'])) {//если узнали чувака
                 $ssid = $_COOKIE['cybersession'];
                 $basket = BasketQuery::create()->findOneBySessionId($ssid);
+                if ($basket == null) {
+                    $basket = new Basket($ssid);
+                    $basket->save();
+                }
         } else {
             $str = date("d.m.Y H:i").(rand());
             $cokie = md5($str);
