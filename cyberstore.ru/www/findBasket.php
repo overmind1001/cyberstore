@@ -17,7 +17,12 @@
             $basket = new Basket($cokie);
             $basket->save();
 
-            setcookie('cybersession', $cokie, time()+60*60*24*7);//кука живёт 7 дней
+            if(setcookie('cybersession', $cokie, time()+60*60*24*7)) { ////кука живёт 7 дней
+               
+            }
+            else {
+                echo "Куки не установлены";
+            }
         }
         return $basket;
     }
