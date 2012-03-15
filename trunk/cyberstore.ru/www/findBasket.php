@@ -5,7 +5,7 @@
     {
         if (isset($_COOKIE['cybersession'])) {//если узнали чувака
                 $ssid = $_COOKIE['cybersession'];
-                if(setcookie('cybersession', $ssid, time()+60*60*24*7)) { ////кука живёт 7 дней
+                if(setcookie('cybersession', $ssid, time()+60*60*24*7,"/", ".cyberstore.ru")) { ////кука живёт 7 дней
                
                 }
                 else {
@@ -16,7 +16,7 @@
                     $basket = new Basket($ssid);
                     $basket->save();
                 }
-                if(setcookie('cybersession', $ssid, time()+60*60*24*7)) { ////кука живёт 7 дней
+                if(setcookie('cybersession', $ssid, time()+60*60*24*7,"/", ".cyberstore.ru")) { ////кука живёт 7 дней
                
                 }
                 else {
@@ -29,7 +29,7 @@
             $basket = new Basket($cokie);
             $basket->save();
 
-            if(setcookie('cybersession', $cokie, time()+60*60*24*7)) { ////кука живёт 7 дней
+            if(setcookie('cybersession', $cokie, time()+60*60*24*7,"/", ".cyberstore.ru")) { ////кука живёт 7 дней
                
             }
             else {
