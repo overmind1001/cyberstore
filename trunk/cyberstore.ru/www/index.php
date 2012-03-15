@@ -18,20 +18,25 @@
         <script src="./catalog/catalog.js"></script>
         <link rel="stylesheet" href="main.css" />
         <script>
+            function updateSelectedButtons(){
+                $('#link1,link2').removeClass('ui-btn-active');
+                $('#link1').addClass('ui-btn-active'); 
+            }
             $(function(){
-                $.mobile.defaultPageTransition = "fade";
-                $.mobile.ajaxLinksEnabled = false;
+                //$.mobile.defaultPageTransition = "fade";
+                //$.mobile.ajaxLinksEnabled = false;
 
-                $( 'div' ).live( 'pageshow', function(event, ui){
-                    $('#accordion').accordion();
-                    $('#accordion').css('width','200px');
-                    $('#accordion').css('margin','10px');
-                    $('.ui-accordion-content').css('padding-top','5px');
-                    $('.ui-accordion-content').css('padding-bottom','5px');
-                    $('.ui-accordion-content').css('padding-left','15px');
-                    $('.ui-accordion-content').css('padding-right','15px');
-                    updateBasketInfo_s();
-                });
+                //$( 'div' ).live( 'pageshow', function(event, ui){
+                //    $('#accordion').accordion();
+                //    $('#accordion').css('width','200px');
+                //    $('#accordion').css('margin','10px');
+                //    $('.ui-accordion-content').css('padding-top','5px');
+                //    $('.ui-accordion-content').css('padding-bottom','5px');
+                //    $('.ui-accordion-content').css('padding-left','15px');
+                //    $('.ui-accordion-content').css('padding-right','15px');
+                //    updateBasketInfo_s();
+                //});
+                updateSelectedButtons();
 
             });
         </script>
@@ -58,16 +63,17 @@
                     <div data-role="navbar" >
                         <ul>
                             <li>
-                                <a id="link1" href="#" data-theme="a">Главная</a>
+                                <a id="link1" href="./" data-theme="a">Главная</a>
                             </li>
                             <li>
-                                <a id="link2" href="" onclick="$.mobile.changePage('./catalog/index.php'); $('#link2').addClass('ui-btn-active'); $('#link1').removeClass('ui-btn-active');" data-theme="a">Каталог</a>
+                                <!--a id="link2" href="" onclick="$.mobile.changePage('./catalog/index.php'); $('#link2').addClass('ui-btn-active'); $('#link1').removeClass('ui-btn-active');" data-theme="a">Каталог</a-->
+                                 <a id="link2" href="./catalog" data-theme="a">Каталог</a>
                             </li>
                             <li>
-                                <a href="#" data-theme="a">Корзина</a>
+                                <a href="./basket" data-theme="a">Корзина</a>
                             </li>
                             <li>
-                                <a href="#" data-theme="a">Помощь</a>
+                                <a href="./about" data-theme="a">Помощь</a>
                             </li>
                         </ul>
                     </div>

@@ -1,7 +1,11 @@
+<?php
+    include_once '../findBasket.php';
+    $basket = findBasket();
+?>
 <!DOCTYPE html>
 <html>
     <head>
-        <title>CyberStore - всё для киборгов</title>
+        <title>CyberStore - каталог</title>
         <link rel="stylesheet" href="http://code.jquery.com/mobile/1.0.1/jquery.mobile-1.0.1.min.css" />
 
         <link type="text/css" href="./../css/black-tie/jquery-ui-1.8.18.custom.css" rel="stylesheet" />
@@ -11,12 +15,16 @@
         <script src="./../jquery.mobile-1.0.1.min.js"></script>
         <script src="./catalog.js"></script>
         <link rel="stylesheet" href="./../main.css" />
-
+        
         <script>
+            function updateSelectedButtons(){
+                $('#link1,link2').removeClass('ui-btn-active');
+                $('#link2').addClass('ui-btn-active'); 
+            }
             $(function(){
-                $.mobile.defaultPageTransition = "fade";
-                $.mobile.ajaxLinksEnabled = false;
-                
+                //$.mobile.defaultPageTransition = "fade";
+                //$.mobile.ajaxLinksEnabled = false;
+                updateSelectedButtons();
                 $( 'div' ).live( 'pageshow', function(event, ui){
                     $('#accordion').accordion();
                     $('#accordion').css('width','200px');
@@ -25,23 +33,21 @@
                     $('.ui-accordion-content').css('padding-bottom','5px');
                     $('.ui-accordion-content').css('padding-left','15px');
                     $('.ui-accordion-content').css('padding-right','15px');
-<?
-    if ($basket != null)
-        echo 'updateBasketInfo_b('.$basket->getId().');';
-?>
+                    <?php
+                        if ($basket != null)
+                            echo 'updateBasketInfo_b('.$basket->getId().');';
+                    ?>
                 });
             });            
         </script>
     </head>
     
     
-<!--
 <?
     require_once './../vendor/propel/runtime/lib/Propel.php';
     Propel::init("./../cyberstore/build/conf/cyberstore-conf.php");
     set_include_path("./../cyberstore/build/classes" . PATH_SEPARATOR . get_include_path());
 ?>
--->
 <body>
     <div id="wrapper">
         <div id="mainpage">
@@ -52,7 +58,7 @@
                             <!--img src="logo.gif"-->
                         </td>
                         <td valign="top" align="right">
-                            <a href="#" data-role="button" data-inline="true">Вход</a>
+                            <a href="../login" data-role="button" data-inline="true">Вход</a>
                         </td>
                     </tr>
                         <td align="right" valign="bottom">
@@ -63,16 +69,17 @@
                 <div data-role="navbar" >
                     <ul>
                         <li>
-                            <a id="link1" href="#" onclick="$.mobile.changePage('./../index.php'); $('#link1').addClass('ui-btn-active'); $('#link2').removeClass('ui-btn-active');" data-theme="a">Главная</a>
+                            <!--a id="link1" href="#" onclick="$.mobile.changePage('./../index.php'); $('#link1').addClass('ui-btn-active'); $('#link2').removeClass('ui-btn-active');" data-theme="a">Главная</a-->
+                            <a id="link1" href="../" data-theme="a">Главная</a>
                         </li>
                         <li>
-                            <a id="link2" href="#" data-theme="a">Каталог</a>
+                            <a id="link2" href="../catalog" data-theme="a">Каталог</a>
                         </li>
                         <li>
-                            <a id="3" href="#" data-theme="a">Корзина</a>
+                            <a id="3" href="../basket" data-theme="a">Корзина</a>
                         </li>
                         <li>
-                            <a id="4" href="#" data-theme="a">Помощь</a>
+                            <a id="4" href="../about" data-theme="a">Помощь</a>
                         </li>
                     </ul>
                 </div>
@@ -101,7 +108,7 @@
                                         </td>
                                     </tr>
                                 </table>
-                            </td>
+                             </td>
                             <td align="center">
                                 <div id="topPagesLine" data-role="controlgroup" data-type="horizontal" class="localnav"></div>
                             </td>
