@@ -1,11 +1,7 @@
 <?php 
     include_once '../findBasket.php';
     include_once 'redirect.php';
-?>
-
-
-
-<?php
+    
     $error=false;
     
     if(!isset($_POST['login'])) {
@@ -23,7 +19,7 @@
     $login=$_POST['login'];
     $password=$_POST['password'];
     
-    $defaultNextPage = "./";//TODO
+    $defaultNextPage = "../";//TODO
     
     if(isset($_POST['nextPage']))   {
         $nextPage = $_POST['nextPage'];
@@ -56,7 +52,7 @@
             $basket = BasketQuery::create()->findOneByUserId($user->getId());
             
             if($basket!=NULL)   {
-                setcookie('cybersession', $basket->getSessionId(), time()+60*60*24*7);
+                setcookie('cybersession', $basket->getSessionId(), time()+60*60*24*7,"/", ".cyberstore.ru");
             } else {//
                 $basket = findBasket();
                 $basket->setUserId($user->getId());
