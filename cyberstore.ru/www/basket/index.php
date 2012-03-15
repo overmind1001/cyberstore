@@ -5,9 +5,8 @@
 
 <!DOCTYPE html>
 <html>
-
     <head>
-        <title>Всё для киборгов</title>
+        <title>Корзина</title>
         <link rel="stylesheet" href="http://code.jquery.com/mobile/1.0.1/jquery.mobile-1.0.1.min.css" />
         
         <link type="text/css" href="./../css/black-tie/jquery-ui-1.8.18.custom.css" rel="stylesheet" />
@@ -19,6 +18,10 @@
         <link rel="stylesheet" href="./../main.css" />
         
         <script>
+            function updateSelectedButtons(){
+                $('#link1,link2').removeClass('ui-btn-active');
+                //$('#link2').addClass('ui-btn-active'); 
+            }
             $(function()
                 {
                     $.mobile.defaultPageTransition = "fade";
@@ -51,16 +54,18 @@
                     <div data-role="navbar" >
                         <ul>
                             <li>
-                                <a id="link1" href="#" onclick="$.mobile.changePage('./../index.php'); $('#link1').addClass('ui-btn-active'); $('#link3').removeClass('ui-btn-active');" data-theme="a">Главная</a>
+                                <a id="link1" href="../" data-theme="a">Главная</a>
+                                <!--a id="link1" href="#" onclick="$.mobile.changePage('./../index.php'); $('#link1').addClass('ui-btn-active'); $('#link3').removeClass('ui-btn-active');" data-theme="a">Главная</a-->
                             </li>
                             <li>
-                                <a id="link2" href="#" onclick="$.mobile.changePage('./../catalog/index.php'); $('#link2').addClass('ui-btn-active'); $('#link3').removeClass('ui-btn-active');" data-theme="a">Каталог</a>
+                                <a id="link2" href="../catalog" onclick="$.mobile.changePage('./../catalog/index.php'); $('#link2').addClass('ui-btn-active'); $('#link3').removeClass('ui-btn-active');" data-theme="a">Каталог</a>
+                                <!--a id="link2" href="#" onclick="$.mobile.changePage('./../catalog/index.php'); $('#link2').addClass('ui-btn-active'); $('#link3').removeClass('ui-btn-active');" data-theme="a">Каталог</a-->
                             </li>
                             <li>
-                                <a id="link3" href="#" data-theme="a">Корзина</a>
+                                <a id="link3" href="../basket" data-theme="a">Корзина</a>
                             </li>
                             <li>
-                                <a href="#" data-theme="a">Помощь</a>
+                                <a href="../about" data-theme="a">Помощь</a>
                             </li>
                         </ul>
                     </div><!--navbar-->      
@@ -74,8 +79,11 @@
                         $goodInBasketQuery = GoodInBasketQuery::Create()->filterByBasket($basket);
                         $goodsInBasket = $goodInBasketQuery->find();
                         
-                        foreach ($goodsInBasket as $goodInBasket) 
-                        {
+                        if($goodsInBasket->count()<1) {
+                            echo "<h1>Корзина пуста</h1>";
+                        }
+                        
+                        foreach ($goodsInBasket as $goodInBasket){
                             printGoodsRow($goodInBasket);
                         }
                     ?>
