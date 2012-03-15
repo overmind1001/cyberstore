@@ -52,6 +52,8 @@
                             </td>
                             <td valign="top" align="right">
                                 <a href="./login/" data-role="button" data-inline="true">Вход</a>
+                                <a href="./login/logout.php/" data-role="button" data-inline="true">Выход</a>
+                                
                             </td>
                         </tr>
                         <!--td align="right" valign="bottom">
