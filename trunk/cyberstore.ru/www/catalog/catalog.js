@@ -93,7 +93,6 @@ function categoryClicked(id)
 
 function pageClicked(num)
 {
-    $.mobile.silentScroll(130);
     currentPage = num;
     currentSkip = num * goodsOnPage;
     categoryClicked(currentCategory);
