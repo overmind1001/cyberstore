@@ -50,7 +50,7 @@
             <center>
             <h1 align="center">Регистрация нового пользователя</h1>
             <form method="POST" action="registerNewUser.php">
-                <table  align="center">
+                <table class="login_pass"  align="center">
                     <tr>
                         <td>Логин:</td>
                         <td><input type="text" name="login" required selected></td>

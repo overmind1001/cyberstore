@@ -350,3 +350,8 @@ table.startTable td.descr {
     float:right; 
     padding:10px;
 }
+
+table.login_pass td{
+    text-align: center;
+    padding: 5px;
+}
