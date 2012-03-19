@@ -68,8 +68,6 @@ function categoryClicked(id)
             for (i = 0; i < pageCount; ++i) {
                 $('#topPagesLine').append('<a id="btnpt' + i + '" href="#">' + (i+1) + '</a>');
                 $('#bottomPagesLine').append('<a id="btnpb' + i + '" href="#">' + (i+1) + '</a>');
-                $('#btnpt' + i).buttonMarkup({inline: "true"});
-                $('#btnpb' + i).buttonMarkup({inline: "true"});
                 if (i == currentPage) {
                     $("#btnpt" + i).addClass('ui-btn-active');
                     $("#btnpb" + i).addClass('ui-btn-active');
@@ -83,8 +81,6 @@ function categoryClicked(id)
             for (i = 0; i < goodsOnPage; ++i) {
                 good = goods[i];
                 $('#catalogGrid').append(goodToDiv(good, lts[i%2]));
-                $('#showgood' + good.Id).button();
-                $('#buygood' + good.Id).button();
             }
         },
         "text"        
