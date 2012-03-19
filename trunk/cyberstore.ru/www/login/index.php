@@ -36,12 +36,14 @@
             </div>
             <div id="nav">
                 <div id="topmenu">
-                    <ul>
-                        <li><a href="../">Главная</a></li>
-                        <li><a href="../catalog/">Каталог</a></li>
-                        <li><a href="../basket">Корзина</a></li>
-                        <li><a href="../about">Помощь</a></li>
-                    </ul>
+                    <table>
+                        <tr>
+                            <td><a href="../">Главная</a></td>
+                            <td><a href="./catalog/">Каталог</a></td>
+                            <td><a href="../basket/">Корзина</a></td>
+                            <td><a href="../about/">Помощь</a></td>
+                        </tr>
+                    </table>
                 </div>
             </div>
         </div>

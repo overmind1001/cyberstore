@@ -166,7 +166,7 @@ h1 a, h2 a, h3 a, h4 a {text-decoration:none; border:none!important;}
     float:left;
     background:url(images/nav2.png) repeat-x;
     text-align:center;
-    padding:5px 81px 0 81px;
+    padding:6px 81px 0 84px;
     height:25px;
     color:#999999;
 }
