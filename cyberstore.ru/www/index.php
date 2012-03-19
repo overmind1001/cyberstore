@@ -52,7 +52,7 @@
                 ?>
                 
             </div>
-            <div id="basketinfo" style="float:right; margin-top:80px; margin-right:10px;clear:both;">
+            <div id="basketinfo">
                 Корзина: 0 товаров на 0 кб
             </div>
             <div id="nav">
