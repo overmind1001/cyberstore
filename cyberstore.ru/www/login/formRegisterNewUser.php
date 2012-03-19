@@ -29,9 +29,9 @@
     <div id="wrap">
         <div id="header">
             <div id="enterbtn" style="float:right; padding:10px;">
-                <!--a href="./login/">Вход</a-->
+                <!--a href="./login/">Вход</a-->&nbsp;
             </div>
-            <div id="basketinfo" style="float:right; margin-top:120px; margin-right:-43px;">
+            <div id="basketinfo">
                 Корзина: 0 товаров на 0 кб сделать
             </div>
             <div id="nav">
