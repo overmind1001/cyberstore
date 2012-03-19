@@ -317,3 +317,18 @@ img.productimg {border:solid 1px #716148; margin:0 0 0 8px;}
 	color: #FFF !important;
 }
 
+table.startTable{
+    width: 100%;
+    
+}
+table.startTable td.pic {
+    width: 10%;
+}
+table.startTable td.descr {
+    vertical-align: top;
+    margin: 100px;
+}
+.mainLeft {
+    text-align: center;
+    color: blue;
+}
