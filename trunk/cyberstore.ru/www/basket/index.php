@@ -23,50 +23,54 @@
     <body>
         <div id="wrap">
             
-                <div id="enter_exit" style="float:right; padding:10px;">
-                <?php //Вход - выход
-                    if($basket!=NULL){
-                        $user_id = $basket->getUserId();
-                        $user = UserQuery::create()->findOneById($user_id);
-                        if($user!=NULL){
-                            echo "<a style='margin-left=5px;' href='./../login/logout.php'>Выход</a>";
-                        }
-                        else {
-                            echo "<a style='margin-left=5px;' href='./../login/'>Вход</a>";
-                        }
-                    }
-                ?>    
-                </div>
-            
-                <div id="user" style="float:right; padding:10px;">
-                <?php
-                    if($basket==NULL) {
-                    }
-                    else {
-                        //$user_id = $basket->getUserId();
-                        //$user = UserQuery::create()->findOneById($user_id);
-                        if($user==NULL){
-                            //echo "<a href='./login/'>Вход</a>";
-                        }
-                        else {
-                            echo "Пользователь: ".$user->getLogin();
-                            //echo "<a style='margin-left=5px;' href='./login/logout.php'>Выход</a>";
-                        }
-                    }
-                ?>
-                </div>
-                
                 <div id="header">
+                    
+                    <div id="enter_exit" style="float:right; padding:10px;">
+                    <?php //Вход - выход
+                        if($basket!=NULL){
+                            $user_id = $basket->getUserId();
+                            $user = UserQuery::create()->findOneById($user_id);
+                            if($user!=NULL){
+                                echo "<a style='margin-left=5px;' href='./../login/logout.php'>Выход</a>";
+                            }
+                            else {
+                                echo "<a style='margin-left=5px;' href='./../login/'>Вход</a>";
+                            }
+                        }
+                    ?>    
+                    </div>
+
+                    <div id="user" style="float:right; padding:10px;">
+                    <?php
+                        if($basket==NULL) {
+                        }
+                        else {
+                            //$user_id = $basket->getUserId();
+                            //$user = UserQuery::create()->findOneById($user_id);
+                            if($user==NULL){
+                                //echo "<a href='./login/'>Вход</a>";
+                            }
+                            else {
+                                echo "Пользователь: ".$user->getLogin();
+                                //echo "<a style='margin-left=5px;' href='./login/logout.php'>Выход</a>";
+                            }
+                        }
+                    ?>
+                    </div>
+
                     <div id="nav">
                         <div id="topmenu">
-                            <ul>
-                                <li><a href="./../">Главная</a></li>
-                                <li><a href="./../catalog/">Каталог</a></li>
-                                <li class="active"><a href="./">Корзина</a></li>
-                                <li><a href="./../about/">Помощь</a></li>
-                            </ul>
+                            <table>
+                                <tr>
+                                    <td><a href="./../">Главная</a></td>
+                                    <td><a href="./../catalog/">Каталог</a></td>
+                                    <td class="active"><a href="./">Корзина</a></td>
+                                    <td><a href="./../about/">Помощь</a></td>
+                                </tr>
+                            </table>
                         </div>
                     </div>
+                    
                 </div>   
             
                 <div class="clear"></div>
