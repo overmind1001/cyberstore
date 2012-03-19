@@ -51,7 +51,7 @@
                 
             <h1 align="center">Авторизация</h1>
             <form method="post" action="login.php" data-ajax="false">
-                <table  align="center">
+                <table class="login_pass"  align="center">
                     <tr>
                         <td>Логин:</td>
                         <td><input type="text" name="login" required selected></td>
