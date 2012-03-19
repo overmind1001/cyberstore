@@ -345,3 +345,8 @@ table.startTable td.descr {
 {
     width:207px;
 }
+
+#enter_exit, #user {
+    float:right; 
+    padding:10px;
+}
