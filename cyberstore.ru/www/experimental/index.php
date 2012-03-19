@@ -20,7 +20,7 @@
     <div id="wrap">
         <div id="header">
             <div id="enterbtn" style="float:right; padding:10px;">
-                <a href="./login/">Вход</a>
+                <a href="">Вход</a>
             </div>
             <div id="basketinfo" style="float:right; margin-top:120px; margin-right:-43px;">
                 Корзина: 0 товаров на 0 кб
@@ -29,7 +29,7 @@
                 <div id="topmenu">
                     <ul>
                         <li class="active"><a href="#">Главная</a></li>
-                        <li><a href="./catalog/">Каталог</a></li>
+                        <li><a href="styles.html">Каталог</a></li>
                         <li><a href="cart.htmlposition:right;">Корзина</a></li>
                         <li><a href="#">Помощь</a></li>
                     </ul>
@@ -37,7 +37,7 @@
             </div>
         </div>
         <div class="clear"></div>
-        <div id="content" style="">
+        <div id="content" style="height:500px;">
                 <p>
                         <?php
                             if($basket==NULL) {
