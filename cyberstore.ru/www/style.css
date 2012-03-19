@@ -334,6 +334,13 @@ table.startTable td.descr {
     color: blue;
 }
 
+#basketinfo {
+    float:right; 
+    margin-top:80px; 
+    margin-right:10px;
+    clear:both;
+}
+
 #accordion
 {
     width:207px;
