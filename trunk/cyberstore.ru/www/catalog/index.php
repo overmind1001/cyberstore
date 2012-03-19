@@ -22,10 +22,39 @@
 <body>
     <div id="wrap">
         <div id="header">
-            <div id="enterbtn" style="float:right; padding:10px;">
-                <a href="">Вход</a>
+            <div id="enter_exit" style="float:right; padding:10px;">
+            <?php //Вход - выход
+                if($basket!=NULL){
+                    $user_id = $basket->getUserId();
+                    $user = UserQuery::create()->findOneById($user_id);
+                    if($user!=NULL){
+                        echo "<a style='margin-left=5px;' href='../login/logout.php'>Выход</a>";
+                    }
+                    else {
+                        echo "<a style='margin-left=5px;' href='../login/'>Вход</a>";
+                    }
+                }
+            ?>    
             </div>
-            <div id="basketinfo" style="float:right; margin-top:120px; margin-right:-43px;">
+            <div id="user" style="float:right; padding:10px;">
+                <?php
+                    if($basket==NULL) {
+                    }
+                    else {
+                        //$user_id = $basket->getUserId();
+                        //$user = UserQuery::create()->findOneById($user_id);
+                        if($user==NULL){
+                            //echo "<a href='./login/'>Вход</a>";
+                        }
+                        else {
+                            echo "Пользователь: ".$user->getLogin();
+                            //echo "<a style='margin-left=5px;' href='./login/logout.php'>Выход</a>";
+                        }
+                    }
+                ?>
+                
+            </div>
+            <div id="basketinfo">
                 Корзина: 0 товаров на 0 кб
             </div>
             <div id="nav">
