@@ -75,8 +75,8 @@
                     }
                     else {
                         echo " Сессия: ".$basket->getSessionId(). " Корзина: ".$basket->getId()." ";
-                        $user_id = $basket->getUserId();
-                        $user = UserQuery::create()->findOneById($user_id);
+                        //$user_id = $basket->getUserId();
+                        //$user = UserQuery::create()->findOneById($user_id);
                         if($user==NULL){
                             echo "Пользователь=NULL";
                         }

@@ -47,20 +47,7 @@ body
     width:900px;
 }
 
-table.startTable{
-    width: 100%;
-}
-table.startTable td.pic {
-    width: 10%;
-}
-table.startTable td.descr {
-    vertical-align: top;
-    margin: 100px;
-}
-.mainLeft {
-    text-align: center;
-    color: blue;
-}
+
 
 .ui-accordeon-content
 {
