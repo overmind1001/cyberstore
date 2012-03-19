@@ -33,7 +33,7 @@
                     <ul>
                         <li><a href="./../">Главная</a></li>
                         <li class="active"><a href="styles.html">Каталог</a></li>
-                        <li><a href="#">Корзина</a></li>
+                        <li><a href="./../basket/">Корзина</a></li>
                         <li><a href="./../about/">Помощь</a></li>
                     </ul>
                 </div>

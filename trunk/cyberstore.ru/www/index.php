@@ -60,8 +60,8 @@
                     <ul>
                         <li class="active"><a href="./">Главная</a></li>
                         <li><a href="./catalog/">Каталог</a></li>
-                        <li><a href="./basket">Корзина</a></li>
-                        <li><a href="./about">Помощь</a></li>
+                        <li><a href="./basket/">Корзина</a></li>
+                        <li><a href="./about/">Помощь</a></li>
                     </ul>
                 </div>
             </div>
