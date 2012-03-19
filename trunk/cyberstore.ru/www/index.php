@@ -19,7 +19,7 @@
 <body>
     <div id="wrap">
         <div id="header">
-            <div id="enter_exit" style="float:right; padding:10px;">
+            <div id="enter_exit">
             <?php //Вход - выход
                 if($basket!=NULL){
                     $user_id = $basket->getUserId();
@@ -34,7 +34,7 @@
             ?>    
             </div>
             
-            <div id="user" style="float:right; padding:10px;">
+            <div id="user">
                 <?php
                     if($basket==NULL) {
                     }
