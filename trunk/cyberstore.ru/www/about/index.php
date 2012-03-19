@@ -1,83 +1,62 @@
+<?php
+    include_once '../findBasket.php';
+    $basket = findBasket();
+?>
+
 <!DOCTYPE html>
 <html>
-    <head>
-        <title>CyberStore - о нас</title>
-        <link rel="stylesheet" href="http://code.jquery.com/mobile/1.0.1/jquery.mobile-1.0.1.min.css" />
-
-        <link type="text/css" href="./../css/black-tie/jquery-ui-1.8.18.custom.css" rel="stylesheet" />
-        <script type="text/javascript" src="./../js/jquery-1.7.1.min.js"></script>
-        <script type="text/javascript" src="./../js/jquery-ui-1.8.18.custom.min.js"></script>
-        
-        <script src="./../jquery.mobile-1.0.1.min.js"></script>
-        <script src="./catalog.js"></script>
-        <link rel="stylesheet" href="./../main.css" />
-        
-        <script>
-            function updateSelectedButtons(){
-                $('#link1,link2').removeClass('ui-btn-active');
-                //$('#link2').addClass('ui-btn-active'); 
-            }
-            $(function(){
-                //$.mobile.defaultPageTransition = "fade";
-                //$.mobile.ajaxLinksEnabled = false;
-                updateSelectedButtons();
-            });            
-        </script>
-    </head>
-    
-    
-<?php
-    require_once './../vendor/propel/runtime/lib/Propel.php';
-    Propel::init("./../cyberstore/build/conf/cyberstore-conf.php");
-    set_include_path("./../cyberstore/build/classes" . PATH_SEPARATOR . get_include_path());
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Cyberstore - о нас</title>
+    <link href="../style.css" rel="stylesheet" type="text/css" />
+</head>
+<!--
+<?
+    include '../propel.inc.php';
 ?>
+-->
+
 <body>
-    <div id="wrapper">
-        <div id="mainpage">
-            <div data-role="header" data-theme="c">
-                <table style="background:url('./../logo.png');" padding="0" margin="0" border="0px" width="100%">
-                    <tr>
-                        <td rowspan="2" style="width:35%; height:130px;">
-                            <!--img src="logo.gif"-->
-                        </td>
-                        <td valign="top" align="right">
-                            <a href="../login" data-role="button" data-inline="true">Вход</a>
-                        </td>
-                    </tr>
-                        <td align="right" valign="bottom">
-                            <a id="basket" href="#" data-role="button" data-inline="true">Корзина: 0 товаров на 0 квазибит</a>
-                        </td>
-                    <tr>
-                </table>
-                <div data-role="navbar" >
+    <div id="wrap">
+        <div id="header">
+            <div id="enterbtn" style="float:right; padding:10px;">
+                <a href="../login/">Вход</a>
+            </div>
+            <div id="basketinfo" style="float:right; margin-top:120px; margin-right:-43px;">
+                Корзина: 0 товаров на 0 кб
+            </div>
+            <div id="nav">
+                <div id="topmenu">
                     <ul>
-                        <li>
-                            <!--a id="link1" href="#" onclick="$.mobile.changePage('./../index.php'); $('#link1').addClass('ui-btn-active'); $('#link2').removeClass('ui-btn-active');" data-theme="a">Главная</a-->
-                            <a id="link1" href="../" data-theme="a">Главная</a>
-                        </li>
-                        <li>
-                            <a id="link2" href="../catalog" data-theme="a">Каталог</a>
-                        </li>
-                        <li>
-                            <a id="3" href="../basket" data-theme="a">Корзина</a>
-                        </li>
-                        <li>
-                            <a id="4" href="../about" data-theme="a">Помощь</a>
-                        </li>
+                        <li><a href="../">Главная</a></li>
+                        <li><a href="../catalog/">Каталог</a></li>
+                        <li><a href="../basket">Корзина</a></li>
+                        <li class="active"><a href="./">Помощь</a></li>
                     </ul>
                 </div>
-            </div><!-- /header -->
-            <div data-role="content">
-                <div id="aboutus">
-                    <h1>Ну тут типа информация о нас</h1>
-                </div>
-            </div><!-- /content -->
+            </div>
+        </div>
+        <div class="clear"></div>
+        <div id="content" style="">
+            <h1>О нас</h1>
+            <p>У вас оторвало руку, и вы не знаете что делать? Скорее бегите, ползите, летите к нам!!!</p>
+            <p>Как вы уже догадались, мы продаем различные запчасти для киборгов</p>
+            <p>У нас ограмный выбор. Тут вам и ноги, и руки, и мозги... Сотни наименований.</p>
+            
+            <h1>Немного истории</h1>
+            <p>Идея родилась у нас по накурке. TODO</p>
+            
+            <h1>Контакты</h1>
+            <p>абыр абыр</p>
+            
+            
+        </div>
 
-            <div data-role="footer">
-                <h1>© ДаЁжСофт</h1>
-            </div><!-- /footer -->
-
-        </div><!-- /mainpage -->
-    </div><!-- /wrapper-->
+        <div id="footer">
+            <div id="credits">
+                (с) ДаЁжСофт
+            </div>
+        </div>
+   </div>
 </body>
 </html>
