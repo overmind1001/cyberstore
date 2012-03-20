@@ -6,7 +6,7 @@
 <html>
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>Cyberstore - запчасти для всей семьи</title>
+    <title>Cyberstore - каталог</title>
     <link type="text/css" href="./../css/black-tie/jquery-ui-1.8.18.custom.css" rel="stylesheet" />
     <script type="text/javascript" src="./../js/jquery-1.7.1.min.js"></script>
     <script type="text/javascript" src="./catalog.js"></script>
@@ -55,7 +55,25 @@
                 
             </div>
             <div id="basketinfo">
-                Корзина: 0 товаров на 0 кб
+                <?php
+                    if($basket!=NULL){
+                        $count=$basket->countGoodInBaskets();
+                        $goodsInBasket = $basket->getGoodInBaskets();
+                        
+                        $sum=0.0;
+                        foreach ($goodsInBasket as $goodInBasket) {
+                            $good_id = $goodInBasket->getGoodId();
+                            $good = GoodsQuery::create()->findOneById($good_id);
+                            if($good!=NULL){
+                                $sum += $good->getPriceCurrent()*$goodInBasket->getCount();
+                            }
+                        } 
+                        echo "Корзина: $count товаров на $sum кб";
+                    }
+                    else {
+                        echo "Корзина: 0 товаров на 0 кб";
+                    }
+                ?>
             </div>
             <div id="nav">
                 <div id="topmenu">
