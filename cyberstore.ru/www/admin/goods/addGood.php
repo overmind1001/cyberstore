@@ -1,4 +1,9 @@
 <?php
+    include '../protection.php';
+    if(!isAdmin()){
+        echo "Access denied.";
+        return;
+    }
     include_once 'resize_jpg.php';
 
     $error=false;

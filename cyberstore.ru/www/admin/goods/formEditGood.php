@@ -1,5 +1,9 @@
-
 <?php
+    include '../protection.php';
+    if(!isAdmin()){
+        echo "Access denied.";
+        return;
+    }
     if(isset($_POST['good_name']))  {
                 $good_name = $_POST['good_name'];
     }

@@ -69,7 +69,14 @@
                     </tr>
                     <tr>
                         <td>   
-                            <input type="text" name="nextPage" style="display:none;" hidden readonly>
+                            <input type="text" name="nextPage" style="display:none;" hidden readonly value=
+                                   <?php
+                                        if(isset($_GET['nextPage'])){
+                                            $nextPage = $_GET['nextPage'];
+                                            echo "'".$nextPage.";";
+                                        }
+                                    ?>
+                                   />
                         </td>
                         <td>
                             <button type="submit" name="submit" value="submit-value">Войти</button>
