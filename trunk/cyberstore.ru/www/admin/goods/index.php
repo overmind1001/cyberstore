@@ -1,4 +1,9 @@
 <?php
+    include '../protection.php';
+    if(!isAdmin()){
+        echo "Access denied.";
+        return;
+    }
     include '../adminHead.php';
     $name="Товары";
     generateHead($name, $name, "default", "");
@@ -13,7 +18,7 @@
                     Propel::init("../../cyberstore/build/conf/cyberstore-conf.php");
                     set_include_path("../../cyberstore/build/classes" . PATH_SEPARATOR . get_include_path());
 
-                    $goods = GoodsQuery::create()->find();
+                    $goods = GoodsQuery::create()->orderByName()->find();
                     foreach ($goods as $good)   {
                         $good_name=$good->getName();
                         echo "<option>$good_name</option>";

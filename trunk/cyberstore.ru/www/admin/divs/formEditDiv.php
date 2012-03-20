@@ -1,4 +1,9 @@
 <?php
+    include '../protection.php';
+    if(!isAdmin()){
+        echo "Access denied.";
+        return;
+    }
     include_once '../../initPropel.php';
     Propel::init("../../cyberstore/build/conf/cyberstore-conf.php");
     set_include_path("../../cyberstore/build/classes" . PATH_SEPARATOR . get_include_path());

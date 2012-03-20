@@ -1,4 +1,9 @@
 <?php
+    include '../protection.php';
+    if(!isAdmin()){
+        echo "Access denied.";
+        return;
+    }
     $error=false;
     if(!isset($_POST['login'])) {
         $error=true;

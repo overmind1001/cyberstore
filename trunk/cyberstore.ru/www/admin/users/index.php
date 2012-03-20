@@ -1,4 +1,9 @@
 <?php
+    include '../protection.php';
+    if(!isAdmin()){
+        echo "Access denied.";
+        return;
+    }
     include '../adminHead.php';
     $name="Пользователи";
     generateHead($name, $name, "default", "");
