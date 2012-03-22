@@ -35,7 +35,7 @@ function goodToDiv(good, letter)
                 '">Добавлен в корзину</a></td></tr>';
     else result += '<td align="right" width="50%"><a href="" onclick="addGoodToBasket(' + good.Id + ');" id="buygood' + good.Id +
                 '">В корзину: ' + good.PriceCurrent + ' кб</a></td></tr>';
-    result += '</table';
+    result += '</table>';
     result += '</div>';
     return result;
 }
@@ -74,20 +74,21 @@ function categoryClicked(id)
                 }
             }
             $('#catalogGrid').html('');
-            $('#catalogGrid').append("<table>");
+            innerhtml = "<table>";
             for (i = 0; i < goodsOnPage; ++i) {
                 good = goods[i];
                 if (!(i%2)) {
-                    $('#catalogGrid').append("<tr>");
+                    innerhtml += "<tr>";
                 }
-                $('#catalogGrid').append("<td>");
-                $('#catalogGrid').append(goodToDiv(good));
-                $('#catalogGrid').append("</td>");
-                if (!(i%2)) {
-                    $('#catalogGrid').append("</tr>");
+                innerhtml += "<td>";
+                innerhtml += goodToDiv(good);
+                innerhtml += "</td>";
+                if (i%2) {
+                    innerhtml += "</tr>";
                 }
             }
-            $('#catalogGrid').append("</table>");
+            innerhtml += "</table>";
+			$('#catalogGrid').html(innerhtml);
         },
         "text"        
     );
