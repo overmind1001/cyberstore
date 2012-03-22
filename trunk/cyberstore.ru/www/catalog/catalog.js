@@ -23,8 +23,7 @@ function goodToDiv(good, letter)
     if (good.Description.length > 60)
         description = good.Description.substring(0, 60) + '...';
     else description = good.Description;
-    result =  '<div class="ui-block-'+ letter + '">';
-    result += '<div class="ui-bar ui-bar-c" style="height:250px;">';
+    result =  '<div>';
     result += '<table border="0px" width="100%" height="100%">';
     result += '<tr><td align="center" colspan="2">' + good.Name + '</td></tr>';
     result += '<tr><td align="center" colspan="2"><img src="' + picpath + '"/></td></tr>';
@@ -38,7 +37,6 @@ function goodToDiv(good, letter)
                 '">В корзину: ' + good.PriceCurrent + ' кб</a></td></tr>';
     result += '</table';
     result += '</div>';
-    result += '</div';
     return result;
 }
 
@@ -62,7 +60,6 @@ function categoryClicked(id)
             goodsCount = response.goodsCount;
             goods = response.goods;
 
-            $('#category' + id).addClass('ui-btn-active');
             $('#topPagesLine').html('');
             $('#bottomPagesLine').html('');
             for (i = 0; i < pageCount; ++i) {
@@ -77,11 +74,20 @@ function categoryClicked(id)
                 }
             }
             $('#catalogGrid').html('');
-            lts = ['a','b'];
+            $('#catalogGrid').append("<table>");
             for (i = 0; i < goodsOnPage; ++i) {
                 good = goods[i];
-                $('#catalogGrid').append(goodToDiv(good, lts[i%2]));
+                if (!(i%2)) {
+                    $('#catalogGrid').append("<tr>");
+                }
+                $('#catalogGrid').append("<td>");
+                $('#catalogGrid').append(goodToDiv(good));
+                $('#catalogGrid').append("</td>");
+                if (!(i%2)) {
+                    $('#catalogGrid').append("</tr>");
+                }
             }
+            $('#catalogGrid').append("</table>");
         },
         "text"        
     );
