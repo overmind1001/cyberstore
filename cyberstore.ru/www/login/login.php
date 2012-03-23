@@ -52,7 +52,7 @@
             $basket = BasketQuery::create()->findOneByUserId($user->getId());
             
             if($basket!=NULL)   {
-                setcookie('cybersession', $basket->getSessionId(), time()+60*60*24*7,"/", ".cyberstore.ru");
+                setcookie('cybersession', $basket->getSessionId(), time()+60*60*24*7,"/");
             } else {//
                 $basket = findBasket();
                 $basket->setUserId($user->getId());
