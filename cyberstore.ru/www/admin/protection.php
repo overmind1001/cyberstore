@@ -1,7 +1,6 @@
 <?php
 function isAdmin() {
-    @include_once '../findBasket.php';
-    @include_once '../../findBasket.php';
+    include_once $_SERVER['DOCUMENT_ROOT']. '/findBasket.php';
     if(isset($_COOKIE['cybersession'])) {
         $basket = findBasket();
         $user_id = $basket->getUserId();
