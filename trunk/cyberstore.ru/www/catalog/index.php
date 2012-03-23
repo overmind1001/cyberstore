@@ -23,57 +23,13 @@
     <div id="wrap">
         <div id="header">
             <div id="enter_exit">
-            <?php //Вход - выход
-                if($basket!=NULL){
-                    $user_id = $basket->getUserId();
-                    $user = UserQuery::create()->findOneById($user_id);
-                    if($user!=NULL){
-                        echo "<a style='margin-left=5px;' href='../login/logout.php'>Выход</a>";
-                    }
-                    else {
-                        echo "<a style='margin-left=5px;' href='../login/'>Вход</a>";
-                    }
-                }
-            ?>    
+                <?php include '../userEnterExit.php'; ?> 
             </div>
             <div id="user">
-                <?php
-                    if($basket==NULL) {
-                    }
-                    else {
-                        //$user_id = $basket->getUserId();
-                        //$user = UserQuery::create()->findOneById($user_id);
-                        if($user==NULL){
-                            //echo "<a href='./login/'>Вход</a>";
-                        }
-                        else {
-                            echo "Пользователь: ".$user->getLogin();
-                            //echo "<a style='margin-left=5px;' href='./login/logout.php'>Выход</a>";
-                        }
-                    }
-                ?>
-                
+                <?php include '../userInfo.php';  ?> 
             </div>
             <div id="basketinfo">
-                <?php
-                    if($basket!=NULL){
-                        $count=$basket->countGoodInBaskets();
-                        $goodsInBasket = $basket->getGoodInBaskets();
-                        
-                        $sum=0.0;
-                        foreach ($goodsInBasket as $goodInBasket) {
-                            $good_id = $goodInBasket->getGoodId();
-                            $good = GoodsQuery::create()->findOneById($good_id);
-                            if($good!=NULL){
-                                $sum += $good->getPriceCurrent()*$goodInBasket->getCount();
-                            }
-                        } 
-                        echo "Корзина: $count товаров на $sum кб";
-                    }
-                    else {
-                        echo "Корзина: 0 товаров на 0 кб";
-                    }
-                ?>
+               <?php include '../basketInfo.php';?>
             </div>
             <div id="nav">
                 <div id="topmenu">
