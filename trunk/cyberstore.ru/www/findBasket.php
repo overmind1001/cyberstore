@@ -1,5 +1,5 @@
 <?
-    include_once 'propel.inc.php';
+    include_once $_SERVER['DOCUMENT_ROOT']. '/propel.inc.php';
     
     function findBasket()
     {
