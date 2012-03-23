@@ -12,11 +12,83 @@
         <link href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8/themes/base/jquery-ui.css" rel="stylesheet" type="text/css"/>
         <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.5/jquery.min.js"></script>
         <script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8/jquery-ui.min.js"></script>
+        <script type="text/javascript" src="../catalog/catalog.js"></script>
+        
         <script>
             $(function(){
                 $("button").button();
                 $('#set').buttonset();
             });
+            function addCount(good_id) {
+                ssid = readCookie('cybersession');
+                $.post("addCount.php",
+                        {
+                            ssid: ssid,
+                            good_id: good_id
+                        },
+                        function(data, textStatus, jqXHR){
+                            response = eval("(" + data + ")");
+                            if (response.success) {
+                                $('#goodCount' + good_id).text(response.count);
+                                updateBasketInfo_s();
+                            }
+                        },
+                        'text'
+                        );
+            }
+            function delCount(good_id) {
+                ssid = readCookie('cybersession');
+                $.post("delCount.php",
+                        {
+                            ssid: ssid,
+                            good_id: good_id
+                        },
+                        function(data, textStatus, jqXHR){
+                            response = eval("(" + data + ")");
+                            if (response.success) {
+                                $('#goodCount' + good_id).text(response.count);
+                                updateBasketInfo_s();
+                            }
+                        },
+                        'text'
+                        );
+            }
+            function delGood(good_id) {
+                ssid = readCookie('cybersession');
+                $.post("delGood.php",
+                        {
+                            ssid: ssid,
+                            good_id: good_id
+                        },
+                        function(data, textStatus, jqXHR){
+                            response = eval("(" + data + ")");
+                            if (response.success) {
+                                //$('#startTable').removeData($('#goodRow' + good_id));
+                                $('#goodRow' + good_id).remove();
+                                updateBasketInfo_s();
+                            }
+                        },
+                        'text'
+                        );
+            }
+            function updateBasketInfo_s()
+            {
+                ssid = readCookie('cybersession');
+                $.post(
+                    '../catalog/basketInfo.php',
+                    {
+                        sessionId : ssid
+                    },
+                    updateBasketText,
+                    'text');    
+            }
+
+            function updateBasketText(data, textStatus, jqXHR)
+            {
+                response = eval("(" + data + ")");
+                $('#basketinfo').text('Корзина: ' + response.goodsCount + ' товаров на '
+                    + response.sum + ' квазибит');
+            }
         </script>
     </head>
     

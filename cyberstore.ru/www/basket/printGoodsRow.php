@@ -2,7 +2,7 @@
     function printGoodsRow($goodInBasket)
     {
         $good = $goodInBasket->getGoods();
-        
+        $good_id = $goodInBasket->getId();
         $name=$good->getname();
         $description=$good->getDescription();
         $price=$good->getPriceCurrent();
@@ -17,7 +17,7 @@
             $picture_path='./../pictures/m0.jpg';
         }
                                     
-        echo "<tr>";
+        echo "<tr id=goodRow$good_id>";
         echo "<td class='pic' >
                 <table style='align: center;'>
                     <tr><td class='mainLeft'><img src='$picture_path'></td></tr>
@@ -30,13 +30,13 @@
         
                     <table>
                         <tr><td align='top | left'>
-                            <button>X</button>
+                            <button onclick='delGood($good_id);'>X</button>
                         </td></tr>
-                        <tr align='bottom'><td align='center | bottom'>$count</td></tr>
+                        <tr align='bottom'><td id=goodCount$good_id align='center | bottom'>$count</td></tr>
                         <tr align='bottom'><td align='center | bottom'>
                             <div id='set'>
-                                <button>+</button>
-                                <button>-</button>
+                                <button onclick='addCount($good_id);'>+</button>
+                                <button onclick='delCount($good_id);'>-</button>
                             </div>
                         </td></tr>
                     </table>
