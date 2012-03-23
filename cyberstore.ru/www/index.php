@@ -20,7 +20,8 @@
     <div id="wrap">
         <div id="header">
             <div id="enter_exit">
-                <?php include 'userEnterExit.php'; ?>
+                <?php $prefix = '.';
+                include 'userEnterExit.php'; ?>
             </div>
             
             <div id="user">
