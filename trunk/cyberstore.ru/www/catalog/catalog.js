@@ -33,7 +33,7 @@ function goodToDiv(good, letter)
     if (good.already) 
         result += '<td align="right" width="50%"><a href=""  id="buygood' + good.Id +
                 '">Добавлен в корзину</a></td></tr>';
-    else result += '<td align="right" width="50%"><a href="" onclick="addGoodToBasket(' + good.Id + ');" id="buygood' + good.Id +
+    else result += '<td align="right" width="50%"><a href="javascript:addGoodToBasket(' + good.Id + ');" id="buygood' + good.Id +
                 '">В корзину: ' + good.PriceCurrent + ' кб</a></td></tr>';
     result += '</table>';
     result += '</div>';
@@ -42,7 +42,6 @@ function goodToDiv(good, letter)
 
 function categoryClicked(id)
 {
-    $('#category' + currentCategory).removeClass('ui-btn-active');
     currentCategory = id;
     ssid = readCookie('cybersession');
     $.post(
@@ -65,10 +64,7 @@ function categoryClicked(id)
             for (i = 0; i < pageCount; ++i) {
                 $('#topPagesLine').append('<a id="btnpt' + i + '" href="#">' + (i+1) + '</a>');
                 $('#bottomPagesLine').append('<a id="btnpb' + i + '" href="#">' + (i+1) + '</a>');
-                if (i == currentPage) {
-                    $("#btnpt" + i).addClass('ui-btn-active');
-                    $("#btnpb" + i).addClass('ui-btn-active');
-                } else {
+                if (i != currentPage) {
                     $("#btnpt" + i).attr('onclick', 'pageClicked(' + i + ');');
                     $("#btnpb" + i).attr('onclick', 'pageClicked(' + i + ');');
                 }
@@ -121,8 +117,8 @@ function addGoodToBasket(id)
         function(data, textStatus, jqXHR){
             response = eval("(" + data + ")");
             if (response.success) {
-                $('#buygood' + id + ' .ui-btn-text').text('Добавлен в корзину');
-                $('#buygood' + id).attr('onclick','');
+                $('#buygood' + id).text('Добавлен в корзину');
+                $('#buygood' + id).attr('href','javascript:void();');
                 updateBasketInfo_b(response.basketId);
             }
         },
@@ -155,6 +151,6 @@ function updateBasketInfo_s()
 function updateBasketText(data, textStatus, jqXHR)
 {
     response = eval("(" + data + ")");
-    $('#basket .ui-btn-text').text('Корзина: ' + response.goodsCount + ' товаров на ' 
+    $('#basketinfo').text('Корзина: ' + response.goodsCount + ' товаров на '
         + response.sum + ' квазибит');
 }
