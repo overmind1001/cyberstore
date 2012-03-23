@@ -39,7 +39,7 @@
                     <table>
                         <tr>
                             <td><a href="../">Главная</a></td>
-                            <td><a href="./catalog/">Каталог</a></td>
+                            <td><a href="../catalog/">Каталог</a></td>
                             <td><a href="../basket/">Корзина</a></td>
                             <td><a href="../about/">Помощь</a></td>
                         </tr>
