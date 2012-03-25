@@ -26,7 +26,7 @@
                 </table>
               </td>
               <td class='descr'>$description</td>
-              <td>
+              <td class='buttons'>
         
                     <table>
                         <tr><td align='top | left'>
