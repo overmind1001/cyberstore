@@ -345,12 +345,20 @@ table.startTable{
     width: 100%;
     
 }
+table.startTable tr {
+  
+}
 table.startTable td.pic {
-    width: 10%;
+    padding: 20px;
 }
 table.startTable td.descr {
     vertical-align: top;
     margin: 100px;
+    padding: 20px;
+    font-size: 2em;
+}
+table.startTable td.buttons {
+    width: 80px;
 }
 .mainLeft {
     text-align: center;
