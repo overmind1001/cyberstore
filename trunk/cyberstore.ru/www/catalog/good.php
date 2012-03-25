@@ -1,13 +1,3 @@
-<!DOCTYPE html>
-<html>
-    <head>
-        <title>CyberStore - всё для киборгов</title>
-        <link rel="stylesheet" href="http://code.jquery.com/mobile/1.0.1/jquery.mobile-1.0.1.min.css" />
-        <script src="./../jquery-1.6.4.min.js"></script>
-        <script src="./../jquery.mobile-1.0.1.min.js"></script>
-        <link rel="stylesheet" href="./../main.css" />
-    </head>
-
 <!--
 <?
     require_once './../vendor/propel/runtime/lib/Propel.php';
@@ -26,47 +16,58 @@
     }
 ?>
 -->
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Cyberstore - каталог</title>
+    <link type="text/css" href="./../css/black-tie/jquery-ui-1.8.18.custom.css" rel="stylesheet" />
+    <script type="text/javascript" src="./../js/jquery-1.7.1.min.js"></script>
+    <script type="text/javascript" src="./catalog.js"></script>
+    <script type="text/javascript" src="./../js/jquery-ui-1.8.18.custom.min.js"></script>
+    <link href="./../style.css" rel="stylesheet" type="text/css" />
+</head>
+
 <body>
-    <div id="wrapper">
-        <div id="mainpage">
-            <div data-role="header" data-theme="c">
-                <table style="background:url('./../logo.png');" padding="0" margin="0" border="0px" width="100%">
-                    <tr>
-                        <td rowspan="2" style="width:35%; height:130px;">
-                            <!--img src="logo.gif"-->
-                        </td>
-                        <td valign="top" align="right">
-                            <!--a href="#" data-role="button" data-inline="true">Вход</a-->
-                        </td>
-                    </tr>
-                        <td align="right" valign="bottom">
-                            <!--a href="#" data-role="button" data-inline="true">Корзина: 0 товаров на 0 квазибит</a-->
-                        </td>
-                    <tr>
-                </table>
-                <div data-role="header" align="center">
-                    <h1>Просмотр товара</h1>
-                    <a href="#" onclick="window.close();" data-role="button" data-theme="b">Закрыть окно</a>
+    <div id="wrap">
+        <div id="header">
+            <div id="enter_exit">
+                <?php $prefix = './..'; include './../userEnterExit.php'; ?>
+            </div>
+            <div id="user">
+                <?php include '../userInfo.php';  ?>
+            </div>
+            <div id="basketinfo">
+               <?php include '../basketInfo.php';?>
+            </div>
+            <div id="nav">
+                <div id="topmenu">
+                    <table>
+                        <tr>
+                            <td><a href="../">Главная</a></td>
+                            <td><a href="./">Каталог</a></td>
+                            <td><a href="../basket/">Корзина</a></td>
+                            <td><a href="../about/">Помощь</a></td>
+                        </tr>
+                    </table>
                 </div>
-            </div><!-- /header -->
-            <div data-role="content">
-            <h1 align="center">
-<?
-    echo $good->getName();
-?>
-            </h1>
-            
-            <img src="<?echo $picture_path;?>" align="left" style="margin-right:15px;"></img>
+            </div>
+        </div>
+        <div class="clear"></div>
+        <div id="content" style="">
+        <h2><?echo $good->getName();?></h2>
+        <img src="<?echo $picture_path;?>" align="left"/>
 <?
     echo $good->getDescription();
 ?>
-            </div><!-- /content -->
+        </div>
 
-            <div data-role="footer">
-                <h1>© ДаЁжСофт</h1>
-            </div><!-- /footer -->
+        <div id="footer">
+            <div id="credits">
+                (с) ДаЁжСофт
+            </div>
+        </div>
 
-        </div><!-- /mainpage -->
-    </div><!-- /wrapper-->
 </body>
 </html>

@@ -70,17 +70,19 @@ function categoryClicked(id)
                 }
             }
             $('#catalogGrid').html('');
-            innerhtml = "<table>";
+            innerhtml = "<table width=\"100%\">";
             for (i = 0; i < goodsOnPage; ++i) {
                 good = goods[i];
-                if (!(i%2)) {
-                    innerhtml += "<tr>";
-                }
-                innerhtml += "<td>";
-                innerhtml += goodToDiv(good);
-                innerhtml += "</td>";
-                if (i%2) {
-                    innerhtml += "</tr>";
+                if (typeof good != 'undefined') {
+                    if (!(i%2)) {
+                        innerhtml += "<tr>";
+                    }
+                    innerhtml += "<td>";
+                    innerhtml += goodToDiv(good);
+                    innerhtml += "</td>";
+                    if (i%2) {
+                        innerhtml += "</tr>";
+                    }
                 }
             }
             innerhtml += "</table>";
