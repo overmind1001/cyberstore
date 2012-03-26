@@ -372,6 +372,11 @@ table.startTable td.buttons {
     clear:both;
 }
 
+#basketinfo2 {
+    text-align: center;
+    font-size: 200%;
+}
+
 #accordion
 {
     width:207px;
