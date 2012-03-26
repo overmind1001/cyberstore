@@ -406,3 +406,6 @@ table.login_pass td{
 #catalogGrid h2 {
 	
 }
+#catalogGrid div {
+	height: 205px;
+}
