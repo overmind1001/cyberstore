@@ -82,24 +82,31 @@
                     updateBasketText,
                     'text');    
             }
-
             function updateBasketText(data, textStatus, jqXHR)
             {
                 response = eval("(" + data + ")");
-                $('#basketinfo2').text('Корзина: ' + response.goodsCount + ' товаров на '
-                    + response.sum + ' квазибит');
+                if (response.goodsCount > 0) 
+                {
+                    $('#basketinfo2').text('Корзина: ' + response.goodsCount + ' товаров на '
+                        + response.sum + ' квазибит');
+                }
+                else
+                {
+                    $('#basketinfo2').empty();
+                    $('#toOrder').empty();
+                    $('#goodsList').html('<h1>Корзина пуста</h1>');
+                }
             }
-            
-            function toOrder()
-            {
-                
-            }
+
         </script>
     </head>
     
     <?
         include './../propel.inc.php';
         include './printGoodsRow.php';
+        
+        $goodInBasketQuery = GoodInBasketQuery::Create()->filterByBasket($basket);
+        $goodsInBasket = $goodInBasketQuery->find();
     ?>
     
     <body>
@@ -132,13 +139,14 @@
                 <div class="clear"></div>
                 <div id="content" style="">
                     <div id="basketinfo2">
-                        <?php include '../basketInfo.php';?>
+                        <?php 
+                            if($goodsInBasket->count() > 0) {
+                                include '../basketInfo.php';
+                            }
+                        ?>
                     </div>
-                    <table class="startTable">
-                        <?php                        
-                            $goodInBasketQuery = GoodInBasketQuery::Create()->filterByBasket($basket);
-                            $goodsInBasket = $goodInBasketQuery->find();
-
+                    <table id="goodsList" class="startTable">
+                        <?php                      
                             if($goodsInBasket->count()<1) {
                                 echo "<h1>Корзина пуста</h1>";
                             }
@@ -148,8 +156,12 @@
                             }
                         ?>
                     </table>
-                    <div>
-                        <button onclick='toOrder();'>Оформить заказ</button>
+                    <div id="toOrder">
+                        <?php
+                            if($goodsInBasket->count() > 0) {
+                                echo '<a href="./../toOrder/"><button>Оформить заказ</button></a>';
+                            }
+                        ?>
                     </div>
                 </div>
 
