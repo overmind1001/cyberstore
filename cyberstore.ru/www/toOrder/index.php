@@ -17,8 +17,24 @@
         <script>
             $(function(){
                 $("button").button();
-                $('#set').buttonset();
             });
+            
+            function pay(){
+                ssid = readCookie('cybersession');
+                $.post("pay.php",
+                        {
+                            ssid: ssid
+                        },
+                        function(data, textStatus, jqXHR){
+                                response = eval("(" + data + ")");
+                                if (response.success) {
+                                   $('#payform').empty();
+                                   $('#payform').html('<h1>Оплата успешно произведена</h1>');
+                                }
+                            },
+                        'text'
+                        );
+            }
         </script>
     </head>
     
@@ -42,29 +58,37 @@
             
                 <div class="clear"></div>
                 <div id="content" style="">
-                    <center>
-                        <h1 align="center">Выберите средство оплаты</h1>
-                        <form method="post" action="pay.php" data-ajax="false">
-                            <table class="payment" align="center">
-                                <tr>
-                                    <td>
-                                        <input type="radio" name="paytype" value="wm" checked>        
-                                            <img src="./wm.png" hspace="30" align="center"> 
-                                            WebMoney
-                                        </input>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>
-                                        <input type="radio" name="paytype" value="ya">        
-                                            <img src="./ya.png" hspace="30" align="center"> 
-                                            Яндекс Деньги
-                                        </input>
-                                    </td>
-                                </tr>
-                            </table>
-                        </form>
-                    </center>
+                        <center>
+                            <form method="post" action="pay.php" data-ajax="false">
+                                <table id="payform" class="payment" align="center">
+                                    <tr>
+                                        <h1 align="center">Выберите средство оплаты</h1>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <input type="radio" name="paytype" value="wm" checked>        
+                                                <img src="./wm.png" hspace="30" align="center"> 
+                                                WebMoney
+                                            </input>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <input type="radio" name="paytype" value="ya">        
+                                                <img src="./ya.png" hspace="30" align="center"> 
+                                                Яндекс Деньги
+                                            </input>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <button onclick="pay();">Оплатить</button>
+                                        </td>    
+                                    </tr>
+
+                                </table>
+                            </form>
+                        </center>
                 </div>
 
         <div id="footer">

@@ -18,7 +18,7 @@
         foreach ($goodsInBasket as $goodInBasket) {
             if($good_id == $goodInBasket->getId()) {
                 $goodInBasketCount = $goodInBasket->getCount();
-                if($goodInBasketCount>0){//уменьшаем количество товаров в корзине на 1
+                if($goodInBasketCount>1){//уменьшаем количество товаров в корзине на 1
                     $goodInBasket->setCount($goodInBasketCount-1);
                     $goodInBasket->save();
                     echo '{"success": true, "count":'.($goodInBasketCount-1).'}' ;
