@@ -24,8 +24,8 @@ function goodToDiv(good, letter)
         description = good.Description.substring(0, 60) + '...';
     else description = good.Description;
     result =  '<div>';
-    result += '<table border="0px" width="100%" height="100%">';
-    result += '<tr><td align="center" colspan="2">' + good.Name + '</td></tr>';
+    result += '<table width="100%" height="100%">';
+    result += '<tr><td align="center" colspan="2"><h2>' + good.Name + '</h2></td></tr>';
     result += '<tr><td align="center" colspan="2"><img src="' + picpath + '"/></td></tr>';
     result += '<tr><td valign="bottom" colspan="2">' + description + '</td></tr>';
     result += '<tr><td align="left" width="50%"><a href="good.php?goodId=' + good.Id + '" target="_blank" id="showgood' + good.Id +
