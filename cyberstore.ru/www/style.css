@@ -386,3 +386,18 @@ table.login_pass td{
     text-align: center;
     padding: 5px;
 }
+#catalogGrid  table{
+	width:100%;
+	height:100%;
+	padding: 5px;
+	border:2px solid;	
+	border-spacing:1px 1px;
+}
+
+#catalogGrid > table {
+	border:none;
+}
+
+#catalogGrid h2 {
+	
+}
