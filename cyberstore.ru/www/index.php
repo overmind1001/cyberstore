@@ -46,7 +46,7 @@
         <div class="clear"></div>
         <div id="content" style="">
             <p>
-                <?php
+                <!--?php
                     if($basket==NULL) {
                         echo "Корзина = NULL";
                     }
@@ -61,7 +61,7 @@
                             echo "Пользователь: ".$user->getLogin();
                         }
                     }
-                ?>
+                ?-->
             </p>
             <table  class="startTable">
                 <!--tr>
