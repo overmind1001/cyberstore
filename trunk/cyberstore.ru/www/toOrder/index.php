@@ -28,7 +28,7 @@
                         function(data, textStatus, jqXHR){
                                 response = eval("(" + data + ")");
                                 if (response.success) {
-                                   $('#payform').empty();
+                                   //$('#payform').empty();
                                    $('#payform').html('<h1>Оплата успешно произведена</h1>');
                                 }
                             },
@@ -59,7 +59,7 @@
                 <div class="clear"></div>
                 <div id="content" style="">
                         <center>
-                            <form method="post" action="pay.php" data-ajax="false">
+                            
                                 <table id="payform" class="payment" align="center">
                                     <tr>
                                         <h1 align="center">Выберите средство оплаты</h1>
@@ -87,7 +87,7 @@
                                     </tr>
 
                                 </table>
-                            </form>
+                            
                         </center>
                 </div>
 
