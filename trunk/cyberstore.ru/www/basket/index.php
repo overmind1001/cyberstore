@@ -162,6 +162,7 @@
                                 echo '<a href="./../toOrder/"><button>Оформить заказ</button></a>';
                             }
                         ?>
+                        <a href="./sale_history.php">История покупок</a>
                     </div>
                 </div>
 

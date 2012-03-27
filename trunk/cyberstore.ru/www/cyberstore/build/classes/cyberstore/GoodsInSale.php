@@ -15,7 +15,7 @@
  */
 class GoodsInSale extends BaseGoodsInSale {
 
-	public function __construct($price, $count, $saleId, $goodId)
+	public function __construct($price=NULL, $count=NULL, $saleId=NULL, $goodId=NULL)
 	{
 		parent::__construct();
 		$this->setPrice($price);
