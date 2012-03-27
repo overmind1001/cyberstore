@@ -90,6 +90,7 @@ function categoryClicked(id)
         },
         "text"        
     );
+	currentSkip = 0;
 }
 
 function pageClicked(num)
