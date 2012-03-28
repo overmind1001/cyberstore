@@ -60,7 +60,7 @@
                 <div id="content" style="">
                         <center>
                             
-                                <table id="payform" class="payment" align="center">
+<!--                                <table id="payform" class="payment" align="center">
                                     <tr>
                                         <h1 align="center">Выберите средство оплаты</h1>
                                     </tr>
@@ -86,7 +86,39 @@
                                         </td>    
                                     </tr>
 
-                                </table>
+                                </table>-->
+                            
+                            <form id=pay name=pay method="POST" action="https://merchant.webmoney.ru/lmi/payment.asp">
+
+                                <p><img src="./wm.png" hspace="30" align="center">Платеж через WebMoney</p>
+                                
+                                <?php
+                                    $sum=0.0;
+                                    if($basket!=NULL){
+                                        $count=$basket->countGoodInBaskets();
+                                        $goodsInBasket = $basket->getGoodInBaskets();
+
+                                        foreach ($goodsInBasket as $goodInBasket) {
+                                            $good_id = $goodInBasket->getGoodId();
+                                            $good = GoodsQuery::create()->findOneById($good_id);
+                                            if($good!=NULL){
+                                                $sum += $good->getPriceCurrent()*$goodInBasket->getCount();
+                                            }
+                                        } 
+                                    }
+                                    echo   '<p>
+                                                <input type="hidden" name="LMI_PAYMENT_AMOUNT" value="'.$sum.'">
+                                                <input type="hidden" name="LMI_PAYMENT_DESC" value="Pay Cyberstore">
+                                                <input type="hidden" name="LMI_PAYMENT_NO" value="1">
+                                                <input type="hidden" name="LMI_PAYEE_PURSE" value="Z145179295679">
+                                                <input type="hidden" name="LMI_SIM_MODE" value="0">
+                                            </p>';
+                                ?>
+                                
+                                <p>	
+                                        <button type="submit" value="submit" onclick="pay();">Оплатить</button>
+                                </p>
+                            </form>
                             
                         </center>
                 </div>
