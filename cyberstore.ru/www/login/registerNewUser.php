@@ -31,15 +31,26 @@
     }
     else {
         $nextPage =$defaultNextPage;
-    }
- 
+    } 
+	
+	if(isset($_SESSION['captcha_keystring']) && $_SESSION['captcha_keystring'] === $_POST['keystring']){
+		$capchaiswrong = false;
+	}else{
+		$capchaiswrong = true;
+	}
+	
+	unset($_SESSION['captcha_keystring']);
     
     include_once '../initPropel.php';
     Propel::init("../cyberstore/build/conf/cyberstore-conf.php");
     set_include_path("../cyberstore/build/classes" . PATH_SEPARATOR . get_include_path());
     
     $user=UserQuery::create()->findOneByLogin($login);
-    if($user==NULL) {
+	if ($capchaiswrong)
+	{ 
+		echo "Неверно введён код проверки";
+	}
+     else if($user==NULL) {
         
         $user = new User($login, $password);
         $basket = findBasket();

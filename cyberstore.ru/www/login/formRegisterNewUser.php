@@ -1,4 +1,5 @@
 <?php
+	session_start();	
     include_once '../findBasket.php';
     $basket = findBasket();
 ?>
@@ -61,6 +62,13 @@
                         <td>Пароль:</td>
                         <td><input type="password" name="password" required></td>
                     </tr>
+					
+					<tr>
+						<td>Слово с картинки:
+						<p><img src="./kapcha/?<?php echo session_name()?>=<?php echo session_id()?>"></p>
+						</td>
+						<td><p><input type="text" name="keystring"></p></td>
+					</tr>
 
                     <tr>
                         <td>   
