@@ -1,4 +1,5 @@
 <?php 
+	session_start();
     include_once '../findBasket.php';
     include_once 'redirect.php';
 ?>
@@ -38,8 +39,6 @@
 	}else{
 		$capchaiswrong = true;
 	}
-	
-	unset($_SESSION['captcha_keystring']);
     
     include_once '../initPropel.php';
     Propel::init("../cyberstore/build/conf/cyberstore-conf.php");
