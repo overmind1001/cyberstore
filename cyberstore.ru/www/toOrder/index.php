@@ -19,7 +19,8 @@
                 $("button").button();
             });
             
-            function pay(){
+            function payme(){
+                document.forms.pay.submit();
                 ssid = readCookie('cybersession');
                 $.post("pay.php",
                         {
@@ -116,7 +117,7 @@
                                 ?>
                                 
                                 <p>	
-                                        <button type="submit" value="submit" onclick="pay();">Оплатить</button>
+                                        <button type="button" value="submit" onclick="payme();">Оплатить</button>
                                 </p>
                             </form>
                             

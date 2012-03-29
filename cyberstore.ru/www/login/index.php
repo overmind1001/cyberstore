@@ -50,7 +50,7 @@
         <div class="clear"></div>
         <div id="content" style="">
             <center>
-                
+
             <h1 align="center">Авторизация</h1>
             <form method="post" action="login.php" data-ajax="false">
                 <table class="login_pass"  align="center">
@@ -68,7 +68,7 @@
                         <td style="valign: top;"><p style="font-size: 0.7em;"><a href="formRegisterNewUser.php">Зарегистрироваться</a></p></td>
                     </tr>
                     <tr>
-                        <td>   
+                        <td>
                             <input type="text" name="nextPage" style="display:none;" hidden readonly value=
                                    <?php
                                         if(isset($_GET['nextPage'])){
@@ -84,10 +84,10 @@
                     </tr>
             </table>
             </form>
-            
+
             </center>
         </div><!-- /content -->
-                                    
+
         <div id="footer">
             <div id="credits">
                 (с) ДаЁжСофт
